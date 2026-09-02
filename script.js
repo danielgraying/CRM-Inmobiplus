@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (FOTOS VARIADAS + COORDENADAS GPS)
+    // 3. BASE DE DATOS: 30 INMUEBLES CON GPS Y ZONAS TOP REALES
     // ==========================================
     const defaultProperties = [
         {
@@ -97,9 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Táchira",
             city: "San Cristóbal",
-            address: "Av. Ferrero Tamayo, Edificio Altamira Suite 4B",
-            lat: 7.7854,
-            lng: -72.2185,
+            address: "Av. Ferrero Tamayo, Residencias Altamira Suite, Pueblo Nuevo",
+            lat: 7.7885,
+            lng: -72.2156,
             beds: 3,
             baths: 2,
             parking: 2,
@@ -122,14 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Táchira",
             city: "San Cristóbal",
-            address: "Residencias El Bosque, Calle Los Pinos #12",
-            lat: 7.7780,
-            lng: -72.2240,
-            beds: 2,
-            baths: 2,
-            parking: 1,
-            sqmBuild: 90,
-            sqmLot: 180,
+            address: "Urb. Las Lomas, Calle Principal #14-22, Qta. Villa Real",
+            lat: 7.7812,
+            lng: -72.2289,
+            beds: 3,
+            baths: 2.5,
+            parking: 2,
+            sqmBuild: 180,
+            sqmLot: 240,
             pool: true,
             pets: true,
             furnished: true,
@@ -142,14 +142,62 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             id: 3,
+            category: "Apartamento",
+            price: 70000,
+            country: "Venezuela",
+            subdivision: "Táchira",
+            city: "San Cristóbal",
+            address: "Altos de Pirineos, Av. Principal, Res. Terrazas del Este",
+            lat: 7.7715,
+            lng: -72.2140,
+            beds: 2,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 88,
+            sqmLot: 88,
+            pool: false,
+            pets: false,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1502005229762-ee152da915d6?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 4,
+            category: "Townhouse",
+            price: 165000,
+            country: "Venezuela",
+            subdivision: "Táchira",
+            city: "San Cristóbal",
+            address: "Av. 19 de Abril, Conjunto Residencial Santa Inés, Casa 5",
+            lat: 7.7748,
+            lng: -72.2215,
+            beds: 4,
+            baths: 3.5,
+            parking: 2,
+            sqmBuild: 210,
+            sqmLot: 230,
+            pool: true,
+            pets: true,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 5,
             category: "Townhouse",
             price: 240000,
             country: "Venezuela",
             subdivision: "Miranda",
             city: "Chacao",
-            address: "Altamira Norte, Conjunto Las Villas Casa 8",
-            lat: 10.5012,
-            lng: -66.8490,
+            address: "Av. San Juan Bosco con 2da Transversal, Altamira Norte",
+            lat: 10.4995,
+            lng: -66.8512,
             beds: 4,
             baths: 3.5,
             parking: 3,
@@ -160,43 +208,41 @@ document.addEventListener('DOMContentLoaded', () => {
             furnished: false,
             images: [
                 "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
         },
         {
-            id: 4,
+            id: 6,
             category: "Apartamento",
-            price: 65000,
+            price: 155000,
             country: "Venezuela",
-            subdivision: "Carabobo",
-            city: "Valencia",
-            address: "El Viñedo, Edificio Vista Real Piso 6",
-            lat: 10.2180,
-            lng: -68.0055,
-            beds: 2,
-            baths: 1,
-            parking: 1,
-            sqmBuild: 68,
-            sqmLot: 68,
-            pool: false,
-            pets: false,
+            subdivision: "Miranda",
+            city: "Baruta",
+            address: "Calle París con Mucuchíes, Torre Santa María, Las Mercedes",
+            lat: 10.4820,
+            lng: -66.8610,
+            beds: 3,
+            baths: 2.5,
+            parking: 2,
+            sqmBuild: 142,
+            sqmLot: 142,
+            pool: true,
+            pets: true,
             furnished: true,
             images: [
-                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1502005229762-ee152da915d6?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
         },
         {
-            id: 5,
+            id: 7,
             category: "Casa",
             price: 340000,
             country: "Venezuela",
             subdivision: "Distrito Capital",
             city: "Caracas",
-            address: "Alto Prado, Quinta Bella Vista Calle Los Pinos",
+            address: "Calle Los Cedros, Urb. Alto Prado, Qta. Bella Vista",
             lat: 10.4430,
             lng: -66.8625,
             beds: 5,
@@ -214,13 +260,36 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 6,
+            id: 8,
+            category: "Apartamento",
+            price: 65000,
+            country: "Venezuela",
+            subdivision: "Carabobo",
+            city: "Valencia",
+            address: "Calle 139A con Av. Monseñor Adams, El Viñedo",
+            lat: 10.2180,
+            lng: -68.0055,
+            beds: 2,
+            baths: 1,
+            parking: 1,
+            sqmBuild: 68,
+            sqmLot: 68,
+            pool: false,
+            pets: false,
+            furnished: true,
+            images: [
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 9,
             category: "Apartamento",
             price: 450,
             country: "Venezuela",
             subdivision: "Táchira",
             city: "Táriba",
-            address: "Av. 1, Torres del Parque Bloque A-3",
+            address: "Av. 1 con Calle 7, Centro Urbano Táriba, Res. El Parque 3A",
             lat: 7.8180,
             lng: -72.2245,
             beds: 1,
@@ -232,19 +301,18 @@ document.addEventListener('DOMContentLoaded', () => {
             pets: false,
             furnished: false,
             images: [
-                "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Alquiler"
         },
         {
-            id: 7,
+            id: 10,
             category: "Local",
             price: 180000,
             country: "Colombia",
             subdivision: "Antioquia",
             city: "Medellín",
-            address: "El Tesoro Parque Comercial, Local 140",
+            address: "Carrera 25A #1A Sur-45, El Tesoro Parque Comercial",
             lat: 6.1985,
             lng: -75.5580,
             beds: 0,
@@ -256,19 +324,64 @@ document.addEventListener('DOMContentLoaded', () => {
             pets: false,
             furnished: false,
             images: [
-                "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
         },
         {
-            id: 8,
+            id: 11,
+            category: "Apartamento",
+            price: 165000,
+            country: "Colombia",
+            subdivision: "Antioquia",
+            city: "El Poblado",
+            address: "Calle 10A #34-22, Sector Provenza / El Poblado",
+            lat: 6.2085,
+            lng: -75.5670,
+            beds: 3,
+            baths: 3,
+            parking: 2,
+            sqmBuild: 190,
+            sqmLot: 190,
+            pool: true,
+            pets: true,
+            furnished: true,
+            images: [
+                "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 12,
+            category: "Casa",
+            price: 1500,
+            country: "Colombia",
+            subdivision: "Cundinamarca",
+            city: "Bogotá",
+            address: "Carrera 6 #118-20, Santa Bárbara / Usaquén",
+            lat: 4.6975,
+            lng: -74.0305,
+            beds: 3,
+            baths: 3,
+            parking: 2,
+            sqmBuild: 210,
+            sqmLot: 300,
+            pool: true,
+            pets: true,
+            furnished: true,
+            images: [
+                "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Alquiler"
+        },
+        {
+            id: 13,
             category: "Terreno",
             price: 95000,
             country: "Colombia",
             subdivision: "Cundinamarca",
             city: "Chía",
-            address: "Vereda La Balsa, Sector La Campiña Lote 12",
+            address: "Vereda La Balsa, Sector El Guaymaral Lote 12",
             lat: 4.8620,
             lng: -74.0530,
             beds: 0,
@@ -285,61 +398,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 9,
-            category: "Apartamento",
-            price: 165000,
-            country: "Colombia",
-            subdivision: "Antioquia",
-            city: "El Poblado",
-            address: "Calle 10A, Torre Horizon Penthouse 1402",
-            lat: 6.2085,
-            lng: -75.5670,
-            beds: 3,
-            baths: 3,
-            parking: 2,
-            sqmBuild: 190,
-            sqmLot: 190,
-            pool: true,
-            pets: true,
-            furnished: true,
-            images: [
-                "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
-        },
-        {
-            id: 10,
-            category: "Casa",
-            price: 1500,
-            country: "Colombia",
-            subdivision: "Cundinamarca",
-            city: "Bogotá",
-            address: "Usaquén, Carrera 6 #118-20",
-            lat: 4.6975,
-            lng: -74.0305,
-            beds: 3,
-            baths: 3,
-            parking: 2,
-            sqmBuild: 210,
-            sqmLot: 300,
-            pool: true,
-            pets: true,
-            furnished: true,
-            images: [
-                "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Alquiler"
-        },
-        {
-            id: 11,
+            id: 14,
             category: "Townhouse",
             price: 195000,
             country: "Colombia",
             subdivision: "Santander",
             city: "Bucaramanga",
-            address: "Cabecera del Llano, Calle 48 #34-11",
+            address: "Calle 48 #34-11, Cabecera del Llano",
             lat: 7.1165,
             lng: -73.1090,
             beds: 3,
@@ -356,13 +421,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 12,
+            id: 15,
             category: "Apartamento",
             price: 550,
             country: "Colombia",
             subdivision: "Valle del Cauca",
             city: "Cali",
-            address: "Ciudad Jardín, Carrera 105 #14-30",
+            address: "Carrera 105 #14-30, Ciudad Jardín Sur",
             lat: 3.3680,
             lng: -76.5340,
             beds: 2,
@@ -379,13 +444,36 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Alquiler"
         },
         {
-            id: 13,
+            id: 16,
+            category: "Casa",
+            price: 2200,
+            country: "Colombia",
+            subdivision: "Bolívar",
+            city: "Cartagena",
+            address: "Calle de la Mantilla #3-44, Centro Histórico Amurallado",
+            lat: 10.4240,
+            lng: -75.5515,
+            beds: 4,
+            baths: 4.5,
+            parking: 3,
+            sqmBuild: 350,
+            sqmLot: 500,
+            pool: true,
+            pets: true,
+            furnished: true,
+            images: [
+                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Alquiler"
+        },
+        {
+            id: 17,
             category: "Casa",
             price: 420000,
             country: "México",
             subdivision: "CDMX",
             city: "Polanco",
-            address: "Campos Elíseos 204, Polanco V Sección",
+            address: "Campos Elíseos 204, Polanco V Sección, Miguel Hidalgo",
             lat: 19.4285,
             lng: -99.1930,
             beds: 6,
@@ -402,82 +490,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 14,
-            category: "Local",
-            price: 1200,
-            country: "México",
-            subdivision: "Jalisco",
-            city: "Guadalajara",
-            address: "Avenida Chapultepec Sur 340",
-            lat: 20.6720,
-            lng: -103.3685,
-            beds: 0,
-            baths: 2,
-            parking: 1,
-            sqmBuild: 110,
-            sqmLot: 110,
-            pool: false,
-            pets: false,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Alquiler"
-        },
-        {
-            id: 15,
-            category: "Apartamento",
-            price: 98000,
-            country: "México",
-            subdivision: "Nuevo León",
-            city: "Monterrey",
-            address: "San Jerónimo, Av. Anillo Periférico 101",
-            lat: 25.6790,
-            lng: -100.3640,
-            beds: 2,
-            baths: 2,
-            parking: 1,
-            sqmBuild: 88,
-            sqmLot: 88,
-            pool: false,
-            pets: true,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
-        },
-        {
-            id: 16,
-            category: "Terreno",
-            price: 145000,
-            country: "México",
-            subdivision: "Quintana Roo",
-            city: "Tulum",
-            address: "Región 15, Calle 7 Poniente Lote 45",
-            lat: 20.2010,
-            lng: -87.4720,
-            beds: 0,
-            baths: 0,
-            parking: 0,
-            sqmBuild: 0,
-            sqmLot: 2400,
-            pool: false,
-            pets: false,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
-        },
-        {
-            id: 17,
+            id: 18,
             category: "Apartamento",
             price: 1400,
             country: "México",
             subdivision: "CDMX",
             city: "Cuauhtémoc",
-            address: "Colonia Roma Norte, Calle Orizaba 84",
+            address: "Calle Orizaba 84, Col. Roma Norte, Cuauhtémoc",
             lat: 19.4180,
             lng: -99.1595,
             beds: 3,
@@ -494,13 +513,105 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Alquiler"
         },
         {
-            id: 18,
+            id: 19,
+            category: "Local",
+            price: 1200,
+            country: "México",
+            subdivision: "Jalisco",
+            city: "Guadalajara",
+            address: "Avenida Chapultepec Sur 340, Col. Americana",
+            lat: 20.6720,
+            lng: -103.3685,
+            beds: 0,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 110,
+            sqmLot: 110,
+            pool: false,
+            pets: false,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Alquiler"
+        },
+        {
+            id: 20,
+            category: "Apartamento",
+            price: 98000,
+            country: "México",
+            subdivision: "Nuevo León",
+            city: "Monterrey",
+            address: "Av. Anillo Periférico 101, Col. San Jerónimo",
+            lat: 25.6790,
+            lng: -100.3640,
+            beds: 2,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 88,
+            sqmLot: 88,
+            pool: false,
+            pets: true,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 21,
+            category: "Local",
+            price: 350000,
+            country: "México",
+            subdivision: "Nuevo León",
+            city: "San Pedro Garza García",
+            address: "Calzada del Valle 400 Oriente, San Pedro Garza García",
+            lat: 25.6580,
+            lng: -100.3590,
+            beds: 0,
+            baths: 4,
+            parking: 6,
+            sqmBuild: 420,
+            sqmLot: 420,
+            pool: false,
+            pets: false,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 22,
+            category: "Terreno",
+            price: 145000,
+            country: "México",
+            subdivision: "Quintana Roo",
+            city: "Tulum",
+            address: "Región 15, Calle 7 Poniente Lote Ecoturístico 45",
+            lat: 20.2010,
+            lng: -87.4720,
+            beds: 0,
+            baths: 0,
+            parking: 0,
+            sqmBuild: 0,
+            sqmLot: 2400,
+            pool: false,
+            pets: false,
+            furnished: false,
+            images: [
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+            ],
+            type: "Venta"
+        },
+        {
+            id: 23,
             category: "Casa",
             price: 175000,
             country: "Argentina",
             subdivision: "Buenos Aires",
             city: "San Isidro",
-            address: "Las Lomas de San Isidro, Calle Blanco Encalada 1200",
+            address: "Calle Blanco Encalada 1200, Las Lomas de San Isidro",
             lat: -34.4820,
             lng: -58.5380,
             beds: 4,
@@ -517,13 +628,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 19,
+            id: 24,
             category: "Townhouse",
             price: 1250,
             country: "Argentina",
             subdivision: "Buenos Aires",
             city: "CABA (Palermo)",
-            address: "Palermo Soho, Pasaje Russell 5020",
+            address: "Pasaje Russell 5020, Palermo Soho, CABA",
             lat: -34.5880,
             lng: -58.4285,
             beds: 3,
@@ -540,13 +651,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Alquiler"
         },
         {
-            id: 20,
+            id: 25,
             category: "Apartamento",
             price: 78000,
             country: "Argentina",
             subdivision: "Córdoba",
             city: "Córdoba Capital",
-            address: "Nueva Córdoba, Calle Obispo Trejo 740",
+            address: "Calle Obispo Trejo 740, Nueva Córdoba",
             lat: -31.4250,
             lng: -64.1880,
             beds: 2,
@@ -563,13 +674,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 21,
+            id: 26,
             category: "Casa",
             price: 285000,
             country: "Chile",
             subdivision: "Región Metropolitana",
             city: "Las Condes",
-            address: "Av. Las Condes 12500, San Damián",
+            address: "Av. Las Condes 12500, Sector San Damián",
             lat: -33.3820,
             lng: -70.5250,
             beds: 4,
@@ -586,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 22,
+            id: 27,
             category: "Local",
             price: 750,
             country: "Chile",
@@ -609,13 +720,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Alquiler"
         },
         {
-            id: 23,
+            id: 28,
             category: "Apartamento",
             price: 210000,
             country: "Chile",
             subdivision: "Valparaíso",
             city: "Viña del Mar",
-            address: "Avenida Perú 100, Torre Platinum 901",
+            address: "Avenida Perú 100, Torre Platinum Piso 9",
             lat: -33.0210,
             lng: -71.5580,
             beds: 3,
@@ -632,59 +743,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 24,
-            category: "Casa",
-            price: 680,
-            country: "Perú",
-            subdivision: "Arequipa",
-            city: "Yanahuara",
-            address: "Calle Los Cedros 204, Yanahuara Tradicional",
-            lat: -16.3880,
-            lng: -71.5420,
-            beds: 2,
-            baths: 1,
-            parking: 1,
-            sqmBuild: 80,
-            sqmLot: 150,
-            pool: false,
-            pets: true,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Alquiler"
-        },
-        {
-            id: 25,
-            category: "Terreno",
-            price: 60000,
-            country: "Perú",
-            subdivision: "Cusco",
-            city: "San Jerónimo",
-            address: "Valle Sur, Sector Huaccoto Lote 18",
-            lat: -13.5480,
-            lng: -71.8840,
-            beds: 0,
-            baths: 0,
-            parking: 0,
-            sqmBuild: 0,
-            sqmLot: 500,
-            pool: false,
-            pets: false,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
-        },
-        {
-            id: 26,
+            id: 29,
             category: "Townhouse",
             price: 320000,
             country: "Perú",
             subdivision: "Lima",
             city: "Miraflores",
-            address: "Malecón de la Reserva 610, TH-01",
+            address: "Malecón de la Reserva 610, Miraflores",
             lat: -12.1320,
             lng: -77.0280,
             beds: 4,
@@ -701,13 +766,13 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "Venta"
         },
         {
-            id: 27,
+            id: 30,
             category: "Apartamento",
             price: 89000,
             country: "Perú",
             subdivision: "Lima",
             city: "San Isidro",
-            address: "Av. Los Conquistadores 450, Apto 5B",
+            address: "Av. Los Conquistadores 450, San Isidro",
             lat: -12.1020,
             lng: -77.0390,
             beds: 3,
@@ -722,75 +787,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
-        },
-        {
-            id: 28,
-            category: "Casa",
-            price: 2200,
-            country: "Colombia",
-            subdivision: "Bolívar",
-            city: "Cartagena",
-            address: "Centro Histórico, Calle de la Mantilla #3-44",
-            lat: 10.4240,
-            lng: -75.5515,
-            beds: 4,
-            baths: 4.5,
-            parking: 3,
-            sqmBuild: 350,
-            sqmLot: 500,
-            pool: true,
-            pets: true,
-            furnished: true,
-            images: [
-                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Alquiler"
-        },
-        {
-            id: 29,
-            category: "Local",
-            price: 350000,
-            country: "México",
-            subdivision: "Nuevo León",
-            city: "San Pedro Garza García",
-            address: "Calzada del Valle 400 Ote",
-            lat: 25.6580,
-            lng: -100.3590,
-            beds: 0,
-            baths: 4,
-            parking: 6,
-            sqmBuild: 420,
-            sqmLot: 420,
-            pool: false,
-            pets: false,
-            furnished: false,
-            images: [
-                "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
-        },
-        {
-            id: 30,
-            category: "Apartamento",
-            price: 155000,
-            country: "Venezuela",
-            subdivision: "Miranda",
-            city: "Baruta",
-            address: "Las Mercedes, Calle París, Torre Santa María Piso 8",
-            lat: 10.4820,
-            lng: -66.8610,
-            beds: 3,
-            baths: 2.5,
-            parking: 2,
-            sqmBuild: 142,
-            sqmLot: 142,
-            pool: true,
-            pets: true,
-            furnished: true,
-            images: [
-                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
-            ],
-            type: "Venta"
         }
     ];
 
@@ -799,17 +795,17 @@ document.addEventListener('DOMContentLoaded', () => {
             id: "lead_1",
             name: "Carlos Mendoza",
             phone: "+58 414-1234567",
-            intent: "Busca apto 3 habs con 2 puestos",
+            intent: "Busca apto 3 habs con 2 puestos en Pueblo Nuevo",
             budget: "$100,000 - $130,000",
             status: "new",
-            notes: "Interesado preferiblemente en zona norte o este. Disponible para visitas los sábados.",
+            notes: "Interesado preferiblemente en zona alta de San Cristóbal. Disponible sábados.",
             time: "Hace 2h"
         },
         {
             id: "lead_2",
             name: "Ana Silva",
             phone: "+58 424-9876543",
-            intent: "Alquiler casa c/ piscina y mascotas",
+            intent: "Alquiler casa c/ piscina en Las Lomas",
             budget: "$800 - $1,000 / mes",
             status: "new",
             notes: "Tiene 2 perros medianos. Requiere estacionamiento techado.",
@@ -819,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: "lead_3",
             name: "Luis Pérez",
             phone: "+57 310-5550199",
-            intent: "Interesado en Townhouse amplio",
+            intent: "Interesado en Townhouse amplio en Altamira",
             budget: "$200,000 - $250,000",
             status: "contacted",
             notes: "Crédito pre-aprobado. Busca mudanza en los próximos 60 días.",
@@ -834,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
             leadName: "Carlos Mendoza",
             leadPhone: "+58 414-1234567",
             propId: 1,
-            propAddress: "Av. Ferrero Tamayo, Edificio Altamira Suite 4B",
+            propAddress: "Av. Ferrero Tamayo, Residencias Altamira Suite, Pueblo Nuevo",
             date: "2026-09-05",
             time: "10:30",
             notes: "Llevar ficha impresa y llaves del portón."
@@ -845,16 +841,15 @@ document.addEventListener('DOMContentLoaded', () => {
             leadName: "Ana Silva",
             leadPhone: "+58 424-9876543",
             propId: 2,
-            propAddress: "Residencias El Bosque, Calle Los Pinos #12",
+            propAddress: "Urb. Las Lomas, Calle Principal #14-22, Qta. Villa Real",
             date: "2026-09-06",
             time: "15:00",
             notes: "Cliente evaluará espacio del patio para mascotas."
         }
     ];
 
-    // Forzar actualización si no tienen latitud
-    let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
-    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].lat) ? savedProps : defaultProperties;
+    // Cargar y asegurar datos con ubicaciones reales
+    let properties = defaultProperties;
     localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
@@ -975,12 +970,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function initLeafletMap() {
         if (leafletMap) return;
         
-        // Inicializar mapa centrado en San Cristóbal / Táchira por defecto
         leafletMap = L.map('interactive-results-map', {
             zoomControl: true
         }).setView([7.7780, -72.2240], 13);
 
-        // Capa de mosaicos OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
@@ -1022,7 +1015,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const shortPrice = formatShortPrice(prop.price);
             const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80');
 
-            // Crear ícono personalizado HTML con el badge de precio
             const customIcon = L.divIcon({
                 className: 'custom-map-icon',
                 html: `<div class="map-price-badge">${shortPrice}</div>`,
@@ -1032,7 +1024,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const marker = L.marker([prop.lat, prop.lng], { icon: customIcon });
 
-            // Popup overlay con card de la propiedad
             const popupHtml = `
                 <div class="map-popup-card">
                     <img src="${mainImg}" class="map-popup-img" alt="${prop.address}">
@@ -2064,9 +2055,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
         ];
 
-        // Centro referencial según ciudad
-        const defaultCityLat = 7.7780;
-        const defaultCityLng = -72.2240;
+        const defaultCityLat = 7.7885;
+        const defaultCityLng = -72.2156;
 
         const newProp = {
             id: Date.now(),
@@ -2075,8 +2065,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subdivision: document.getElementById('prop-subdivision').value,
             city: document.getElementById('prop-city').value,
             address: document.getElementById('prop-address').value.trim(),
-            lat: defaultCityLat + (Math.random() - 0.5) * 0.02,
-            lng: defaultCityLng + (Math.random() - 0.5) * 0.02,
+            lat: defaultCityLat + (Math.random() - 0.5) * 0.015,
+            lng: defaultCityLng + (Math.random() - 0.5) * 0.015,
             price: rawPrice,
             type: document.getElementById('prop-type').value,
             beds: parseInt(document.getElementById('prop-beds').value, 10) || 0,
