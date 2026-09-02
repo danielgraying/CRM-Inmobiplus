@@ -293,3 +293,125 @@ body {
 .btn-whatsapp:hover {
     background-color: #1ebc5a;
 }
+/* --- Cabecera del Kanban --- */
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.kanban-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* --- Tablero y Columnas --- */
+.kanban-board {
+    display: flex;
+    gap: 20px;
+    /* Permite scroll horizontal si hay muchas columnas */
+    overflow-x: auto; 
+    /* Restamos el header y padding para que haga scroll interno */
+    height: calc(100vh - 180px); 
+    padding-bottom: 16px;
+}
+
+.kanban-column {
+    background-color: #f1f5f9; /* Un gris muy suave para diferenciar el fondo */
+    min-width: 300px;
+    max-width: 300px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+.column-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+}
+
+.column-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.count-badge {
+    background-color: #e2e8f0;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* --- Área donde van las tarjetas --- */
+.column-content {
+    padding: 0 16px 16px 16px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* --- Tarjetas de Leads --- */
+.lead-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: grab;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.lead-card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.lead-card:active {
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+.lead-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.lead-header h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.time-tag {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.lead-intent {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.lead-footer {
+    display: flex;
+}
+
+.budget-tag {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
