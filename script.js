@@ -70,6 +70,36 @@ document.addEventListener('DOMContentLoaded', () => {
             pets: true,
             furnished: false,
             type: "Venta"
+        },
+        {
+            id: 4,
+            category: "Apartamento",
+            price: 85000,
+            address: "Edificio Vista Real, Piso 6",
+            beds: 2,
+            baths: 1,
+            parking: 1,
+            sqmBuild: 72,
+            sqmLot: 72,
+            pool: false,
+            pets: false,
+            furnished: true,
+            type: "Venta"
+        },
+        {
+            id: 5,
+            category: "Casa",
+            price: 310000,
+            address: "Urbanización Alto Prado, Quinta Bella",
+            beds: 5,
+            baths: 4,
+            parking: 4,
+            sqmBuild: 420,
+            sqmLot: 600,
+            pool: true,
+            pets: true,
+            furnished: true,
+            type: "Venta"
         }
     ];
 
@@ -103,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let properties = JSON.parse(localStorage.getItem('inmo_properties')) || defaultProperties;
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
 
-    // Normalizar formato numérico
+    // Normalizar tipos
     properties.forEach(p => {
         if (typeof p.price === 'string') p.price = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
         p.beds = parseInt(p.beds, 10) || 0;
@@ -121,13 +151,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. MOTOR DE FILTRADO ZILLOW STYLE
+    // 3. MOTOR DE FILTRADO & HISTOGRAMA ZILLOW
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
     const globalSearch = document.getElementById('global-search');
 
-    // Elementos de Filtro
+    // Histograma y Sliders
+    const histogramBarsContainer = document.getElementById('histogram-bars');
+    const rangeSliderMin = document.getElementById('range-slider-min');
+    const rangeSliderMax = document.getElementById('range-slider-max');
+    const labelMinPrice = document.getElementById('label-min-price');
+    const labelMaxPrice = document.getElementById('label-max-price');
+
+    // Inputs directos
     const filterMinPrice = document.getElementById('filter-min-price');
     const filterMaxPrice = document.getElementById('filter-max-price');
     const filterMinSqmBuild = document.getElementById('filter-min-sqm-build');
@@ -135,14 +172,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterMinSqmLot = document.getElementById('filter-min-sqm-lot');
     const filterMaxSqmLot = document.getElementById('filter-max-sqm-lot');
 
-    // Checkboxes Amenities
+    // Checkboxes
     const filterPool = document.getElementById('filter-pool');
     const filterPets = document.getElementById('filter-pets');
     const filterFurnished = document.getElementById('filter-furnished');
-
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
 
-    // Helper para obtener el valor del Pill Group activo
+    const HISTOGRAM_BUCKETS = 18;
+    const MAX_RANGE_LIMIT = 500000;
+
+    // Renderizar barras del histograma basadas en la distribución real de precios
+    function renderHistogram(currentMin, currentMax) {
+        if (!histogramBarsContainer) return;
+        histogramBarsContainer.innerHTML = '';
+
+        const bucketSize = MAX_RANGE_LIMIT / HISTOGRAM_BUCKETS;
+        const counts = new Array(HISTOGRAM_BUCKETS).fill(0);
+
+        properties.forEach(p => {
+            const bucketIndex = Math.min(Math.floor(p.price / bucketSize), HISTOGRAM_BUCKETS - 1);
+            counts[bucketIndex]++;
+        });
+
+        const maxCount = Math.max(...counts, 1);
+
+        counts.forEach((count, i) => {
+            const bucketPriceMin = i * bucketSize;
+            const bucketPriceMax = (i + 1) * bucketSize;
+            const heightPct = Math.max((count / maxCount) * 100, 10);
+
+            const bar = document.createElement('div');
+            bar.className = 'histogram-bar';
+            bar.style.height = `${heightPct}%`;
+
+            // Resaltar barras dentro del rango activo
+            const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMax;
+            if (inRange && count > 0) {
+                bar.classList.add('active');
+            }
+
+            histogramBarsContainer.appendChild(bar);
+        });
+    }
+
+    function syncPriceSlidersAndInputs(source) {
+        let minVal = parseFloat(rangeSliderMin.value);
+        let maxVal = parseFloat(rangeSliderMax.value);
+
+        if (source === 'slider') {
+            if (minVal > maxVal) {
+                const temp = minVal;
+                minVal = maxVal;
+                maxVal = temp;
+            }
+            filterMinPrice.value = minVal === 0 ? '' : minVal;
+            filterMaxPrice.value = maxVal === MAX_RANGE_LIMIT ? '' : maxVal;
+        } else if (source === 'input') {
+            minVal = filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
+            maxVal = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : MAX_RANGE_LIMIT;
+            rangeSliderMin.value = Math.min(minVal, MAX_RANGE_LIMIT);
+            rangeSliderMax.value = Math.min(maxVal, MAX_RANGE_LIMIT);
+        }
+
+        labelMinPrice.textContent = `$${Number(minVal).toLocaleString('en-US')}`;
+        labelMaxPrice.textContent = maxVal >= MAX_RANGE_LIMIT ? `$500K+` : `$${Number(maxVal).toLocaleString('en-US')}`;
+
+        renderHistogram(minVal, maxVal);
+        renderProperties();
+    }
+
+    if (rangeSliderMin && rangeSliderMax) {
+        rangeSliderMin.addEventListener('input', () => syncPriceSlidersAndInputs('slider'));
+        rangeSliderMax.addEventListener('input', () => syncPriceSlidersAndInputs('slider'));
+    }
+
+    if (filterMinPrice && filterMaxPrice) {
+        filterMinPrice.addEventListener('input', () => syncPriceSlidersAndInputs('input'));
+        filterMaxPrice.addEventListener('input', () => syncPriceSlidersAndInputs('input'));
+    }
+
+    // Pill group helper
     function getPillValue(containerId) {
         const activeBtn = document.querySelector(`#${containerId} .pill-btn.active`);
         return activeBtn ? activeBtn.getAttribute('data-val') : '';
@@ -175,11 +284,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const valType = getSelectedFacet('facet-type');
         const valOp = getSelectedFacet('facet-op');
 
-        // Precios
         const minPrice = filterMinPrice && filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
         const maxPrice = filterMaxPrice && filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
 
-        // Distribución
         const bedsVal = getPillValue('filter-beds-pills');
         const minBeds = bedsVal ? parseInt(bedsVal, 10) : 0;
 
@@ -189,41 +296,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const parkingVal = getPillValue('filter-parking-pills');
         const minParking = parkingVal ? parseInt(parkingVal, 10) : 0;
 
-        // Metrajes
         const minSqmBuild = filterMinSqmBuild && filterMinSqmBuild.value ? parseFloat(filterMinSqmBuild.value) : 0;
         const maxSqmBuild = filterMaxSqmBuild && filterMaxSqmBuild.value ? parseFloat(filterMaxSqmBuild.value) : Infinity;
 
         const minSqmLot = filterMinSqmLot && filterMinSqmLot.value ? parseFloat(filterMinSqmLot.value) : 0;
         const maxSqmLot = filterMaxSqmLot && filterMaxSqmLot.value ? parseFloat(filterMaxSqmLot.value) : Infinity;
 
-        // Amenities
         const reqPool = filterPool ? filterPool.checked : false;
         const reqPets = filterPets ? filterPets.checked : false;
         const reqFurnished = filterFurnished ? filterFurnished.checked : false;
 
         const filtered = properties.filter(prop => {
-            // Buscador global
             const matchesSearch = !valSearch || 
                 prop.address.toLowerCase().includes(valSearch) || 
                 prop.category.toLowerCase().includes(valSearch);
 
-            // Operación y Tipo
             const matchesType = !valType || prop.category === valType;
             const matchesOp = !valOp || prop.type === valOp;
-
-            // Rango de Precios
             const matchesPrice = prop.price >= minPrice && prop.price <= maxPrice;
 
-            // Distribución
             const matchesBeds = prop.beds >= minBeds;
             const matchesBaths = prop.baths >= minBaths;
             const matchesParking = (prop.parking || 0) >= minParking;
 
-            // Superficies
             const matchesSqmBuild = (prop.sqmBuild || 0) >= minSqmBuild && (prop.sqmBuild || 0) <= maxSqmBuild;
             const matchesSqmLot = (prop.sqmLot || 0) >= minSqmLot && (prop.sqmLot || 0) <= maxSqmLot;
 
-            // Amenities
             const matchesPool = !reqPool || prop.pool === true;
             const matchesPets = !reqPets || prop.pets === true;
             const matchesFurnished = !reqFurnished || prop.furnished === true;
@@ -236,11 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         grid.innerHTML = '';
         if (filteredCountBadge) {
-            filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble encontrado' : 'inmuebles encontrados'}`;
+            filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble disponible' : 'inmuebles disponibles'}`;
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades que coincidan con estos criterios de búsqueda.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
@@ -282,16 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats();
     }
 
-    // Listeners para todos los filtros
+    // Listeners de filtros
     document.querySelectorAll('input[name="facet-type"], input[name="facet-op"]').forEach(radio => {
         radio.addEventListener('change', renderProperties);
     });
 
-    [
-        filterMinPrice, filterMaxPrice,
-        filterMinSqmBuild, filterMaxSqmBuild,
-        filterMinSqmLot, filterMaxSqmLot
-    ].forEach(input => {
+    [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(input => {
         if (input) input.addEventListener('input', renderProperties);
     });
 
@@ -306,8 +400,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (defaultType) defaultType.checked = true;
             if (defaultOp) defaultOp.checked = true;
 
-            [filterMinPrice, filterMaxPrice, filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
+            [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
             [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
+
+            if (rangeSliderMin) rangeSliderMin.value = 0;
+            if (rangeSliderMax) rangeSliderMax.value = MAX_RANGE_LIMIT;
+            if (filterMinPrice) filterMinPrice.value = '';
+            if (filterMaxPrice) filterMaxPrice.value = '';
 
             ['filter-beds-pills', 'filter-baths-pills', 'filter-parking-pills'].forEach(id => {
                 const btns = document.querySelectorAll(`#${id} .pill-btn`);
@@ -317,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (globalSearch) globalSearch.value = '';
-            renderProperties();
+            syncPriceSlidersAndInputs('slider');
         });
     }
 
@@ -530,7 +629,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetView) targetView.style.display = 'block';
 
             if (globalSearch) globalSearch.value = '';
-            if (targetId === 'view-inventory') renderProperties();
+            if (targetId === 'view-inventory') {
+                renderHistogram(0, MAX_RANGE_LIMIT);
+                renderProperties();
+            }
             if (targetId === 'view-leads') renderLeads();
 
             closeMobileSidebar();
@@ -616,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         properties.push(newProp);
         localStorage.setItem('inmo_properties', JSON.stringify(properties));
+        renderHistogram(0, MAX_RANGE_LIMIT);
         renderProperties();
         closeM(propModal, propForm);
     });
@@ -671,6 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     leads = parsed.inmo_leads;
                     localStorage.setItem('inmo_properties', JSON.stringify(properties));
                     localStorage.setItem('inmo_leads', JSON.stringify(leads));
+                    renderHistogram(0, MAX_RANGE_LIMIT);
                     renderProperties();
                     renderLeads();
                     alert('¡Datos restaurados con éxito!');
@@ -682,7 +786,8 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // Inicializar renders
+    // Inicializar vistas e histograma inicial
+    renderHistogram(0, MAX_RANGE_LIMIT);
     renderProperties();
     renderLeads();
 });
