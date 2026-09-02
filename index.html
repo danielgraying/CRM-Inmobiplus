@@ -19,7 +19,7 @@
         <!-- SIDEBAR PRINCIPAL (NIVEL 1) -->
         <aside class="primary-sidebar" id="primary-sidebar">
             <div class="workspace-header">
-                <!-- CONTENEDOR DE LOGO (CARGA IMAGEN O MUESTRA TEXTO) -->
+                <!-- CONTENEDOR DE LOGO -->
                 <div class="workspace-brand">
                     <img src="img/logo.png" alt="inmoderno logo" class="brand-logo-img" id="main-brand-logo" onerror="this.style.display='none'; document.getElementById('brand-text-fallback').style.display='flex';">
                     <div class="brand-fallback-group" id="brand-text-fallback" style="display: none;">
@@ -31,10 +31,25 @@
                 <button class="collapse-btn" id="mobile-sidebar-close" title="Cerrar menú">✕</button>
             </div>
 
+            <!-- BOTÓN CREAR NUEVO CON POPOVER PARA DESKTOP -->
             <div class="quick-create-wrapper">
                 <button class="btn-create-global" id="btn-quick-create">
                     <span>+</span> Crear nuevo...
                 </button>
+                <div class="desktop-create-popover" id="desktop-create-popover">
+                    <button class="popover-item" id="desk-popover-btn-prop">
+                        <span class="popover-icon">🏢</span> Nueva Propiedad
+                    </button>
+                    <button class="popover-item" id="desk-popover-btn-lead">
+                        <span class="popover-icon">👤</span> Nuevo Lead
+                    </button>
+                    <button class="popover-item" id="desk-popover-btn-visit">
+                        <span class="popover-icon">📅</span> Agendar Visita
+                    </button>
+                    <button class="popover-item" id="desk-popover-btn-backup">
+                        <span class="popover-icon">📥</span> Exportar Backup
+                    </button>
+                </div>
             </div>
 
             <nav class="primary-nav">
