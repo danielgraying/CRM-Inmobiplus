@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES)
+    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES + LEADS + VISITAS)
     // ==========================================
     const defaultProperties = [
         {
@@ -725,11 +725,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    const defaultVisits = [
+        {
+            id: "visit_1",
+            leadId: "lead_1",
+            leadName: "Carlos Mendoza",
+            leadPhone: "+58 414-1234567",
+            propId: 1,
+            propAddress: "Av. Ferrero Tamayo, Edificio Altamira Suite 4B",
+            date: "2026-09-05",
+            time: "10:30",
+            notes: "Llevar ficha impresa y llaves del portón."
+        },
+        {
+            id: "visit_2",
+            leadId: "lead_2",
+            leadName: "Ana Silva",
+            leadPhone: "+58 424-9876543",
+            propId: 2,
+            propAddress: "Residencias El Bosque, Calle Los Pinos #12",
+            date: "2026-09-06",
+            time: "15:00",
+            notes: "Cliente evaluará espacio del patio para mascotas."
+        }
+    ];
+
     let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
     let properties = (savedProps && savedProps.length >= 10 && savedProps[0].images) ? savedProps : defaultProperties;
     localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
+    let visits = JSON.parse(localStorage.getItem('inmo_visits')) || defaultVisits;
 
     function formatCurrency(val, type) {
         return `$${Number(val).toLocaleString('en-US')}${type === 'Alquiler' ? ' / mes' : ''}`;
@@ -827,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
 
     // ==========================================
-    // 5. MOTOR DE FILTRADO Y LISTENERS BLINDADOS
+    // 5. MOTOR DE FILTRADO Y LISTENERS REACTIVOS
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
@@ -855,7 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
 
-    // Control de Tags de Operación
     let selectedOperation = "";
     const opTags = document.querySelectorAll('#filter-operation-tags .tag-filter-btn');
     opTags.forEach(tag => {
@@ -875,7 +900,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Control de Tags de Tipo de Inmueble (Arreglado)
     let selectedCategory = "";
     const catTags = document.querySelectorAll('#filter-category-tags .tag-filter-btn');
     catTags.forEach(tag => {
@@ -1142,6 +1166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentView = activeNav ? activeNav.getAttribute('data-target') : '';
             if (currentView === 'view-inventory') renderProperties();
             else if (currentView === 'view-leads') renderLeads();
+            else if (currentView === 'view-calendar') renderVisits();
         });
     }
 
@@ -1151,7 +1176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 6. DETALLE MODAL CON GALERÍA MULTIMEDIA
+    // 6. DETALLE MODAL CON GALERÍA E IMPRESIÓN
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -1169,7 +1194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detailContent.innerHTML = `
             <div class="gallery-container">
                 <img src="${imagesList[0]}" id="gallery-active-img" class="gallery-main-img" alt="${prop.address}">
-                <div class="gallery-thumbs">
+                <div class="gallery-thumbs no-print">
                     ${imagesList.map((img, idx) => `
                         <img src="${img}" class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchGalleryImg('${img}', this)" alt="Thumbnail ${idx + 1}">
                     `).join('')}
@@ -1432,7 +1457,95 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 9. STATS DASHBOARD
+    // 9. GESTIÓN DE AGENDA Y VINCULACIÓN A GOOGLE CALENDAR
+    // ==========================================
+    const visitsList = document.getElementById('visits-list');
+    const visitLeadSelect = document.getElementById('visit-lead-select');
+    const visitPropSelect = document.getElementById('visit-prop-select');
+
+    function populateVisitSelects() {
+        if (!visitLeadSelect || !visitPropSelect) return;
+        visitLeadSelect.innerHTML = '';
+        visitPropSelect.innerHTML = '';
+
+        leads.forEach(l => {
+            const opt = document.createElement('option');
+            opt.value = l.id;
+            opt.textContent = `${l.name} (${l.phone || 'Sin telf'})`;
+            visitLeadSelect.appendChild(opt);
+        });
+
+        properties.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = `${p.address} - ${formatCurrency(p.price, p.type)}`;
+            visitPropSelect.appendChild(opt);
+        });
+    }
+
+    // Generador de URL para Google Calendar
+    function generateGoogleCalendarUrl(visit) {
+        const title = encodeURIComponent(`Visita InmoCRM: ${visit.leadName}`);
+        const location = encodeURIComponent(visit.propAddress);
+        const details = encodeURIComponent(`Cita programada con el cliente ${visit.leadName} (${visit.leadPhone}).\nPropiedad: ${visit.propAddress}\nNotas: ${visit.notes || 'Ninguna'}`);
+
+        // Formato ISO: YYYYMMDDTHHmmssZ
+        const startDateTime = new Date(`${visit.date}T${visit.time}:00`);
+        const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // 1 hora de duración
+
+        const formatIsoUtc = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
+        const datesParam = `${formatIsoUtc(startDateTime)}/${formatIsoUtc(endDateTime)}`;
+
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${datesParam}&details=${details}&location=${location}`;
+    }
+
+    function renderVisits() {
+        if (!visitsList) return;
+        visitsList.innerHTML = '';
+
+        if (visits.length === 0) {
+            visitsList.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">No tienes visitas agendadas por el momento.</p>';
+            return;
+        }
+
+        visits.forEach(v => {
+            const gcalUrl = generateGoogleCalendarUrl(v);
+            const cleanPhone = (v.leadPhone || '').replace(/[^0-9]/g, '');
+            const waMsg = encodeURIComponent(`Hola ${v.leadName}, te confirmo nuestra visita al inmueble en "${v.propAddress}" para el día ${v.date} a las ${v.time}. ¡Nos vemos allá!`);
+
+            const card = document.createElement('div');
+            card.className = 'visit-card';
+            card.innerHTML = `
+                <div class="visit-card-header">
+                    <div>
+                        <h4 class="visit-lead-name">👤 ${v.leadName}</h4>
+                        <p class="visit-prop-title">🏢 ${v.propAddress}</p>
+                    </div>
+                    <span class="visit-date-badge">📅 ${v.date} • ${v.time}</span>
+                </div>
+                ${v.notes ? `<p style="font-size: 0.8rem; color: var(--text-muted);">📝 ${v.notes}</p>` : ''}
+                <div class="visit-actions-strip">
+                    <a href="${gcalUrl}" target="_blank" class="btn-gcal">📅 Google Calendar</a>
+                    <a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" class="btn-whatsapp" style="font-size: 0.78rem; text-decoration: none;">WhatsApp 💬</a>
+                    <button class="btn-secondary" style="font-size: 0.78rem;" onclick="deleteVisit('${v.id}')">Eliminar</button>
+                </div>
+            `;
+            visitsList.appendChild(card);
+        });
+
+        updateDashboardStats();
+    }
+
+    window.deleteVisit = (id) => {
+        if (confirm('¿Deseas eliminar esta cita de la agenda?')) {
+            visits = visits.filter(v => v.id !== id);
+            localStorage.setItem('inmo_visits', JSON.stringify(visits));
+            renderVisits();
+        }
+    };
+
+    // ==========================================
+    // 10. STATS DASHBOARD
     // ==========================================
     function updateDashboardStats() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -1443,11 +1556,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (kpiProps) kpiProps.textContent = properties.length;
         if (kpiLeadsNew) kpiLeadsNew.textContent = leads.filter(l => l.status === 'new').length;
         if (kpiLeadsOffer) kpiLeadsOffer.textContent = leads.filter(l => l.status === 'offer').length;
-        if (kpiVisits) kpiVisits.textContent = leads.filter(l => l.status === 'visited').length;
+        if (kpiVisits) kpiVisits.textContent = visits.length;
     }
 
     // ==========================================
-    // 10. SPA NAVIGATION & DRAWER MOBILE
+    // 11. SPA NAVIGATION & DRAWER MOBILE
     // ==========================================
     const navItems = document.querySelectorAll('.p-nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
@@ -1487,18 +1600,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderProperties();
             }
             if (targetId === 'view-leads') renderLeads();
+            if (targetId === 'view-calendar') renderVisits();
 
             closeMobileSidebar();
         });
     });
 
     // ==========================================
-    // 11. MOBILE FAB '+' POPOVER
+    // 12. MOBILE FAB '+' POPOVER
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
     const popoverBtnProp = document.getElementById('popover-btn-prop');
     const popoverBtnLead = document.getElementById('popover-btn-lead');
+    const popoverBtnVisit = document.getElementById('popover-btn-visit');
     const popoverBtnBackup = document.getElementById('popover-btn-backup');
 
     if (mobileFabCreate) {
@@ -1517,12 +1632,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 12. FORMULARIOS Y MODALES
+    // 13. FORMULARIOS Y MODALES
     // ==========================================
     const propModal = document.getElementById('property-modal');
     const leadModal = document.getElementById('lead-modal');
+    const visitModal = document.getElementById('visit-modal');
+
     const propForm = document.getElementById('property-form');
     const leadForm = document.getElementById('lead-form');
+    const visitForm = document.getElementById('visit-form');
 
     function openM(el) { 
         el.style.display = 'flex'; 
@@ -1539,15 +1657,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dash-btn-add-prop').addEventListener('click', () => openM(propModal));
     const btnOpenLeadDesktop = document.getElementById('btn-open-lead-modal');
     if (btnOpenLeadDesktop) btnOpenLeadDesktop.addEventListener('click', () => openM(leadModal));
+    const btnOpenVisitDesktop = document.getElementById('btn-open-visit-modal');
+    if (btnOpenVisitDesktop) {
+        btnOpenVisitDesktop.addEventListener('click', () => {
+            populateVisitSelects();
+            openM(visitModal);
+        });
+    }
 
     if (popoverBtnProp) popoverBtnProp.addEventListener('click', () => openM(propModal));
     if (popoverBtnLead) popoverBtnLead.addEventListener('click', () => openM(leadModal));
+    if (popoverBtnVisit) {
+        popoverBtnVisit.addEventListener('click', () => {
+            populateVisitSelects();
+            openM(visitModal);
+        });
+    }
     if (popoverBtnBackup) popoverBtnBackup.addEventListener('click', exportData);
 
     document.getElementById('close-modal-btn').addEventListener('click', () => closeM(propModal, propForm));
     document.getElementById('cancel-modal-btn').addEventListener('click', () => closeM(propModal, propForm));
     document.getElementById('close-lead-modal-btn').addEventListener('click', () => closeM(leadModal, leadForm));
     document.getElementById('cancel-lead-modal-btn').addEventListener('click', () => closeM(leadModal, leadForm));
+    document.getElementById('close-visit-modal-btn').addEventListener('click', () => closeM(visitModal, visitForm));
+    document.getElementById('cancel-visit-modal-btn').addEventListener('click', () => closeM(visitModal, visitForm));
 
     propForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1606,13 +1739,42 @@ document.addEventListener('DOMContentLoaded', () => {
         closeM(leadModal, leadForm);
     });
 
+    visitForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const leadId = document.getElementById('visit-lead-select').value;
+        const propId = document.getElementById('visit-prop-select').value;
+
+        const targetLead = leads.find(l => l.id == leadId);
+        const targetProp = properties.find(p => p.id == propId);
+
+        if (targetLead && targetProp) {
+            const newVisit = {
+                id: 'visit_' + Date.now(),
+                leadId: targetLead.id,
+                leadName: targetLead.name,
+                leadPhone: targetLead.phone || '',
+                propId: targetProp.id,
+                propAddress: targetProp.address,
+                date: document.getElementById('visit-date').value,
+                time: document.getElementById('visit-time').value,
+                notes: document.getElementById('visit-notes').value.trim()
+            };
+
+            visits.push(newVisit);
+            localStorage.setItem('inmo_visits', JSON.stringify(visits));
+            renderVisits();
+            closeM(visitModal, visitForm);
+        }
+    });
+
     // ==========================================
-    // 13. EXPORTAR / IMPORTAR BACKUP JSON
+    // 14. EXPORTAR / IMPORTAR BACKUP JSON
     // ==========================================
     function exportData() {
         const data = {
             inmo_properties: properties,
             inmo_leads: leads,
+            inmo_visits: visits,
             exported_at: new Date().toISOString()
         };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1638,11 +1800,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (parsed.inmo_properties && parsed.inmo_leads) {
                     properties = parsed.inmo_properties;
                     leads = parsed.inmo_leads;
+                    visits = parsed.inmo_visits || [];
                     localStorage.setItem('inmo_properties', JSON.stringify(properties));
                     localStorage.setItem('inmo_leads', JSON.stringify(leads));
+                    localStorage.setItem('inmo_visits', JSON.stringify(visits));
                     renderHistogram(0, MAX_RANGE_LIMIT);
                     renderProperties();
                     renderLeads();
+                    renderVisits();
                     alert('¡Datos restaurados con éxito!');
                 }
             } catch (err) {
@@ -1652,8 +1817,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // Inicializar renders e histograma
+    // Inicializar vistas
     renderHistogram(0, MAX_RANGE_LIMIT);
     renderProperties();
     renderLeads();
+    renderVisits();
 });
