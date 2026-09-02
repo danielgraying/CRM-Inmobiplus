@@ -429,7 +429,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO & FILTROS LATAM DINÁMICOS
+   5. INVENTARIO & FILTROS (TAGS DE OPERACIÓN)
    ======================================================= */
 .nested-view-layout {
     display: flex;
@@ -462,6 +462,36 @@ body {
     font-weight: 700;
     color: var(--text-subtle);
     letter-spacing: 0.5px;
+}
+
+/* Operación en formato Tags / Píldoras */
+.operation-tags-group {
+    display: flex;
+    gap: 6px;
+}
+
+.op-tag {
+    flex: 1;
+    padding: 7px 10px;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+.op-tag:hover {
+    border-color: var(--brand-green);
+}
+
+.op-tag.active {
+    background-color: var(--brand-green);
+    color: white;
+    border-color: var(--brand-green);
 }
 
 .form-group-filter {
@@ -518,9 +548,6 @@ body {
     background-color: var(--brand-green);
     box-shadow: 0 0 0 2px var(--brand-green-light);
 }
-
-.facet-dot.status-green { background-color: #10b981; }
-.facet-dot.status-orange { background-color: #f59e0b; }
 
 /* Histograma Zillow */
 .price-histogram-card {
@@ -760,7 +787,6 @@ body {
     box-shadow: 0 8px 16px rgba(0,0,0,0.06);
 }
 
-/* Manejo de Imágenes de Muestra */
 .card-media {
     position: relative;
     height: 160px;
