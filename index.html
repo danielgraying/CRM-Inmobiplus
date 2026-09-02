@@ -141,11 +141,10 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO CON FILTROS POTENTES TIPO ZILLOW -->
+                <!-- VISTA 1: INVENTARIO CON FILTRO HISTOGRAMA ZILLOW -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
                         
-                        <!-- SUB-SIDEBAR DE FILTROS SUPER COMPLETO -->
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
@@ -199,13 +198,37 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Rango de Precios -->
+                            <!-- 3. Rango de Precios con Histograma estilo Zillow -->
                             <div class="sub-nav-group">
-                                <span class="sub-nav-header">RANGO DE PRECIO ($)</span>
-                                <div class="facet-range-row">
-                                    <input type="number" id="filter-min-price" class="facet-input" placeholder="Mínimo">
-                                    <span>-</span>
-                                    <input type="number" id="filter-max-price" class="facet-input" placeholder="Máximo">
+                                <span class="sub-nav-header">RANGO DE PRECIO</span>
+                                
+                                <div class="price-histogram-card">
+                                    <!-- Contenedor dinámico de barras -->
+                                    <div class="histogram-bars" id="histogram-bars"></div>
+                                    
+                                    <!-- Sliders superpuestos -->
+                                    <div class="range-slider-wrapper">
+                                        <div class="slider-track" id="slider-track"></div>
+                                        <input type="range" id="range-slider-min" min="0" max="500000" step="5000" value="0">
+                                        <input type="range" id="range-slider-max" min="0" max="500000" step="5000" value="500000">
+                                    </div>
+                                    
+                                    <div class="histogram-labels">
+                                        <span id="label-min-price">$0</span>
+                                        <span id="label-max-price">$500K+</span>
+                                    </div>
+                                </div>
+
+                                <div class="facet-range-row" style="margin-top: 8px;">
+                                    <div class="range-input-box">
+                                        <label>Mín ($)</label>
+                                        <input type="number" id="filter-min-price" class="facet-input" placeholder="0">
+                                    </div>
+                                    <span class="range-sep">-</span>
+                                    <div class="range-input-box">
+                                        <label>Máx ($)</label>
+                                        <input type="number" id="filter-max-price" class="facet-input" placeholder="Sin límite">
+                                    </div>
                                 </div>
                             </div>
 
@@ -213,7 +236,7 @@
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">HABITACIONES</span>
                                 <div class="pill-group" id="filter-beds-pills">
-                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn active" data-val="">Todos</button>
                                     <button class="pill-btn" data-val="1">1+</button>
                                     <button class="pill-btn" data-val="2">2+</button>
                                     <button class="pill-btn" data-val="3">3+</button>
@@ -226,7 +249,7 @@
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">BAÑOS</span>
                                 <div class="pill-group" id="filter-baths-pills">
-                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn active" data-val="">Todos</button>
                                     <button class="pill-btn" data-val="1">1+</button>
                                     <button class="pill-btn" data-val="2">2+</button>
                                     <button class="pill-btn" data-val="3">3+</button>
@@ -238,7 +261,7 @@
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
                                 <div class="pill-group" id="filter-parking-pills">
-                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn active" data-val="">Todos</button>
                                     <button class="pill-btn" data-val="1">1+</button>
                                     <button class="pill-btn" data-val="2">2+</button>
                                     <button class="pill-btn" data-val="3">3+</button>
@@ -250,7 +273,7 @@
                                 <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
                                 <div class="facet-range-row">
                                     <input type="number" id="filter-min-sqm-build" class="facet-input" placeholder="Mín m²">
-                                    <span>-</span>
+                                    <span class="range-sep">-</span>
                                     <input type="number" id="filter-max-sqm-build" class="facet-input" placeholder="Máx m²">
                                 </div>
                             </div>
@@ -260,12 +283,12 @@
                                 <span class="sub-nav-header">TERRENO / LOTE TOTAL (m²)</span>
                                 <div class="facet-range-row">
                                     <input type="number" id="filter-min-sqm-lot" class="facet-input" placeholder="Mín m²">
-                                    <span>-</span>
+                                    <span class="range-sep">-</span>
                                     <input type="number" id="filter-max-sqm-lot" class="facet-input" placeholder="Máx m²">
                                 </div>
                             </div>
 
-                            <!-- 9. Amenities / Extras (Estilo Zillow) -->
+                            <!-- 9. Amenities -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">CARACTERÍSTICAS & AMENITIES</span>
                                 <div class="checkbox-group">
@@ -392,7 +415,7 @@
 
     </div>
 
-    <!-- MODAL 1: NUEVA PROPIEDAD CON TODOS LOS CAMPOS DE FILTRO -->
+    <!-- MODAL 1: NUEVA PROPIEDAD -->
     <div class="modal-backdrop" id="property-modal">
         <div class="modal-window" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
