@@ -27,29 +27,31 @@
             </header>
 
             <div class="content-area" id="app-content">
+                
                 <!-- VISTA 0: DASHBOARD -->
-<div id="view-dashboard" class="view-section" style="display: none;">
-    <div class="inventory-header">
-        <h2>Resumen de Actividad</h2>
-    </div>
-    <div class="dashboard-grid">
-        <div class="kpi-card">
-            <h3>Propiedades Activas</h3>
-            <p class="kpi-value">24</p>
-            <span class="kpi-trend positive">↑ +2 esta semana</span>
-        </div>
-        <div class="kpi-card">
-            <h3>Leads en Pipeline</h3>
-            <p class="kpi-value">18</p>
-            <span class="kpi-trend positive">↑ +5 esta semana</span>
-        </div>
-        <div class="kpi-card">
-            <h3>Visitas Programadas</h3>
-            <p class="kpi-value">3</p>
-            <span class="kpi-trend neutral">Para hoy y mañana</span>
-        </div>
-    </div>
-</div>
+                <div id="view-dashboard" class="view-section" style="display: none;">
+                    <div class="inventory-header">
+                        <h2>Resumen de Actividad</h2>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="kpi-card">
+                            <h3>Propiedades Activas</h3>
+                            <p class="kpi-value" id="kpi-properties-count">2</p>
+                            <span class="kpi-trend positive">↑ Actualizado</span>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Leads en Pipeline</h3>
+                            <p class="kpi-value">3</p>
+                            <span class="kpi-trend positive">↑ +5 esta semana</span>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Visitas Programadas</h3>
+                            <p class="kpi-value">0</p>
+                            <span class="kpi-trend neutral">Para hoy y mañana</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- VISTA 1: INVENTARIO -->
                 <div id="view-inventory" class="view-section">
                     <div class="inventory-header">
@@ -61,23 +63,10 @@
                             <button class="btn-text">Borrar filtros</button>
                         </div>
                     </div>
-                    <div class="property-grid">
-                        <article class="property-card">
-                            <div class="card-media"><span class="status-badge status-active">En Venta</span><div class="photo-placeholder"></div></div>
-                            <div class="card-body">
-                                <div class="card-header"><h3 class="property-price">$120,000</h3><p class="property-address">Av. Principal, Sector Norte</p></div>
-                                <div class="property-specs"><div class="spec-item"><span>🛏️</span> 3 Hab</div><div class="spec-item"><span>🛁</span> 2 Baños</div><div class="spec-item"><span>📐</span> 150m²</div></div>
-                            </div>
-                            <div class="card-actions"><button class="btn-secondary">Ver Ficha</button><button class="btn-whatsapp">Enviar 💬</button></div>
-                        </article>
-                        <article class="property-card">
-                            <div class="card-media"><span class="status-badge status-rent">Alquiler</span><div class="photo-placeholder" style="background-color: #cbd5e1;"></div></div>
-                            <div class="card-body">
-                                <div class="card-header"><h3 class="property-price">$850 / mes</h3><p class="property-address">Residencias El Bosque, Torre B</p></div>
-                                <div class="property-specs"><div class="spec-item"><span>🛏️</span> 2 Hab</div><div class="spec-item"><span>🛁</span> 2 Baños</div><div class="spec-item"><span>📐</span> 85m²</div></div>
-                            </div>
-                            <div class="card-actions"><button class="btn-secondary">Ver Ficha</button><button class="btn-whatsapp">Enviar 💬</button></div>
-                        </article>
+                    
+                    <!-- Grilla dinámica -->
+                    <div class="property-grid" id="property-grid">
+                        <!-- Las propiedades se inyectan desde JavaScript -->
                     </div>
                 </div>
 
@@ -116,12 +105,64 @@
                             <div class="column-header"><h3>Visitas Programadas</h3><span class="count-badge">0</span></div>
                             <div class="column-content"></div>
                         </div>
+                        <div class="kanban-column">
+                            <div class="column-header"><h3>Ofertas / Negociación</h3><span class="count-badge">0</span></div>
+                            <div class="column-content"></div>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </main>
     </div>
+
+    <!-- MODAL: NUEVA PROPIEDAD -->
+    <div class="modal-backdrop" id="property-modal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>Agregar Nueva Propiedad</h3>
+                <button class="modal-close" id="close-modal-btn">✕</button>
+            </div>
+            <form id="property-form">
+                <div class="form-group">
+                    <label>Título / Dirección</label>
+                    <input type="text" id="prop-address" placeholder="Ej. Residencias Vista Alta, Apto 4B" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="text" id="prop-price" placeholder="Ej. $95,000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Operación</label>
+                        <select id="prop-type" required>
+                            <option value="Venta">Venta</option>
+                            <option value="Alquiler">Alquiler</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Habitaciones</label>
+                        <input type="number" id="prop-beds" min="1" max="20" placeholder="3" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Baños</label>
+                        <input type="number" id="prop-baths" min="1" max="20" placeholder="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Metros (m²)</label>
+                        <input type="number" id="prop-sqm" min="10" placeholder="120" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Inmueble</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
