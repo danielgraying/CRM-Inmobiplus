@@ -86,6 +86,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Colección de fotos secundarias para simular galería real
+    const sampleGalleries = [
+        [
+            "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
+        ],
+        [
+            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+        ],
+        [
+            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+        ]
+    ];
+
     // ==========================================
     // 3. BASE DE DATOS INICIAL (30 PROPIEDADES)
     // ==========================================
@@ -106,7 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
+            images: [
+                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -125,7 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
+            images: [
+                "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -144,7 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
+            images: [
+                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -163,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Venta"
         },
         {
@@ -182,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Venta"
         },
         {
@@ -201,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Alquiler"
         },
         {
@@ -220,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"],
             type: "Venta"
         },
         {
@@ -239,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"],
             type: "Venta"
         },
         {
@@ -258,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Venta"
         },
         {
@@ -277,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Alquiler"
         },
         {
@@ -296,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Venta"
         },
         {
@@ -315,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Alquiler"
         },
         {
@@ -334,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Venta"
         },
         {
@@ -353,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"],
             type: "Alquiler"
         },
         {
@@ -372,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Venta"
         },
         {
@@ -391,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"],
             type: "Venta"
         },
         {
@@ -410,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: false,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1502005229762-ee1b2b8ab00f?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Alquiler"
         },
         {
@@ -429,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Venta"
         },
         {
@@ -448,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Alquiler"
         },
         {
@@ -467,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Venta"
         },
         {
@@ -486,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Venta"
         },
         {
@@ -505,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"],
             type: "Alquiler"
         },
         {
@@ -524,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Venta"
         },
         {
@@ -543,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Alquiler"
         },
         {
@@ -562,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"],
             type: "Venta"
         },
         {
@@ -581,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[2],
             type: "Venta"
         },
         {
@@ -600,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Venta"
         },
         {
@@ -619,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[1],
             type: "Alquiler"
         },
         {
@@ -638,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+            images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"],
             type: "Venta"
         },
         {
@@ -657,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
+            images: sampleGalleries[0],
             type: "Venta"
         }
     ];
@@ -666,31 +697,37 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: "lead_1",
             name: "Carlos Mendoza",
+            phone: "+58 414-1234567",
             intent: "Busca apto 3 habs con 2 puestos",
-            budget: "$100k - $130k",
+            budget: "$100,000 - $130,000",
             status: "new",
+            notes: "Interesado preferiblemente en zona norte o este. Disponible para visitas los sábados.",
             time: "Hace 2h"
         },
         {
             id: "lead_2",
             name: "Ana Silva",
+            phone: "+58 424-9876543",
             intent: "Alquiler casa c/ piscina y mascotas",
-            budget: "Hasta $900/mes",
+            budget: "$800 - $1,000 / mes",
             status: "new",
+            notes: "Tiene 2 perros medianos. Requiere estacionamiento techado.",
             time: "Hace 5h"
         },
         {
             id: "lead_3",
             name: "Luis Pérez",
-            intent: "Interesado en Townhouse en Las Villas",
-            budget: "Pre-aprobado",
+            phone: "+57 310-5550199",
+            intent: "Interesado en Townhouse amplio",
+            budget: "$200,000 - $250,000",
             status: "contacted",
+            notes: "Crédito pre-aprobado. Busca mudanza en los próximos 60 días.",
             time: "Ayer"
         }
     ];
 
     let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
-    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].country) ? savedProps : defaultProperties;
+    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].images) ? savedProps : defaultProperties;
     localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
@@ -819,7 +856,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
 
-    // Control de Tags de Operación y Amenity Contextual
     const opTags = document.querySelectorAll('#filter-operation-tags .op-tag');
     let selectedOperation = "";
 
@@ -829,7 +865,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tag.classList.add('active');
             selectedOperation = tag.getAttribute('data-val');
 
-            // Lógica de Amenity Contextual (Mascotas solo aplica para Alquiler o Todas)
             if (selectedOperation === 'Venta') {
                 if (containerFilterPets) containerFilterPets.style.display = 'none';
                 if (filterPets) filterPets.checked = false;
@@ -1009,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
                 const badgeClass = isVenta ? 'status-active' : 'status-rent';
-                const defaultImg = isVenta ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80' : 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80';
+                const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80');
                 
                 const card = document.createElement('article');
                 card.className = 'property-card';
@@ -1017,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-media">
                         <span class="status-badge ${badgeClass}">En ${prop.type}</span>
                         <span class="category-tag">${prop.category || 'Inmueble'}</span>
-                        <img src="${prop.image || defaultImg}" alt="${prop.address}" class="card-img" onerror="this.src='${defaultImg}'">
+                        <img src="${mainImg}" alt="${prop.address}" class="card-img" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'">
                     </div>
                     <div class="card-body">
                         <span class="property-location-tag">📍 ${prop.city || 'Ubicación'}, ${prop.country || 'LATAM'}</span>
@@ -1107,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 6. DETALLE MODAL
+    // 6. DETALLE MODAL CON GALERÍA MULTIMEDIA
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -1120,10 +1155,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!prop) return;
 
         const formattedPrice = formatCurrency(prop.price, prop.type);
-        const defaultImg = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80';
+        const imagesList = (prop.images && prop.images.length > 0) ? prop.images : [prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
         
         detailContent.innerHTML = `
-            <img src="${prop.image || defaultImg}" alt="${prop.address}" class="detail-img-preview" onerror="this.src='${defaultImg}'">
+            <div class="gallery-container">
+                <img src="${imagesList[0]}" id="gallery-active-img" class="gallery-main-img" alt="${prop.address}">
+                <div class="gallery-thumbs">
+                    ${imagesList.map((img, idx) => `
+                        <img src="${img}" class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchGalleryImg('${img}', this)" alt="Thumbnail ${idx + 1}">
+                    `).join('')}
+                </div>
+            </div>
+
             <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
             <h4 style="font-size: 1.35rem; color: var(--brand-green); margin: 4px 0;">${formattedPrice}</h4>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px;">${prop.address}</p>
@@ -1149,12 +1192,41 @@ document.addEventListener('DOMContentLoaded', () => {
         detailsModal.style.display = 'flex';
     };
 
+    window.switchGalleryImg = (imgUrl, thumbEl) => {
+        const activeImg = document.getElementById('gallery-active-img');
+        if (activeImg) activeImg.src = imgUrl;
+        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        if (thumbEl) thumbEl.classList.add('active');
+    };
+
     function closeDetailsModal() { detailsModal.style.display = 'none'; }
     if (closeDetailsModalBtn) closeDetailsModalBtn.addEventListener('click', closeDetailsModal);
     if (closeDetailsBottomBtn) closeDetailsBottomBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 7. KANBAN LEADS
+    // 7. MOTOR DE MATCHING INTELIGENTE PARA LEADS
+    // ==========================================
+    function findMatchingPropertiesForLead(lead) {
+        const intentText = (lead.intent + ' ' + lead.budget).toLowerCase();
+        
+        return properties.filter(prop => {
+            const matchesCat = intentText.includes(prop.category.toLowerCase()) || intentText.includes('propiedad') || intentText.includes('inmueble');
+            const matchesOp = (intentText.includes('alquiler') && prop.type === 'Alquiler') ||
+                              ((intentText.includes('venta') || intentText.includes('compra') || intentText.includes('busca')) && prop.type === 'Venta') ||
+                              (!intentText.includes('alquiler') && !intentText.includes('venta'));
+            
+            let matchesBeds = true;
+            if (intentText.includes('1 hab') && prop.beds < 1) matchesBeds = false;
+            if (intentText.includes('2 hab') && prop.beds < 2) matchesBeds = false;
+            if (intentText.includes('3 hab') && prop.beds < 3) matchesBeds = false;
+            if (intentText.includes('4 hab') && prop.beds < 4) matchesBeds = false;
+
+            return (matchesCat || matchesOp) && matchesBeds;
+        }).slice(0, 4); // Tomar los mejores 4 matches
+    }
+
+    // ==========================================
+    // 8. KANBAN LEADS & DRAWER LATERAL
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1169,6 +1241,25 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let draggedCard = null;
+    let isDragging = false;
+
+    // Elementos del Drawer
+    const leadDrawer = document.getElementById('lead-drawer');
+    const drawerBackdrop = document.getElementById('drawer-backdrop');
+    const closeLeadDrawerBtn = document.getElementById('close-lead-drawer-btn');
+    const drawerLeadAvatar = document.getElementById('drawer-lead-avatar');
+    const drawerLeadName = document.getElementById('drawer-lead-name');
+    const drawerLeadTime = document.getElementById('drawer-lead-time');
+    const drawerLeadIntent = document.getElementById('drawer-lead-intent');
+    const drawerLeadBudget = document.getElementById('drawer-lead-budget');
+    const drawerLeadPhone = document.getElementById('drawer-lead-phone');
+    const drawerLeadNotes = document.getElementById('drawer-lead-notes');
+    const btnSaveLeadNotes = document.getElementById('btn-save-lead-notes');
+    const drawerMatchesCount = document.getElementById('drawer-matches-count');
+    const drawerMatchesList = document.getElementById('drawer-matches-list');
+    const drawerWhatsAppBtn = document.getElementById('drawer-whatsapp-btn');
+
+    let currentActiveLeadId = null;
 
     function renderLeads() {
         Object.values(columnMap).forEach(col => { if (col) col.innerHTML = ''; });
@@ -1183,6 +1274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filtered.forEach(lead => {
             const targetCol = columnMap[lead.status] || colNew;
             if (targetCol) {
+                const matches = findMatchingPropertiesForLead(lead);
                 const card = document.createElement('div');
                 card.className = 'lead-card';
                 card.setAttribute('draggable', 'true');
@@ -1195,10 +1287,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="lead-intent">${lead.intent}</p>
                     <div class="lead-footer">
                         <span class="budget-tag">${lead.budget}</span>
+                        ${matches.length > 0 ? `<span class="lead-matches-badge">✨ ${matches.length} matches</span>` : ''}
                     </div>
                 `;
 
+                // Eventos de Drag & Drop
                 card.addEventListener('dragstart', () => {
+                    isDragging = true;
                     draggedCard = card;
                     setTimeout(() => card.style.display = 'none', 0);
                 });
@@ -1207,9 +1302,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         if (draggedCard) draggedCard.style.display = 'block';
                         draggedCard = null;
+                        isDragging = false;
                         updateKanbanCounters();
                         saveLeadsState();
                     }, 0);
+                });
+
+                // Clic para abrir el Drawer (solo si no se estaba arrastrando)
+                card.addEventListener('click', () => {
+                    if (!isDragging) {
+                        openLeadDrawer(lead.id);
+                    }
                 });
 
                 targetCol.appendChild(card);
@@ -1218,6 +1321,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateKanbanCounters();
         updateDashboardStats();
+    }
+
+    function openLeadDrawer(leadId) {
+        const lead = leads.find(l => l.id == leadId);
+        if (!lead) return;
+
+        currentActiveLeadId = lead.id;
+        const initials = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+        drawerLeadAvatar.textContent = initials;
+        drawerLeadName.textContent = lead.name;
+        drawerLeadTime.textContent = lead.time || 'Reciente';
+        drawerLeadIntent.textContent = lead.intent;
+        drawerLeadBudget.textContent = lead.budget;
+        drawerLeadPhone.textContent = lead.phone || '+58 414-0000000';
+        drawerLeadNotes.value = lead.notes || '';
+
+        // Calcular y renderizar propiedades compatibles (Matching)
+        const matches = findMatchingPropertiesForLead(lead);
+        drawerMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia' : 'coincidencias'}`;
+        drawerMatchesList.innerHTML = '';
+
+        if (matches.length === 0) {
+            drawerMatchesList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No hay propiedades que coincidan directamente con este requerimiento.</p>';
+        } else {
+            matches.forEach(prop => {
+                const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80');
+                const card = document.createElement('div');
+                card.className = 'drawer-match-card';
+                card.innerHTML = `
+                    <img src="${mainImg}" class="match-img" alt="${prop.address}">
+                    <div class="match-info">
+                        <span class="match-price">${formatCurrency(prop.price, prop.type)}</span>
+                        <span class="match-address">${prop.address}</span>
+                        <span class="match-specs">🛏️ ${prop.beds}h • 🛁 ${prop.baths}b • 📐 ${prop.sqmBuild}m²</span>
+                    </div>
+                `;
+                card.onclick = () => viewPropertyDetails(prop.id);
+                drawerMatchesList.appendChild(card);
+            });
+        }
+
+        // WhatsApp direct link
+        drawerWhatsAppBtn.onclick = () => {
+            const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+            const msg = `Hola ${lead.name}, te contacto de InmoCRM respecto a tu búsqueda de inmueble: "${lead.intent}". ¿Cómo estás?`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        leadDrawer.classList.add('open');
+        drawerBackdrop.style.display = 'block';
+    }
+
+    function closeLeadDrawer() {
+        leadDrawer.classList.remove('open');
+        drawerBackdrop.style.display = 'none';
+        currentActiveLeadId = null;
+    }
+
+    if (closeLeadDrawerBtn) closeLeadDrawerBtn.addEventListener('click', closeLeadDrawer);
+    if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeLeadDrawer);
+
+    if (btnSaveLeadNotes) {
+        btnSaveLeadNotes.addEventListener('click', () => {
+            if (!currentActiveLeadId) return;
+            const lead = leads.find(l => l.id == currentActiveLeadId);
+            if (lead) {
+                lead.notes = drawerLeadNotes.value.trim();
+                saveLeadsState();
+                alert('¡Notas del cliente guardadas correctamente!');
+            }
+        });
     }
 
     document.querySelectorAll('.column-content').forEach(zone => {
@@ -1255,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. STATS DASHBOARD
+    // 9. STATS DASHBOARD
     // ==========================================
     function updateDashboardStats() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -1270,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 9. SPA NAVIGATION & DRAWER MOBILE
+    // 10. SPA NAVIGATION & DRAWER MOBILE
     // ==========================================
     const navItems = document.querySelectorAll('.p-nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
@@ -1316,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 10. MOBILE FAB '+' POPOVER
+    // 11. MOBILE FAB '+' POPOVER
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
@@ -1340,7 +1515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 11. FORMULARIOS Y MODALES
+    // 12. FORMULARIOS Y MODALES
     // ==========================================
     const propModal = document.getElementById('property-modal');
     const leadModal = document.getElementById('lead-modal');
@@ -1377,6 +1552,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const rawPrice = parseFloat(document.getElementById('prop-price').value) || 0;
         const imgInput = document.getElementById('prop-image').value.trim();
 
+        const defaultGallery = [
+            imgInput || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
+        ];
+
         const newProp = {
             id: Date.now(),
             category: document.getElementById('prop-category').value,
@@ -1394,7 +1575,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: document.getElementById('prop-pool').checked,
             pets: document.getElementById('prop-pets').checked,
             furnished: document.getElementById('prop-furnished').checked,
-            image: imgInput || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
+            images: defaultGallery
         };
 
         properties.push(newProp);
@@ -1409,9 +1590,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const newLead = {
             id: 'lead_' + Date.now(),
             name: document.getElementById('lead-name').value.trim(),
+            phone: document.getElementById('lead-phone').value.trim() || '+58 414-0000000',
             intent: document.getElementById('lead-intent').value.trim(),
             budget: document.getElementById('lead-budget').value.trim(),
             status: document.getElementById('lead-status').value,
+            notes: '',
             time: 'Ahora'
         };
 
@@ -1422,7 +1605,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 12. EXPORTAR / IMPORTAR BACKUP JSON
+    // 13. EXPORTAR / IMPORTAR BACKUP JSON
     // ==========================================
     function exportData() {
         const data = {
