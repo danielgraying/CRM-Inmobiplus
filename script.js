@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES CON IMÁGENES REALES Y LOCALIZACIÓN LATAM)
+    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES)
     // ==========================================
     const defaultProperties = [
         {
@@ -690,7 +690,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
-    // Si no tiene las nuevas propiedades o no tienen país asignado, inicializar con las 30 completas
     let properties = (savedProps && savedProps.length >= 10 && savedProps[0].country) ? savedProps : defaultProperties;
     localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
@@ -703,7 +702,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 4. CONTROLADORES DE LOCALIZACIÓN DINÁMICA
     // ==========================================
-    // Sidebar de Filtros
     const filterCountry = document.getElementById('filter-country');
     const filterSubdivContainer = document.getElementById('filter-subdiv-container');
     const filterSubdivLabel = document.getElementById('filter-subdiv-label');
@@ -712,7 +710,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterCityLabel = document.getElementById('filter-city-label');
     const filterCity = document.getElementById('filter-city');
 
-    // Modal de Nueva Propiedad
     const propCountry = document.getElementById('prop-country');
     const propSubdivLabel = document.getElementById('prop-subdiv-label');
     const propSubdivision = document.getElementById('prop-subdivision');
@@ -739,7 +736,6 @@ document.addEventListener('DOMContentLoaded', () => {
             filterCityContainer.style.display = 'none';
         }
 
-        // Poblar subdivisiones
         subdivSelectEl.innerHTML = isFilter ? `<option value="">Todos los ${countryData.subdivName.toLowerCase()}s</option>` : '';
         Object.keys(countryData.subdivisions).forEach(subdiv => {
             const opt = document.createElement('option');
@@ -748,7 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
             subdivSelectEl.appendChild(opt);
         });
 
-        // Trigger ciudades inicial
         updateCitySelector(countryVal, subdivSelectEl.value, cityLabelEl, citySelectEl, isFilter);
     }
 
@@ -773,7 +768,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Eventos Filtros
     filterCountry.addEventListener('change', () => {
         updateLocationSelectors(filterCountry.value, filterSubdivLabel, filterSubdivision, filterCityLabel, filterCity, true);
         renderProperties();
@@ -786,7 +780,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filterCity.addEventListener('change', renderProperties);
 
-    // Eventos Modal
     propCountry.addEventListener('change', () => {
         updateLocationSelectors(propCountry.value, propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
     });
@@ -795,11 +788,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCitySelector(propCountry.value, propSubdivision.value, propCityLabel, propCity, false);
     });
 
-    // Inicializar selectores en el modal
     updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
 
     // ==========================================
-    // 5. MOTOR DE FILTRADO & HISTOGRAMA ZILLOW
+    // 5. MOTOR DE FILTRADO Y AMENITIES CONTEXTUALES
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
@@ -820,11 +812,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filterPool = document.getElementById('filter-pool');
     const filterPets = document.getElementById('filter-pets');
+    const containerFilterPets = document.getElementById('container-filter-pets');
     const filterFurnished = document.getElementById('filter-furnished');
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
 
     const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
+
+    // Control de Tags de Operación y Amenity Contextual
+    const opTags = document.querySelectorAll('#filter-operation-tags .op-tag');
+    let selectedOperation = "";
+
+    opTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            opTags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            selectedOperation = tag.getAttribute('data-val');
+
+            // Lógica de Amenity Contextual (Mascotas solo aplica para Alquiler o Todas)
+            if (selectedOperation === 'Venta') {
+                if (containerFilterPets) containerFilterPets.style.display = 'none';
+                if (filterPets) filterPets.checked = false;
+            } else {
+                if (containerFilterPets) containerFilterPets.style.display = 'flex';
+            }
+
+            renderProperties();
+        });
+    });
 
     function renderHistogram(currentMin, currentMax) {
         if (!histogramBarsContainer) return;
@@ -848,7 +863,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const bar = document.createElement('div');
             bar.className = 'histogram-bar';
             bar.style.height = `${heightPct}%`;
-            bar.title = `${count} inmuebles ($${bucketPriceMin.toLocaleString()} - $${bucketPriceMax.toLocaleString()})`;
 
             const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMax;
             if (inRange && count > 0) {
@@ -928,7 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const valSubdiv = filterSubdivision.value;
         const valCity = filterCity.value;
         const valType = getSelectedFacet('facet-type');
-        const valOp = getSelectedFacet('facet-op');
+        const valOp = selectedOperation;
 
         const minPrice = filterMinPrice && filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
         const maxPrice = filterMaxPrice && filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
@@ -949,15 +963,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxSqmLot = filterMaxSqmLot && filterMaxSqmLot.value ? parseFloat(filterMaxSqmLot.value) : Infinity;
 
         const reqPool = filterPool ? filterPool.checked : false;
-        const reqPets = filterPets ? filterPets.checked : false;
+        const reqPets = (valOp !== 'Venta' && filterPets) ? filterPets.checked : false;
         const reqFurnished = filterFurnished ? filterFurnished.checked : false;
 
         const filtered = properties.filter(prop => {
             const matchesSearch = !valSearch || 
                 prop.address.toLowerCase().includes(valSearch) || 
                 prop.category.toLowerCase().includes(valSearch) ||
-                (prop.city && prop.city.toLowerCase().includes(valSearch)) ||
-                (prop.subdivision && prop.subdivision.toLowerCase().includes(valSearch));
+                (prop.city && prop.city.toLowerCase().includes(valSearch));
 
             const matchesCountry = !valCountry || prop.country === valCountry;
             const matchesSubdiv = !valSubdiv || prop.subdivision === valSubdiv;
@@ -991,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros en esta localización.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
@@ -1035,10 +1048,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats();
     }
 
-    document.querySelectorAll('input[name="facet-type"], input[name="facet-op"]').forEach(radio => {
-        radio.addEventListener('change', renderProperties);
-    });
-
     [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(input => {
         if (input) input.addEventListener('input', renderProperties);
     });
@@ -1055,10 +1064,13 @@ document.addEventListener('DOMContentLoaded', () => {
             filterSubdivContainer.style.display = 'none';
             filterCityContainer.style.display = 'none';
 
+            opTags.forEach(t => t.classList.remove('active'));
+            document.querySelector('#filter-operation-tags .op-tag[data-val=""]').classList.add('active');
+            selectedOperation = "";
+            if (containerFilterPets) containerFilterPets.style.display = 'flex';
+
             const defaultType = document.querySelector('input[name="facet-type"][value=""]');
-            const defaultOp = document.querySelector('input[name="facet-op"][value=""]');
             if (defaultType) defaultType.checked = true;
-            if (defaultOp) defaultOp.checked = true;
 
             [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
             [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
