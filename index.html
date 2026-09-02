@@ -22,7 +22,7 @@
         <!-- Espacio de Trabajo -->
         <main class="main-content">
             <header class="topbar">
-                <input type="text" placeholder="Buscar propiedades o clientes..." class="search-bar">
+                <input type="text" placeholder="Buscar propiedades o clientes..." class="search-bar" id="global-search">
                 <button class="btn-primary" id="main-action-btn">+ Nueva Propiedad</button>
             </header>
 
@@ -36,18 +36,18 @@
                     <div class="dashboard-grid">
                         <div class="kpi-card">
                             <h3>Propiedades Activas</h3>
-                            <p class="kpi-value" id="kpi-properties-count">2</p>
+                            <p class="kpi-value" id="kpi-properties-count">0</p>
                             <span class="kpi-trend positive">↑ Actualizado</span>
                         </div>
                         <div class="kpi-card">
                             <h3>Leads en Pipeline</h3>
-                            <p class="kpi-value">3</p>
-                            <span class="kpi-trend positive">↑ +5 esta semana</span>
+                            <p class="kpi-value" id="kpi-leads-count">0</p>
+                            <span class="kpi-trend positive">↑ Total clientes</span>
                         </div>
                         <div class="kpi-card">
                             <h3>Visitas Programadas</h3>
-                            <p class="kpi-value">0</p>
-                            <span class="kpi-trend neutral">Para hoy y mañana</span>
+                            <p class="kpi-value" id="kpi-visits-count">0</p>
+                            <span class="kpi-trend neutral">En seguimiento</span>
                         </div>
                     </div>
                 </div>
@@ -57,57 +57,54 @@
                     <div class="inventory-header">
                         <h2>Inventario de Propiedades</h2>
                         <div class="filters-bar">
-                            <select class="filter-select"><option>Tipo de Inmueble</option></select>
-                            <select class="filter-select"><option>Operación</option></select>
-                            <select class="filter-select"><option>Habitaciones</option></select>
-                            <button class="btn-text">Borrar filtros</button>
+                            <select class="filter-select" id="filter-property-type">
+                                <option value="">Todos los tipos</option>
+                                <option value="Apartamento">Apartamento</option>
+                                <option value="Casa">Casa</option>
+                                <option value="Local">Local</option>
+                                <option value="Terreno">Terreno</option>
+                            </select>
+                            <select class="filter-select" id="filter-operation">
+                                <option value="">Toda operación</option>
+                                <option value="Venta">Venta</option>
+                                <option value="Alquiler">Alquiler</option>
+                            </select>
+                            <select class="filter-select" id="filter-beds">
+                                <option value="">Habitaciones</option>
+                                <option value="1">1+ Hab</option>
+                                <option value="2">2+ Habs</option>
+                                <option value="3">3+ Habs</option>
+                                <option value="4">4+ Habs</option>
+                            </select>
+                            <button class="btn-text" id="btn-clear-filters">Borrar filtros</button>
                         </div>
                     </div>
                     
-                    <!-- Grilla dinámica -->
-                    <div class="property-grid" id="property-grid">
-                        <!-- Las propiedades se inyectan desde JavaScript -->
-                    </div>
+                    <div class="property-grid" id="property-grid"></div>
                 </div>
 
                 <!-- VISTA 2: LEADS (KANBAN) -->
                 <div id="view-leads" class="view-section" style="display: none;">
                     <div class="kanban-header">
                         <h2>Pipeline de Leads</h2>
+                        <button class="btn-primary" id="btn-open-lead-modal">+ Nuevo Lead</button>
                     </div>
                     <div class="kanban-board">
-                        <div class="kanban-column">
-                            <div class="column-header"><h3>Nuevos</h3><span class="count-badge">2</span></div>
-                            <div class="column-content">
-                                <div class="lead-card" draggable="true">
-                                    <div class="lead-header"><h4>Carlos Mendoza</h4><span class="time-tag">Hace 2h</span></div>
-                                    <p class="lead-intent">Busca apto 2 habs - Zona Norte</p>
-                                    <div class="lead-footer"><span class="budget-tag">$80k - $100k</span></div>
-                                </div>
-                                <div class="lead-card" draggable="true">
-                                    <div class="lead-header"><h4>Ana Silva</h4><span class="time-tag">Hace 5h</span></div>
-                                    <p class="lead-intent">Alquiler casa c/ patio</p>
-                                    <div class="lead-footer"><span class="budget-tag">Hasta $900/mes</span></div>
-                                </div>
-                            </div>
+                        <div class="kanban-column" data-status="new">
+                            <div class="column-header"><h3>Nuevos</h3><span class="count-badge">0</span></div>
+                            <div class="column-content" id="col-new"></div>
                         </div>
-                        <div class="kanban-column">
-                            <div class="column-header"><h3>Contactados</h3><span class="count-badge">1</span></div>
-                            <div class="column-content">
-                                <div class="lead-card" draggable="true">
-                                    <div class="lead-header"><h4>Luis Pérez</h4><span class="time-tag">Ayer</span></div>
-                                    <p class="lead-intent">Interesado en Res. El Bosque</p>
-                                    <div class="lead-footer"><span class="budget-tag">Pre-aprobado</span></div>
-                                </div>
-                            </div>
+                        <div class="kanban-column" data-status="contacted">
+                            <div class="column-header"><h3>Contactados</h3><span class="count-badge">0</span></div>
+                            <div class="column-content" id="col-contacted"></div>
                         </div>
-                        <div class="kanban-column">
+                        <div class="kanban-column" data-status="visited">
                             <div class="column-header"><h3>Visitas Programadas</h3><span class="count-badge">0</span></div>
-                            <div class="column-content"></div>
+                            <div class="column-content" id="col-visited"></div>
                         </div>
-                        <div class="kanban-column">
+                        <div class="kanban-column" data-status="offer">
                             <div class="column-header"><h3>Ofertas / Negociación</h3><span class="count-badge">0</span></div>
-                            <div class="column-content"></div>
+                            <div class="column-content" id="col-offer"></div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +113,7 @@
         </main>
     </div>
 
-    <!-- MODAL: NUEVA PROPIEDAD -->
+    <!-- MODAL 1: NUEVA PROPIEDAD -->
     <div class="modal-backdrop" id="property-modal">
         <div class="modal-window">
             <div class="modal-header">
@@ -130,8 +127,13 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Precio ($)</label>
-                        <input type="text" id="prop-price" placeholder="Ej. $95,000" required>
+                        <label>Tipo de Inmueble</label>
+                        <select id="prop-category" required>
+                            <option value="Apartamento">Apartamento</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Local">Local</option>
+                            <option value="Terreno">Terreno</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Operación</label>
@@ -141,23 +143,68 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="text" id="prop-price" placeholder="Ej. $95,000" required>
+                    </div>
+                </div>
                 <div class="form-row-3">
                     <div class="form-group">
                         <label>Habitaciones</label>
-                        <input type="number" id="prop-beds" min="1" max="20" placeholder="3" required>
+                        <input type="number" id="prop-beds" min="0" max="20" placeholder="3" required>
                     </div>
                     <div class="form-group">
                         <label>Baños</label>
-                        <input type="number" id="prop-baths" min="1" max="20" placeholder="2" required>
+                        <input type="number" id="prop-baths" min="0" max="20" placeholder="2" required>
                     </div>
                     <div class="form-group">
                         <label>Metros (m²)</label>
-                        <input type="number" id="prop-sqm" min="10" placeholder="120" required>
+                        <input type="number" id="prop-sqm" min="5" placeholder="120" required>
                     </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancelar</button>
                     <button type="submit" class="btn-primary">Guardar Inmueble</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: NUEVO LEAD -->
+    <div class="modal-backdrop" id="lead-modal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3>Agregar Nuevo Lead</h3>
+                <button class="modal-close" id="close-lead-modal-btn">✕</button>
+            </div>
+            <form id="lead-form">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="lead-name" placeholder="Ej. Mariana Rondón" required>
+                </div>
+                <div class="form-group">
+                    <label>Interés / Requerimiento</label>
+                    <input type="text" id="lead-intent" placeholder="Ej. Busca apto 3 habs con estacionamiento" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Presupuesto / Rango</label>
+                        <input type="text" id="lead-budget" placeholder="Ej. $70k - $90k" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Etapa Inicial</label>
+                        <select id="lead-status" required>
+                            <option value="new">Nuevos</option>
+                            <option value="contacted">Contactados</option>
+                            <option value="visited">Visitas Programadas</option>
+                            <option value="offer">Ofertas / Negociación</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-lead-modal-btn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Lead</button>
                 </div>
             </form>
         </div>
