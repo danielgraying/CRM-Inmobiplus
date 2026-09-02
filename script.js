@@ -86,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Colección de fotos secundarias para simular galería real
     const sampleGalleries = [
         [
             "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
@@ -828,7 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
 
     // ==========================================
-    // 5. MOTOR DE FILTRADO Y AMENITIES CONTEXTUALES
+    // 5. MOTOR DE FILTRADO Y LISTENERS BLINDADOS
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
@@ -856,9 +855,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
 
-    const opTags = document.querySelectorAll('#filter-operation-tags .op-tag');
+    // Control de Tags de Operación
     let selectedOperation = "";
-
+    const opTags = document.querySelectorAll('#filter-operation-tags .tag-filter-btn');
     opTags.forEach(tag => {
         tag.addEventListener('click', () => {
             opTags.forEach(t => t.classList.remove('active'));
@@ -872,6 +871,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (containerFilterPets) containerFilterPets.style.display = 'flex';
             }
 
+            renderProperties();
+        });
+    });
+
+    // Control de Tags de Tipo de Inmueble (Arreglado)
+    let selectedCategory = "";
+    const catTags = document.querySelectorAll('#filter-category-tags .tag-filter-btn');
+    catTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            catTags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            selectedCategory = tag.getAttribute('data-val');
             renderProperties();
         });
     });
@@ -964,11 +975,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPillGroup('filter-baths-pills');
     setupPillGroup('filter-parking-pills');
 
-    function getSelectedFacet(name) {
-        const checked = document.querySelector(`input[name="${name}"]:checked`);
-        return checked ? checked.value : '';
-    }
-
     function renderProperties() {
         if (!grid) return;
 
@@ -976,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const valCountry = filterCountry.value;
         const valSubdiv = filterSubdivision.value;
         const valCity = filterCity.value;
-        const valType = getSelectedFacet('facet-type');
+        const valType = selectedCategory;
         const valOp = selectedOperation;
 
         const minPrice = filterMinPrice && filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
@@ -1005,14 +1011,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesSearch = !valSearch || 
                 prop.address.toLowerCase().includes(valSearch) || 
                 prop.category.toLowerCase().includes(valSearch) ||
-                (prop.city && prop.city.toLowerCase().includes(valSearch));
+                (prop.city && prop.city.toLowerCase().includes(valSearch)) ||
+                (prop.subdivision && prop.subdivision.toLowerCase().includes(valSearch));
 
             const matchesCountry = !valCountry || prop.country === valCountry;
             const matchesSubdiv = !valSubdiv || prop.subdivision === valSubdiv;
             const matchesCity = !valCity || prop.city === valCity;
 
-            const matchesType = !valType || prop.category === valType;
-            const matchesOp = !valOp || prop.type === valOp;
+            const matchesType = !valType || prop.category.toLowerCase() === valType.toLowerCase();
+            const matchesOp = !valOp || prop.type.toLowerCase() === valOp.toLowerCase();
             const matchesPrice = prop.price >= minPrice && prop.price <= maxPrice;
 
             const matchesBeds = prop.beds >= minBeds;
@@ -1039,7 +1046,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos criterios.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
@@ -1100,12 +1107,14 @@ document.addEventListener('DOMContentLoaded', () => {
             filterCityContainer.style.display = 'none';
 
             opTags.forEach(t => t.classList.remove('active'));
-            document.querySelector('#filter-operation-tags .op-tag[data-val=""]').classList.add('active');
+            document.querySelector('#filter-operation-tags .tag-filter-btn[data-val=""]').classList.add('active');
             selectedOperation = "";
-            if (containerFilterPets) containerFilterPets.style.display = 'flex';
 
-            const defaultType = document.querySelector('input[name="facet-type"][value=""]');
-            if (defaultType) defaultType.checked = true;
+            catTags.forEach(t => t.classList.remove('active'));
+            document.querySelector('#filter-category-tags .tag-filter-btn[data-val=""]').classList.add('active');
+            selectedCategory = "";
+
+            if (containerFilterPets) containerFilterPets.style.display = 'flex';
 
             [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
             [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
@@ -1204,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeDetailsBottomBtn) closeDetailsBottomBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 7. MOTOR DE MATCHING INTELIGENTE PARA LEADS
+    // 7. MOTOR DE MATCHING INTELIGENTE
     // ==========================================
     function findMatchingPropertiesForLead(lead) {
         const intentText = (lead.intent + ' ' + lead.budget).toLowerCase();
@@ -1222,11 +1231,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (intentText.includes('4 hab') && prop.beds < 4) matchesBeds = false;
 
             return (matchesCat || matchesOp) && matchesBeds;
-        }).slice(0, 4); // Tomar los mejores 4 matches
+        }).slice(0, 4);
     }
 
     // ==========================================
-    // 8. KANBAN LEADS & DRAWER LATERAL
+    // 8. KANBAN LEADS & DRAWER
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1243,7 +1252,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
     let isDragging = false;
 
-    // Elementos del Drawer
     const leadDrawer = document.getElementById('lead-drawer');
     const drawerBackdrop = document.getElementById('drawer-backdrop');
     const closeLeadDrawerBtn = document.getElementById('close-lead-drawer-btn');
@@ -1291,7 +1299,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // Eventos de Drag & Drop
                 card.addEventListener('dragstart', () => {
                     isDragging = true;
                     draggedCard = card;
@@ -1308,11 +1315,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 0);
                 });
 
-                // Clic para abrir el Drawer (solo si no se estaba arrastrando)
                 card.addEventListener('click', () => {
-                    if (!isDragging) {
-                        openLeadDrawer(lead.id);
-                    }
+                    if (!isDragging) openLeadDrawer(lead.id);
                 });
 
                 targetCol.appendChild(card);
@@ -1338,7 +1342,6 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerLeadPhone.textContent = lead.phone || '+58 414-0000000';
         drawerLeadNotes.value = lead.notes || '';
 
-        // Calcular y renderizar propiedades compatibles (Matching)
         const matches = findMatchingPropertiesForLead(lead);
         drawerMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia' : 'coincidencias'}`;
         drawerMatchesList.innerHTML = '';
@@ -1363,7 +1366,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // WhatsApp direct link
         drawerWhatsAppBtn.onclick = () => {
             const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
             const msg = `Hola ${lead.name}, te contacto de InmoCRM respecto a tu búsqueda de inmueble: "${lead.intent}". ¿Cómo estás?`;
