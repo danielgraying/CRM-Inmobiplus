@@ -1,12 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 1. DATOS INICIALES (LOCALSTORAGE)
+    // 1. MODO OSCURO (THEME SWITCHER)
+    // ==========================================
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const currentTheme = localStorage.getItem('inmo_theme') || 'light';
+
+    if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (darkModeToggle) darkModeToggle.checked = true;
+    }
+
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('inmo_theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('inmo_theme', 'light');
+            }
+        });
+    }
+
+    // ==========================================
+    // 2. DATOS INICIALES (LOCALSTORAGE)
     // ==========================================
     const defaultProperties = [
         {
             id: 1,
             category: "Apartamento",
-            price: "$120,000",
+            price: 120000,
             address: "Av. Principal, Sector Norte",
             beds: 3,
             baths: 2,
@@ -16,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 2,
             category: "Casa",
-            price: "$850 / mes",
+            price: 850,
             address: "Residencias El Bosque, Torre B",
             beds: 2,
             baths: 2,
@@ -55,32 +78,52 @@ document.addEventListener('DOMContentLoaded', () => {
     let properties = JSON.parse(localStorage.getItem('inmo_properties')) || defaultProperties;
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
 
+    // Normalizar formato de precios antiguos si existieran como strings
+    properties.forEach(p => {
+        if (typeof p.price === 'string') {
+            p.price = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
+        }
+    });
+
+    function formatCurrency(val, type) {
+        return `$${Number(val).toLocaleString('en-US')}${type === 'Alquiler' ? ' / mes' : ''}`;
+    }
+
     // ==========================================
-    // 2. RENDER Y FILTRADO DE PROPIEDADES
+    // 3. BUSCADOR GLOBAL & FILTROS DE PROPIEDADES
     // ==========================================
+    const globalSearch = document.getElementById('global-search');
     const grid = document.getElementById('property-grid');
     const filterType = document.getElementById('filter-property-type');
     const filterOp = document.getElementById('filter-operation');
     const filterBeds = document.getElementById('filter-beds');
+    const filterMaxPrice = document.getElementById('filter-max-price');
     const btnClearFilters = document.getElementById('btn-clear-filters');
 
     function renderProperties() {
         if (!grid) return;
 
+        const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
         const valType = filterType.value;
         const valOp = filterOp.value;
         const valBeds = filterBeds.value ? parseInt(filterBeds.value, 10) : 0;
+        const valMaxPrice = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
 
         const filtered = properties.filter(prop => {
+            const matchesSearch = !valSearch || 
+                prop.address.toLowerCase().includes(valSearch) || 
+                prop.category.toLowerCase().includes(valSearch);
             const matchesType = !valType || prop.category === valType;
             const matchesOp = !valOp || prop.type === valOp;
             const matchesBeds = !valBeds || parseInt(prop.beds, 10) >= valBeds;
-            return matchesType && matchesOp && matchesBeds;
+            const matchesPrice = isNaN(valMaxPrice) || prop.price <= valMaxPrice;
+
+            return matchesSearch && matchesType && matchesOp && matchesBeds && matchesPrice;
         });
 
         grid.innerHTML = '';
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">No se encontraron inmuebles con estos filtros.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">No se encontraron inmuebles coincidentes.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
@@ -91,11 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-media">
                         <span class="status-badge ${badgeClass}">En ${prop.type}</span>
                         <span class="category-tag">${prop.category || 'Inmueble'}</span>
-                        <div class="photo-placeholder" style="background-color: ${isVenta ? '#94a3b8' : '#cbd5e1'};"></div>
+                        <div class="photo-placeholder" style="background-color: ${isVenta ? '#64748b' : '#94a3b8'};"></div>
                     </div>
                     <div class="card-body">
                         <div class="card-header">
-                            <h3 class="property-price">${prop.price}</h3>
+                            <h3 class="property-price">${formatCurrency(prop.price, prop.type)}</h3>
                             <p class="property-address">${prop.address}</p>
                         </div>
                         <div class="property-specs">
@@ -105,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-secondary">Ver Ficha</button>
-                        <button class="btn-whatsapp" onclick="sendWhatsApp('${encodeURIComponent(prop.address)}', '${prop.price}')">Enviar 💬</button>
+                        <button class="btn-secondary" onclick="viewPropertyDetails(${prop.id})">Ver Ficha</button>
+                        <button class="btn-whatsapp" onclick="sendWhatsApp('${encodeURIComponent(prop.address)}', '${formatCurrency(prop.price, prop.type)}')">Enviar 💬</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -116,22 +159,94 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardKPIs();
     }
 
-    [filterType, filterOp, filterBeds].forEach(el => el.addEventListener('change', renderProperties));
-
-    btnClearFilters.addEventListener('click', () => {
-        filterType.value = '';
-        filterOp.value = '';
-        filterBeds.value = '';
-        renderProperties();
+    [filterType, filterOp, filterBeds, filterMaxPrice].forEach(el => {
+        if (el) el.addEventListener('input', renderProperties);
     });
 
+    if (btnClearFilters) {
+        btnClearFilters.addEventListener('click', () => {
+            filterType.value = '';
+            filterOp.value = '';
+            filterBeds.value = '';
+            filterMaxPrice.value = '';
+            if (globalSearch) globalSearch.value = '';
+            renderProperties();
+        });
+    }
+
+    // Buscador global en tiempo real (reacciona según la pantalla activa)
+    if (globalSearch) {
+        globalSearch.addEventListener('input', () => {
+            const activeNav = document.querySelector('.nav-item.active');
+            const currentView = activeNav ? activeNav.getAttribute('data-target') : '';
+            if (currentView === 'view-inventory') {
+                renderProperties();
+            } else if (currentView === 'view-leads') {
+                renderLeads();
+            }
+        });
+    }
+
     window.sendWhatsApp = (address, price) => {
-        const text = `Hola, te comparto la ficha de esta propiedad disponible: ${decodeURIComponent(address)} - Precio: ${price}`;
+        const text = `Hola, te comparto la información de esta propiedad: ${decodeURIComponent(address)} - Precio: ${price}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     };
 
     // ==========================================
-    // 3. RENDER Y DRAG & DROP DE LEADS
+    // 4. MODAL: VER FICHA EN DETALLE
+    // ==========================================
+    const detailsModal = document.getElementById('details-modal');
+    const detailContent = document.getElementById('detail-content');
+    const detailWhatsAppBtn = document.getElementById('detail-whatsapp-btn');
+    const closeDetailsModalBtn = document.getElementById('close-details-modal-btn');
+    const closeDetailsBottomBtn = document.getElementById('close-details-bottom-btn');
+
+    window.viewPropertyDetails = (id) => {
+        const prop = properties.find(p => p.id === id);
+        if (!prop) return;
+
+        const formattedPrice = formatCurrency(prop.price, prop.type);
+        detailContent.innerHTML = `
+            <h4 style="font-size: 1.2rem; color: var(--primary-color); margin-bottom: 4px;">${formattedPrice}</h4>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">${prop.address}</p>
+            <div class="detail-meta-grid">
+                <div class="detail-meta-item">
+                    <strong>Tipo</strong>
+                    <span>${prop.category}</span>
+                </div>
+                <div class="detail-meta-item">
+                    <strong>Operación</strong>
+                    <span>${prop.type}</span>
+                </div>
+                <div class="detail-meta-item">
+                    <strong>Habitaciones</strong>
+                    <span>${prop.beds}</span>
+                </div>
+                <div class="detail-meta-item">
+                    <strong>Baños</strong>
+                    <span>${prop.baths}</span>
+                </div>
+                <div class="detail-meta-item">
+                    <strong>Área Construida</strong>
+                    <span>${prop.sqm} m²</span>
+                </div>
+                <div class="detail-meta-item">
+                    <strong>Estado</strong>
+                    <span style="color: #10b981;">Disponible</span>
+                </div>
+            </div>
+        `;
+
+        detailWhatsAppBtn.onclick = () => sendWhatsApp(encodeURIComponent(prop.address), formattedPrice);
+        detailsModal.style.display = 'flex';
+    };
+
+    function closeDetailsModal() { detailsModal.style.display = 'none'; }
+    if (closeDetailsModalBtn) closeDetailsModalBtn.addEventListener('click', closeDetailsModal);
+    if (closeDetailsBottomBtn) closeDetailsBottomBtn.addEventListener('click', closeDetailsModal);
+
+    // ==========================================
+    // 5. RENDER Y DRAG & DROP DE LEADS
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -149,8 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeads() {
         Object.values(columnMap).forEach(col => { if (col) col.innerHTML = ''; });
+        const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
 
-        leads.forEach(lead => {
+        const filteredLeads = leads.filter(lead => {
+            return !valSearch || 
+                lead.name.toLowerCase().includes(valSearch) || 
+                lead.intent.toLowerCase().includes(valSearch) || 
+                lead.budget.toLowerCase().includes(valSearch);
+        });
+
+        filteredLeads.forEach(lead => {
             const targetCol = columnMap[lead.status] || colNew;
             if (targetCol) {
                 const card = createLeadCardElement(lead);
@@ -238,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. ACTUALIZACIÓN DEL DASHBOARD
+    // 6. DASHBOARD KPIS
     // ==========================================
     function updateDashboardKPIs() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -253,9 +376,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ==========================
-    // 5. NAVEGACIÓN ENTRE PANTALLAS (SPA)
-    // ==========================
+    // ==========================================
+    // 7. NAVEGACIÓN (SPA)
+    // ==========================================
     const navItems = document.querySelectorAll('.nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
     const mainActionBtn = document.getElementById('main-action-btn');
@@ -271,29 +394,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetView = document.getElementById(targetId);
             if (targetView) targetView.style.display = 'block';
 
+            if (globalSearch) globalSearch.value = '';
+
             if (targetId === 'view-inventory') {
                 mainActionBtn.textContent = '+ Nueva Propiedad';
                 mainActionBtn.style.display = 'block';
+                renderProperties();
             } else if (targetId === 'view-leads') {
                 mainActionBtn.textContent = '+ Nuevo Lead';
                 mainActionBtn.style.display = 'block';
+                renderLeads();
             } else if (targetId === 'view-dashboard') {
-                mainActionBtn.textContent = 'Descargar Reporte';
+                mainActionBtn.textContent = 'Descargar Backup';
                 mainActionBtn.style.display = 'block';
+            } else if (targetId === 'view-settings') {
+                mainActionBtn.style.display = 'none';
             }
         });
     });
 
     // ==========================================
-    // 6. MODALES Y FORMULARIOS
+    // 8. MODALES Y FORMULARIOS
     // ==========================================
-    // Modal Inmuebles
     const propModal = document.getElementById('property-modal');
     const closePropModal = document.getElementById('close-modal-btn');
     const cancelPropModal = document.getElementById('cancel-modal-btn');
     const propForm = document.getElementById('property-form');
 
-    // Modal Leads
     const leadModal = document.getElementById('lead-modal');
     const closeLeadModal = document.getElementById('close-lead-modal-btn');
     const cancelLeadModal = document.getElementById('cancel-lead-modal-btn');
@@ -306,12 +433,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formEl) formEl.reset();
     }
 
-    // Botón superior dinámico
     mainActionBtn.addEventListener('click', () => {
         const activeNav = document.querySelector('.nav-item.active');
         const target = activeNav ? activeNav.getAttribute('data-target') : '';
         if (target === 'view-inventory') openModal(propModal);
         else if (target === 'view-leads') openModal(leadModal);
+        else if (target === 'view-dashboard') exportDatabase();
     });
 
     if (btnOpenLeadModal) btnOpenLeadModal.addEventListener('click', () => openModal(leadModal));
@@ -322,11 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
     closeLeadModal.addEventListener('click', () => closeModal(leadModal, leadForm));
     cancelLeadModal.addEventListener('click', () => closeModal(leadModal, leadForm));
 
-    // Submit Inmueble
     propForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        let rawPrice = document.getElementById('prop-price').value.trim();
-        if (!rawPrice.startsWith('$')) rawPrice = '$' + rawPrice;
+        const rawPrice = parseFloat(document.getElementById('prop-price').value) || 0;
 
         const newProp = {
             id: Date.now(),
@@ -334,9 +459,9 @@ document.addEventListener('DOMContentLoaded', () => {
             address: document.getElementById('prop-address').value.trim(),
             price: rawPrice,
             type: document.getElementById('prop-type').value,
-            beds: document.getElementById('prop-beds').value,
-            baths: document.getElementById('prop-baths').value,
-            sqm: document.getElementById('prop-sqm').value
+            beds: parseInt(document.getElementById('prop-beds').value, 10) || 0,
+            baths: parseInt(document.getElementById('prop-baths').value, 10) || 0,
+            sqm: parseInt(document.getElementById('prop-sqm').value, 10) || 0
         };
 
         properties.push(newProp);
@@ -345,7 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal(propModal, propForm);
     });
 
-    // Submit Lead
     leadForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const newLead = {
@@ -363,7 +487,58 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal(leadModal, leadForm);
     });
 
-    // Inicializar renders
+    // ==========================================
+    // 9. EXPORTAR / IMPORTAR BASE DE DATOS (JSON)
+    // ==========================================
+    const btnExportJson = document.getElementById('btn-export-json');
+    const importJsonInput = document.getElementById('import-json-input');
+
+    function exportDatabase() {
+        const data = {
+            inmo_properties: properties,
+            inmo_leads: leads,
+            exported_at: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `inmocrm_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    if (btnExportJson) btnExportJson.addEventListener('click', exportDatabase);
+
+    if (importJsonInput) {
+        importJsonInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.inmo_properties && parsed.inmo_leads) {
+                        properties = parsed.inmo_properties;
+                        leads = parsed.inmo_leads;
+                        localStorage.setItem('inmo_properties', JSON.stringify(properties));
+                        localStorage.setItem('inmo_leads', JSON.stringify(leads));
+                        renderProperties();
+                        renderLeads();
+                        alert('¡Base de datos importada correctamente!');
+                    } else {
+                        alert('El archivo no contiene un formato válido de InmoCRM.');
+                    }
+                } catch (err) {
+                    alert('Error al leer el archivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // Inicializar vistas
     renderProperties();
     renderLeads();
 });
