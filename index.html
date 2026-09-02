@@ -15,14 +15,14 @@
                 <a href="#" class="nav-item" data-target="view-dashboard">Dashboard</a>
                 <a href="#" class="nav-item active" data-target="view-inventory">Propiedades</a>
                 <a href="#" class="nav-item" data-target="view-leads">Leads</a>
-                <a href="#" class="nav-item">Configuración</a>
+                <a href="#" class="nav-item" data-target="view-settings">Configuración</a>
             </nav>
         </aside>
 
         <!-- Espacio de Trabajo -->
         <main class="main-content">
             <header class="topbar">
-                <input type="text" placeholder="Buscar propiedades o clientes..." class="search-bar" id="global-search">
+                <input type="text" placeholder="Buscar en la sección actual..." class="search-bar" id="global-search">
                 <button class="btn-primary" id="main-action-btn">+ Nueva Propiedad</button>
             </header>
 
@@ -42,7 +42,7 @@
                         <div class="kpi-card">
                             <h3>Leads en Pipeline</h3>
                             <p class="kpi-value" id="kpi-leads-count">0</p>
-                            <span class="kpi-trend positive">↑ Total clientes</span>
+                            <span class="kpi-trend positive">↑ Total prospectos</span>
                         </div>
                         <div class="kpi-card">
                             <h3>Visitas Programadas</h3>
@@ -76,6 +76,7 @@
                                 <option value="3">3+ Habs</option>
                                 <option value="4">4+ Habs</option>
                             </select>
+                            <input type="number" id="filter-max-price" class="filter-input" placeholder="Precio máx ($)">
                             <button class="btn-text" id="btn-clear-filters">Borrar filtros</button>
                         </div>
                     </div>
@@ -105,6 +106,40 @@
                         <div class="kanban-column" data-status="offer">
                             <div class="column-header"><h3>Ofertas / Negociación</h3><span class="count-badge">0</span></div>
                             <div class="column-content" id="col-offer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISTA 3: CONFIGURACIÓN -->
+                <div id="view-settings" class="view-section" style="display: none;">
+                    <div class="inventory-header">
+                        <h2>Configuración</h2>
+                    </div>
+                    <div class="settings-container">
+                        <div class="settings-card">
+                            <h3>Personalización Visual</h3>
+                            <div class="setting-item">
+                                <div>
+                                    <strong>Modo Oscuro</strong>
+                                    <p class="setting-desc">Ajusta el contraste para trabajar en entornos con baja iluminación.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="dark-mode-toggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Copia de Seguridad y Datos</h3>
+                            <p class="setting-desc">Exporta todos los datos guardados (propiedades y leads) en un archivo JSON o restaura un respaldo previo.</p>
+                            <div class="settings-actions">
+                                <button class="btn-secondary" id="btn-export-json">Exportar Datos (.json)</button>
+                                <label class="btn-primary" style="margin: 0; cursor: pointer;">
+                                    Importar Datos
+                                    <input type="file" id="import-json-input" accept=".json" style="display: none;">
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,8 +180,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Precio ($)</label>
-                        <input type="text" id="prop-price" placeholder="Ej. $95,000" required>
+                        <label>Precio Numérico ($)</label>
+                        <input type="number" id="prop-price" placeholder="Ej. 95000" min="0" step="any" required>
                     </div>
                 </div>
                 <div class="form-row-3">
@@ -207,6 +242,23 @@
                     <button type="submit" class="btn-primary">Guardar Lead</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: VER FICHA DETALLE -->
+    <div class="modal-backdrop" id="details-modal">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h3 id="detail-title">Ficha de la Propiedad</h3>
+                <button class="modal-close" id="close-details-modal-btn">✕</button>
+            </div>
+            <div class="details-body" id="detail-content">
+                <!-- Inyectado dinámicamente -->
+            </div>
+            <div class="modal-actions" style="margin-top: 24px;">
+                <button type="button" class="btn-secondary" id="close-details-bottom-btn">Cerrar</button>
+                <button type="button" class="btn-whatsapp" id="detail-whatsapp-btn">Compartir WhatsApp 💬</button>
+            </div>
         </div>
     </div>
 
