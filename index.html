@@ -8,179 +8,98 @@
 </head>
 <body>
     <div class="crm-layout">
-        <!-- Barra Lateral (Navegación) -->
+        <!-- Barra Lateral -->
         <aside class="sidebar">
             <div class="logo">InmoCRM</div>
             <nav class="nav-menu">
                 <a href="#" class="nav-item">Dashboard</a>
-                <a href="#" class="nav-item active">Propiedades</a>
-                <a href="#" class="nav-item">Leads</a>
+                <a href="#" class="nav-item active" data-target="view-inventory">Propiedades</a>
+                <a href="#" class="nav-item" data-target="view-leads">Leads</a>
                 <a href="#" class="nav-item">Configuración</a>
             </nav>
         </aside>
 
-        <!-- Espacio de Trabajo Principal -->
+        <!-- Espacio de Trabajo -->
         <main class="main-content">
-            <!-- Barra Superior -->
             <header class="topbar">
                 <input type="text" placeholder="Buscar propiedades o clientes..." class="search-bar">
-                <button class="btn-primary">+ Nueva Propiedad</button>
+                <button class="btn-primary" id="main-action-btn">+ Nueva Propiedad</button>
             </header>
 
-            <!-- Área de Contenido Dinámico (Inventario inyectado aquí) -->
-            <div class="kanban-header">
-    <h2>Pipeline de Leads</h2>
-    <button class="btn-primary">+ Nuevo Lead</button>
-</div>
-
-<div class="kanban-board">
-    
-    <div class="kanban-column">
-        <div class="column-header">
-            <h3>Nuevos</h3>
-            <span class="count-badge">2</span>
-        </div>
-        <div class="column-content">
-            <div class="lead-card" draggable="true">
-                <div class="lead-header">
-                    <h4>Carlos Mendoza</h4>
-                    <span class="time-tag">Hace 2h</span>
-                </div>
-                <p class="lead-intent">Busca apto 2 habs - Zona Norte</p>
-                <div class="lead-footer">
-                    <span class="budget-tag">$80k - $100k</span>
-                </div>
-            </div>
-            
-            <div class="lead-card" draggable="true">
-                <div class="lead-header">
-                    <h4>Ana Silva</h4>
-                    <span class="time-tag">Hace 5h</span>
-                </div>
-                <p class="lead-intent">Alquiler casa c/ patio</p>
-                <div class="lead-footer">
-                    <span class="budget-tag">Hasta $900/mes</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="kanban-column">
-        <div class="column-header">
-            <h3>Contactados</h3>
-            <span class="count-badge">1</span>
-        </div>
-        <div class="column-content">
-            <div class="lead-card" draggable="true">
-                <div class="lead-header">
-                    <h4>Luis Pérez</h4>
-                    <span class="time-tag">Ayer</span>
-                </div>
-                <p class="lead-intent">Interesado en Res. El Bosque</p>
-                <div class="lead-footer">
-                    <span class="budget-tag">Pre-aprobado</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="kanban-column">
-        <div class="column-header">
-            <h3>Visitas Programadas</h3>
-            <span class="count-badge">0</span>
-        </div>
-        <div class="column-content">
-            </div>
-    </div>
-
-    <div class="kanban-column">
-        <div class="column-header">
-            <h3>Ofertas / Negociación</h3>
-            <span class="count-badge">0</span>
-        </div>
-        <div class="column-content">
-        </div>
-    </div>
-    
-</div>
+            <div class="content-area" id="app-content">
                 
-                <!-- Cabecera del Inventario y Filtros -->
-                <div class="inventory-header">
-                    <h2>Inventario de Propiedades</h2>
-                    <div class="filters-bar">
-                        <select class="filter-select">
-                            <option value="">Tipo de Inmueble</option>
-                            <option value="casa">Casa</option>
-                            <option value="apartamento">Apartamento</option>
-                        </select>
-                        <select class="filter-select">
-                            <option value="">Operación</option>
-                            <option value="venta">Venta</option>
-                            <option value="alquiler">Alquiler</option>
-                        </select>
-                        <select class="filter-select">
-                            <option value="">Habitaciones</option>
-                            <option value="1">1+</option>
-                            <option value="2">2+</option>
-                            <option value="3">3+</option>
-                        </select>
-                        <button class="btn-text">Borrar filtros</button>
+                <!-- VISTA 1: INVENTARIO -->
+                <div id="view-inventory" class="view-section">
+                    <div class="inventory-header">
+                        <h2>Inventario de Propiedades</h2>
+                        <div class="filters-bar">
+                            <select class="filter-select"><option>Tipo de Inmueble</option></select>
+                            <select class="filter-select"><option>Operación</option></select>
+                            <select class="filter-select"><option>Habitaciones</option></select>
+                            <button class="btn-text">Borrar filtros</button>
+                        </div>
+                    </div>
+                    <div class="property-grid">
+                        <article class="property-card">
+                            <div class="card-media"><span class="status-badge status-active">En Venta</span><div class="photo-placeholder"></div></div>
+                            <div class="card-body">
+                                <div class="card-header"><h3 class="property-price">$120,000</h3><p class="property-address">Av. Principal, Sector Norte</p></div>
+                                <div class="property-specs"><div class="spec-item"><span>🛏️</span> 3 Hab</div><div class="spec-item"><span>🛁</span> 2 Baños</div><div class="spec-item"><span>📐</span> 150m²</div></div>
+                            </div>
+                            <div class="card-actions"><button class="btn-secondary">Ver Ficha</button><button class="btn-whatsapp">Enviar 💬</button></div>
+                        </article>
+                        <article class="property-card">
+                            <div class="card-media"><span class="status-badge status-rent">Alquiler</span><div class="photo-placeholder" style="background-color: #cbd5e1;"></div></div>
+                            <div class="card-body">
+                                <div class="card-header"><h3 class="property-price">$850 / mes</h3><p class="property-address">Residencias El Bosque, Torre B</p></div>
+                                <div class="property-specs"><div class="spec-item"><span>🛏️</span> 2 Hab</div><div class="spec-item"><span>🛁</span> 2 Baños</div><div class="spec-item"><span>📐</span> 85m²</div></div>
+                            </div>
+                            <div class="card-actions"><button class="btn-secondary">Ver Ficha</button><button class="btn-whatsapp">Enviar 💬</button></div>
+                        </article>
                     </div>
                 </div>
 
-                <!-- Grilla de Tarjetas de Propiedades -->
-                <div class="property-grid">
-                    
-                    <!-- Tarjeta de Propiedad 1 -->
-                    <article class="property-card">
-                        <div class="card-media">
-                            <span class="status-badge status-active">En Venta</span>
-                            <div class="photo-placeholder"></div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-header">
-                                <h3 class="property-price">$120,000</h3>
-                                <p class="property-address">Av. Principal, Sector Norte</p>
+                <!-- VISTA 2: LEADS (KANBAN) -->
+                <div id="view-leads" class="view-section" style="display: none;">
+                    <div class="kanban-header">
+                        <h2>Pipeline de Leads</h2>
+                    </div>
+                    <div class="kanban-board">
+                        <div class="kanban-column">
+                            <div class="column-header"><h3>Nuevos</h3><span class="count-badge">2</span></div>
+                            <div class="column-content">
+                                <div class="lead-card" draggable="true">
+                                    <div class="lead-header"><h4>Carlos Mendoza</h4><span class="time-tag">Hace 2h</span></div>
+                                    <p class="lead-intent">Busca apto 2 habs - Zona Norte</p>
+                                    <div class="lead-footer"><span class="budget-tag">$80k - $100k</span></div>
+                                </div>
+                                <div class="lead-card" draggable="true">
+                                    <div class="lead-header"><h4>Ana Silva</h4><span class="time-tag">Hace 5h</span></div>
+                                    <p class="lead-intent">Alquiler casa c/ patio</p>
+                                    <div class="lead-footer"><span class="budget-tag">Hasta $900/mes</span></div>
+                                </div>
                             </div>
-                            <div class="property-specs">
-                                <div class="spec-item"><span>🛏️</span> 3 Hab</div>
-                                <div class="spec-item"><span>🛁</span> 2 Baños</div>
-                                <div class="spec-item"><span>📐</span> 150m²</div>
+                        </div>
+                        <div class="kanban-column">
+                            <div class="column-header"><h3>Contactados</h3><span class="count-badge">1</span></div>
+                            <div class="column-content">
+                                <div class="lead-card" draggable="true">
+                                    <div class="lead-header"><h4>Luis Pérez</h4><span class="time-tag">Ayer</span></div>
+                                    <p class="lead-intent">Interesado en Res. El Bosque</p>
+                                    <div class="lead-footer"><span class="budget-tag">Pre-aprobado</span></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-actions">
-                            <button class="btn-secondary">Ver Ficha</button>
-                            <button class="btn-whatsapp">Enviar a Lead 💬</button>
+                        <div class="kanban-column">
+                            <div class="column-header"><h3>Visitas Programadas</h3><span class="count-badge">0</span></div>
+                            <div class="column-content"></div>
                         </div>
-                    </article>
+                    </div>
+                </div>
 
-                    <!-- Tarjeta de Propiedad 2 -->
-                    <article class="property-card">
-                        <div class="card-media">
-                            <span class="status-badge status-rent">Alquiler</span>
-                            <div class="photo-placeholder" style="background-color: #cbd5e1;"></div>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-header">
-                                <h3 class="property-price">$850 / mes</h3>
-                                <p class="property-address">Residencias El Bosque, Torre B</p>
-                            </div>
-                            <div class="property-specs">
-                                <div class="spec-item"><span>🛏️</span> 2 Hab</div>
-                                <div class="spec-item"><span>🛁</span> 2 Baños</div>
-                                <div class="spec-item"><span>📐</span> 85m²</div>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-secondary">Ver Ficha</button>
-                            <button class="btn-whatsapp">Enviar a Lead 💬</button>
-                        </div>
-                    </article>
-                    
-                </div> <!-- Fin de property-grid -->
-
-            </div> <!-- Fin de content-area -->
+            </div>
         </main>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
