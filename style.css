@@ -199,9 +199,7 @@ body {
     z-index: 140;
 }
 
-.drawer-backdrop {
-    z-index: 180;
-}
+.drawer-backdrop { z-index: 180; }
 
 /* =======================================================
    2. TOPBAR & WORKSPACE
@@ -432,7 +430,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO & FILTROS
+   5. INVENTARIO & FILTROS (TAGS UNIFORMES)
    ======================================================= */
 .nested-view-layout {
     display: flex;
@@ -467,14 +465,15 @@ body {
     letter-spacing: 0.5px;
 }
 
-.operation-tags-group {
+/* GRUPO DE TAGS PARA OPERACIÓN Y TIPO DE INMUEBLE */
+.tags-flex-group {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
 }
 
-.op-tag {
-    flex: 1;
-    padding: 7px 10px;
+.tag-filter-btn {
+    padding: 6px 10px;
     background-color: var(--bg-app);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -482,12 +481,15 @@ body {
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    text-align: center;
     transition: all 0.15s;
+    user-select: none;
 }
 
-.op-tag:hover { border-color: var(--brand-green); }
-.op-tag.active {
+.tag-filter-btn:hover {
+    border-color: var(--brand-green);
+}
+
+.tag-filter-btn.active {
     background-color: var(--brand-green);
     color: white;
     border-color: var(--brand-green);
@@ -518,35 +520,6 @@ body {
 }
 
 .facet-select:focus { border-color: var(--brand-green); }
-
-.facets-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.facet-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.facet-option input { display: none; }
-
-.facet-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #cbd5e1;
-}
-
-.facet-option input:checked + .facet-dot {
-    background-color: var(--brand-green);
-    box-shadow: 0 0 0 2px var(--brand-green-light);
-}
 
 .price-histogram-card {
     background-color: var(--bg-app);
@@ -878,7 +851,7 @@ body {
 }
 
 /* =======================================================
-   6. LEADS (KANBAN) & AJUSTES
+   6. LEADS (KANBAN)
    ======================================================= */
 .leads-layout {
     padding: 24px 32px;
@@ -995,7 +968,7 @@ body {
 }
 
 /* =======================================================
-   7. LEAD DRAWER (PANEL LATERAL CON MATCHING)
+   7. LEAD DRAWER
    ======================================================= */
 .lead-drawer {
     position: fixed;
@@ -1014,9 +987,7 @@ body {
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.lead-drawer.open {
-    transform: translateX(0);
-}
+.lead-drawer.open { transform: translateX(0); }
 
 .lead-drawer-header {
     padding: 20px 24px;
@@ -1191,7 +1162,7 @@ body {
 }
 
 /* =======================================================
-   8. GALERÍA MULTIMEDIA (FICHA DE PROPIEDAD)
+   8. GALERÍA MULTIMEDIA
    ======================================================= */
 .gallery-container {
     display: flex;
@@ -1449,19 +1420,6 @@ input:checked + .slider:before { transform: translateX(20px); }
         padding: 12px 16px;
         gap: 12px;
         max-height: 280px;
-    }
-
-    .facets-wrapper {
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 4px;
-    }
-
-    .facet-option {
-        background-color: var(--bg-app);
-        padding: 6px 12px;
-        border-radius: 16px;
-        white-space: nowrap;
     }
 
     .nested-content-area { padding: 16px 16px 90px 16px; }
