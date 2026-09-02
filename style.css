@@ -67,7 +67,7 @@ body {
 }
 
 /* =======================================================
-   1. PRIMARY SIDEBAR
+   1. PRIMARY SIDEBAR & LOGO PLACEHOLDER
    ======================================================= */
 .primary-sidebar {
     width: 220px;
@@ -97,6 +97,19 @@ body {
     font-weight: 700;
     font-size: 0.95rem;
     cursor: pointer;
+    max-width: 170px;
+}
+
+.brand-logo-img {
+    max-height: 28px;
+    max-width: 130px;
+    object-fit: contain;
+}
+
+.brand-fallback-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .brand-icon { font-size: 1.1rem; }
@@ -311,7 +324,6 @@ body {
 
 .btn-secondary:hover { background-color: var(--bg-app); }
 
-/* BOTÓN WHATSAPP */
 .btn-whatsapp {
     background-color: #25D366;
     color: #ffffff;
@@ -325,15 +337,12 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.2s;
     text-decoration: none;
 }
 
-.btn-whatsapp:hover {
-    background-color: #20ba59;
-}
+.btn-whatsapp:hover { background-color: #20ba59; }
 
-/* BOTÓN GOOGLE CALENDAR */
 .btn-gcal {
     background-color: #ffffff;
     color: #3c4043;
@@ -348,7 +357,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: background-color 0.15s, border-color 0.15s;
+    transition: background-color 0.15s;
     box-shadow: 0 1px 2px rgba(60,64,67,0.08);
 }
 
@@ -361,6 +370,27 @@ body {
     display: inline-block;
     vertical-align: middle;
     flex-shrink: 0;
+}
+
+.btn-icon-action {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background-color: var(--bg-app);
+    transition: all 0.15s;
+}
+
+.btn-icon-action:hover {
+    border-color: var(--brand-green);
+    background-color: var(--brand-green-light);
+}
+
+.btn-icon-action.delete:hover {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 .full-width { width: 100%; }
@@ -1088,7 +1118,7 @@ body {
 .lead-drawer.open { transform: translateX(0); }
 
 .lead-drawer-header {
-    padding: 20px 24px;
+    padding: 18px 24px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
