@@ -1181,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 6. DETALLE MODAL CON GALERÍA E IMPRESIÓN
+    // 6. DETALLE MODAL CON GALERÍA Y GOOGLE MAPS
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -1196,6 +1196,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const formattedPrice = formatCurrency(prop.price, prop.type);
         const imagesList = (prop.images && prop.images.length > 0) ? prop.images : [prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
         
+        // URL integrada para Google Maps
+        const fullAddressQuery = encodeURIComponent(`${prop.address}, ${prop.city}, ${prop.subdivision}, ${prop.country}`);
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddressQuery}`;
+
         detailContent.innerHTML = `
             <div class="gallery-container">
                 <img src="${imagesList[0]}" id="gallery-active-img" class="gallery-main-img" alt="${prop.address}">
@@ -1206,9 +1210,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
+                <a href="${googleMapsUrl}" target="_blank" class="btn-gmaps-link">
+                    🗺️ Ver en Google Maps
+                </a>
+            </div>
+
             <h4 style="font-size: 1.35rem; color: var(--brand-green); margin: 4px 0;">${formattedPrice}</h4>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px;">${prop.address}</p>
+            
             <div class="detail-meta-grid">
                 <div class="detail-meta-item"><strong>Tipo</strong><span>${prop.category}</span></div>
                 <div class="detail-meta-item"><strong>Operación</strong><span>${prop.type}</span></div>
@@ -1282,20 +1293,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
     let isDragging = false;
 
-    // Elementos del Drawer
     const leadDrawer = document.getElementById('lead-drawer');
     const drawerBackdrop = document.getElementById('drawer-backdrop');
     const closeLeadDrawerBtn = document.getElementById('close-lead-drawer-btn');
     const btnToggleEditLead = document.getElementById('btn-toggle-edit-lead');
     const btnDeleteLead = document.getElementById('btn-delete-lead');
     
-    // Contenedores Vista vs Edición
     const drawerViewMode = document.getElementById('drawer-view-mode');
     const drawerEditForm = document.getElementById('drawer-edit-form');
     const drawerViewFooter = document.getElementById('drawer-view-footer');
     const btnCancelEditLead = document.getElementById('btn-cancel-edit-lead');
 
-    // Elementos de Vista
     const drawerLeadAvatar = document.getElementById('drawer-lead-avatar');
     const drawerLeadName = document.getElementById('drawer-lead-name');
     const drawerLeadTime = document.getElementById('drawer-lead-time');
@@ -1308,7 +1316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawerMatchesList = document.getElementById('drawer-matches-list');
     const drawerWhatsAppBtn = document.getElementById('drawer-whatsapp-btn');
 
-    // Inputs de Edición
     const editLeadName = document.getElementById('edit-lead-name');
     const editLeadPhone = document.getElementById('edit-lead-phone');
     const editLeadStatus = document.getElementById('edit-lead-status');
@@ -1391,14 +1398,12 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerLeadPhone.textContent = lead.phone || '+58 414-0000000';
         drawerLeadNotes.value = lead.notes || '';
 
-        // Precargar inputs de edición
         editLeadName.value = lead.name;
         editLeadPhone.value = lead.phone || '';
         editLeadStatus.value = lead.status || 'new';
         editLeadIntent.value = lead.intent;
         editLeadBudget.value = lead.budget;
 
-        // Matches
         const matches = findMatchingPropertiesForLead(lead);
         drawerMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia' : 'coincidencias'}`;
         drawerMatchesList.innerHTML = '';
@@ -1458,7 +1463,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnToggleEditLead) btnToggleEditLead.addEventListener('click', showEditMode);
     if (btnCancelEditLead) btnCancelEditLead.addEventListener('click', showViewMode);
 
-    // Guardar Edición del Lead
     drawerEditForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!currentActiveLeadId) return;
@@ -1473,18 +1477,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             saveLeadsState();
             renderLeads();
-            openLeadDrawer(lead.id); // Refrescar drawer en modo vista
+            openLeadDrawer(lead.id);
         }
     });
 
-    // Eliminar Lead
     if (btnDeleteLead) {
         btnDeleteLead.addEventListener('click', () => {
             if (!currentActiveLeadId) return;
             const lead = leads.find(l => l.id == currentActiveLeadId);
             if (lead && confirm(`¿Deseas eliminar permanentemente al prospecto "${lead.name}"?`)) {
                 leads = leads.filter(l => l.id !== currentActiveLeadId);
-                // Eliminar también visitas asociadas a este lead
                 visits = visits.filter(v => v.leadId !== currentActiveLeadId);
                 localStorage.setItem('inmo_visits', JSON.stringify(visits));
 
