@@ -28,7 +28,81 @@
             </header>
 
             <!-- Área de Contenido Dinámico (Inventario inyectado aquí) -->
-            <div class="content-area" id="app-content">
+            <div class="kanban-header">
+    <h2>Pipeline de Leads</h2>
+    <button class="btn-primary">+ Nuevo Lead</button>
+</div>
+
+<div class="kanban-board">
+    
+    <div class="kanban-column">
+        <div class="column-header">
+            <h3>Nuevos</h3>
+            <span class="count-badge">2</span>
+        </div>
+        <div class="column-content">
+            <div class="lead-card" draggable="true">
+                <div class="lead-header">
+                    <h4>Carlos Mendoza</h4>
+                    <span class="time-tag">Hace 2h</span>
+                </div>
+                <p class="lead-intent">Busca apto 2 habs - Zona Norte</p>
+                <div class="lead-footer">
+                    <span class="budget-tag">$80k - $100k</span>
+                </div>
+            </div>
+            
+            <div class="lead-card" draggable="true">
+                <div class="lead-header">
+                    <h4>Ana Silva</h4>
+                    <span class="time-tag">Hace 5h</span>
+                </div>
+                <p class="lead-intent">Alquiler casa c/ patio</p>
+                <div class="lead-footer">
+                    <span class="budget-tag">Hasta $900/mes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-column">
+        <div class="column-header">
+            <h3>Contactados</h3>
+            <span class="count-badge">1</span>
+        </div>
+        <div class="column-content">
+            <div class="lead-card" draggable="true">
+                <div class="lead-header">
+                    <h4>Luis Pérez</h4>
+                    <span class="time-tag">Ayer</span>
+                </div>
+                <p class="lead-intent">Interesado en Res. El Bosque</p>
+                <div class="lead-footer">
+                    <span class="budget-tag">Pre-aprobado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-column">
+        <div class="column-header">
+            <h3>Visitas Programadas</h3>
+            <span class="count-badge">0</span>
+        </div>
+        <div class="column-content">
+            </div>
+    </div>
+
+    <div class="kanban-column">
+        <div class="column-header">
+            <h3>Ofertas / Negociación</h3>
+            <span class="count-badge">0</span>
+        </div>
+        <div class="column-content">
+        </div>
+    </div>
+    
+</div>
                 
                 <!-- Cabecera del Inventario y Filtros -->
                 <div class="inventory-header">
