@@ -142,13 +142,14 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO -->
+                <!-- VISTA 1: INVENTARIO CON FILTROS REACTIVOS -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
+                        
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
-                            <!-- Localización -->
+                            <!-- 1. Localización LATAM -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">📍 LOCALIZACIÓN (LATAM)</span>
                                 <div class="form-group-filter">
@@ -177,48 +178,30 @@
                                 </div>
                             </div>
 
-                            <!-- Operación Comercial -->
+                            <!-- 2. Operación Comercial (Tags) -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">OPERACIÓN COMERCIAL</span>
-                                <div class="operation-tags-group" id="filter-operation-tags">
-                                    <button class="op-tag active" data-val="">Todas</button>
-                                    <button class="op-tag" data-val="Venta">Venta</button>
-                                    <button class="op-tag" data-val="Alquiler">Alquiler</button>
+                                <div class="tags-flex-group" id="filter-operation-tags">
+                                    <button class="tag-filter-btn active" data-val="">Todas</button>
+                                    <button class="tag-filter-btn" data-val="Venta">Venta</button>
+                                    <button class="tag-filter-btn" data-val="Alquiler">Alquiler</button>
                                 </div>
                             </div>
 
-                            <!-- Tipo de Inmueble -->
+                            <!-- 3. Tipo de Inmueble (Tags) -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">TIPO DE INMUEBLE</span>
-                                <div class="facets-wrapper">
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="" checked>
-                                        <span class="facet-dot"></span> Todos
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Apartamento">
-                                        <span class="facet-dot"></span> Apartamentos
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Casa">
-                                        <span class="facet-dot"></span> Casas
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Townhouse">
-                                        <span class="facet-dot"></span> Townhouse
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Local">
-                                        <span class="facet-dot"></span> Locales / Oficinas
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Terreno">
-                                        <span class="facet-dot"></span> Terrenos / Lotes
-                                    </label>
+                                <div class="tags-flex-group" id="filter-category-tags">
+                                    <button class="tag-filter-btn active" data-val="">Todos</button>
+                                    <button class="tag-filter-btn" data-val="Apartamento">Apartamento</button>
+                                    <button class="tag-filter-btn" data-val="Casa">Casa</button>
+                                    <button class="tag-filter-btn" data-val="Townhouse">Townhouse</button>
+                                    <button class="tag-filter-btn" data-val="Local">Local</button>
+                                    <button class="tag-filter-btn" data-val="Terreno">Terreno</button>
                                 </div>
                             </div>
 
-                            <!-- Rango de Precios con Histograma -->
+                            <!-- 4. Rango de Precios con Histograma -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">RANGO DE PRECIO</span>
                                 <div class="price-histogram-card">
@@ -246,7 +229,7 @@
                                 </div>
                             </div>
 
-                            <!-- Habitaciones -->
+                            <!-- 5. Habitaciones -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">HABITACIONES</span>
                                 <div class="pill-group" id="filter-beds-pills">
@@ -259,7 +242,7 @@
                                 </div>
                             </div>
 
-                            <!-- Baños -->
+                            <!-- 6. Baños -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">BAÑOS</span>
                                 <div class="pill-group" id="filter-baths-pills">
@@ -271,7 +254,7 @@
                                 </div>
                             </div>
 
-                            <!-- Estacionamientos -->
+                            <!-- 7. Estacionamientos -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
                                 <div class="pill-group" id="filter-parking-pills">
@@ -282,7 +265,7 @@
                                 </div>
                             </div>
 
-                            <!-- Metrajes -->
+                            <!-- 8. Metrajes -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
                                 <div class="facet-range-row">
@@ -301,7 +284,7 @@
                                 </div>
                             </div>
 
-                            <!-- Amenities Contextuales -->
+                            <!-- 9. Amenities Contextuales -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">CARACTERÍSTICAS & AMENITIES</span>
                                 <div class="checkbox-group">
@@ -404,9 +387,7 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             DRAWER LATERAL DE LEAD (MATCHING INTELIGENTE)
-             ========================================== -->
+        <!-- DRAWER LATERAL DE LEAD -->
         <aside class="lead-drawer" id="lead-drawer">
             <div class="lead-drawer-header">
                 <div class="drawer-user-title">
@@ -420,7 +401,6 @@
             </div>
 
             <div class="lead-drawer-body">
-                <!-- Info de Requerimientos -->
                 <div class="drawer-section">
                     <span class="drawer-label">REQUERIMIENTO PRINCIPAL</span>
                     <p class="drawer-highlight-text" id="drawer-lead-intent">Busca apto 3 habs con 2 puestos</p>
@@ -436,22 +416,18 @@
                     </div>
                 </div>
 
-                <!-- Notas Rápidas -->
                 <div class="drawer-section">
                     <span class="drawer-label">NOTAS Y SEGUIMIENTO</span>
-                    <textarea class="lead-notes-area" id="drawer-lead-notes" placeholder="Escribe notas sobre las preferencias del cliente, fechas tentativas de visita, etc..."></textarea>
+                    <textarea class="lead-notes-area" id="drawer-lead-notes" placeholder="Escribe notas sobre las preferencias del cliente..."></textarea>
                     <button class="btn-secondary full-width" id="btn-save-lead-notes" style="margin-top: 6px;">Guardar Nota</button>
                 </div>
 
-                <!-- Propiedades Compatibles (Matching) -->
                 <div class="drawer-section">
                     <div class="drawer-section-header">
                         <span class="drawer-label">PROPIEDADES SUGERIDAS (MATCHING)</span>
                         <span class="match-count-badge" id="drawer-matches-count">0 matches</span>
                     </div>
-                    <div class="drawer-matches-list" id="drawer-matches-list">
-                        <!-- Propiedades inyectadas por JS -->
-                    </div>
+                    <div class="drawer-matches-list" id="drawer-matches-list"></div>
                 </div>
             </div>
 
@@ -645,7 +621,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: VER FICHA DETALLE CON GALERÍA MULTIMEDIA -->
+    <!-- MODAL 3: VER FICHA DETALLE CON GALERÍA -->
     <div class="modal-backdrop" id="details-modal">
         <div class="modal-window" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
