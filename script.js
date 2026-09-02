@@ -33,18 +33,43 @@ document.addEventListener('DOMContentLoaded', () => {
             address: "Av. Principal, Sector Norte",
             beds: 3,
             baths: 2,
-            sqm: 150,
+            parking: 2,
+            sqmBuild: 150,
+            sqmLot: 150,
+            pool: false,
+            pets: true,
+            furnished: false,
             type: "Venta"
         },
         {
             id: 2,
             category: "Casa",
             price: 850,
-            address: "Residencias El Bosque, Torre B",
+            address: "Residencias El Bosque, Calle Los Pinos",
             beds: 2,
             baths: 2,
-            sqm: 85,
+            parking: 1,
+            sqmBuild: 85,
+            sqmLot: 200,
+            pool: true,
+            pets: true,
+            furnished: true,
             type: "Alquiler"
+        },
+        {
+            id: 3,
+            category: "Townhouse",
+            price: 240000,
+            address: "Conjunto Residencial Las Villas",
+            beds: 4,
+            baths: 3.5,
+            parking: 3,
+            sqmBuild: 280,
+            sqmLot: 350,
+            pool: true,
+            pets: true,
+            furnished: false,
+            type: "Venta"
         }
     ];
 
@@ -52,15 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: "lead_1",
             name: "Carlos Mendoza",
-            intent: "Busca apto 2 habs - Zona Norte",
-            budget: "$80k - $100k",
+            intent: "Busca apto 3 habs con 2 puestos",
+            budget: "$100k - $130k",
             status: "new",
             time: "Hace 2h"
         },
         {
             id: "lead_2",
             name: "Ana Silva",
-            intent: "Alquiler casa c/ patio",
+            intent: "Alquiler casa c/ piscina y mascotas",
             budget: "Hasta $900/mes",
             status: "new",
             time: "Hace 5h"
@@ -68,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: "lead_3",
             name: "Luis Pérez",
-            intent: "Interesado en Res. El Bosque",
+            intent: "Interesado en Townhouse en Las Villas",
             budget: "Pre-aprobado",
             status: "contacted",
             time: "Ayer"
@@ -78,10 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let properties = JSON.parse(localStorage.getItem('inmo_properties')) || defaultProperties;
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
 
+    // Normalizar formato numérico
     properties.forEach(p => {
-        if (typeof p.price === 'string') {
-            p.price = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
-        }
+        if (typeof p.price === 'string') p.price = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
+        p.beds = parseInt(p.beds, 10) || 0;
+        p.baths = parseFloat(p.baths) || 0;
+        p.parking = parseInt(p.parking, 10) || 0;
+        p.sqmBuild = parseFloat(p.sqmBuild || p.sqm) || 0;
+        p.sqmLot = parseFloat(p.sqmLot || p.sqmBuild || p.sqm) || 0;
+        p.pool = Boolean(p.pool);
+        p.pets = Boolean(p.pets);
+        p.furnished = Boolean(p.furnished);
     });
 
     function formatCurrency(val, type) {
@@ -89,12 +121,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. RENDER Y FILTROS (SUB-SIDEBAR)
+    // 3. MOTOR DE FILTRADO ZILLOW STYLE
     // ==========================================
     const grid = document.getElementById('property-grid');
+    const filteredCountBadge = document.getElementById('filtered-count-badge');
     const globalSearch = document.getElementById('global-search');
+
+    // Elementos de Filtro
+    const filterMinPrice = document.getElementById('filter-min-price');
     const filterMaxPrice = document.getElementById('filter-max-price');
+    const filterMinSqmBuild = document.getElementById('filter-min-sqm-build');
+    const filterMaxSqmBuild = document.getElementById('filter-max-sqm-build');
+    const filterMinSqmLot = document.getElementById('filter-min-sqm-lot');
+    const filterMaxSqmLot = document.getElementById('filter-max-sqm-lot');
+
+    // Checkboxes Amenities
+    const filterPool = document.getElementById('filter-pool');
+    const filterPets = document.getElementById('filter-pets');
+    const filterFurnished = document.getElementById('filter-furnished');
+
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
+
+    // Helper para obtener el valor del Pill Group activo
+    function getPillValue(containerId) {
+        const activeBtn = document.querySelector(`#${containerId} .pill-btn.active`);
+        return activeBtn ? activeBtn.getAttribute('data-val') : '';
+    }
+
+    function setupPillGroup(containerId) {
+        const buttons = document.querySelectorAll(`#${containerId} .pill-btn`);
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderProperties();
+            });
+        });
+    }
+
+    setupPillGroup('filter-beds-pills');
+    setupPillGroup('filter-baths-pills');
+    setupPillGroup('filter-parking-pills');
 
     function getSelectedFacet(name) {
         const checked = document.querySelector(`input[name="${name}"]:checked`);
@@ -107,22 +174,73 @@ document.addEventListener('DOMContentLoaded', () => {
         const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
         const valType = getSelectedFacet('facet-type');
         const valOp = getSelectedFacet('facet-op');
-        const valMaxPrice = filterMaxPrice && filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
+
+        // Precios
+        const minPrice = filterMinPrice && filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
+        const maxPrice = filterMaxPrice && filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
+
+        // Distribución
+        const bedsVal = getPillValue('filter-beds-pills');
+        const minBeds = bedsVal ? parseInt(bedsVal, 10) : 0;
+
+        const bathsVal = getPillValue('filter-baths-pills');
+        const minBaths = bathsVal ? parseFloat(bathsVal) : 0;
+
+        const parkingVal = getPillValue('filter-parking-pills');
+        const minParking = parkingVal ? parseInt(parkingVal, 10) : 0;
+
+        // Metrajes
+        const minSqmBuild = filterMinSqmBuild && filterMinSqmBuild.value ? parseFloat(filterMinSqmBuild.value) : 0;
+        const maxSqmBuild = filterMaxSqmBuild && filterMaxSqmBuild.value ? parseFloat(filterMaxSqmBuild.value) : Infinity;
+
+        const minSqmLot = filterMinSqmLot && filterMinSqmLot.value ? parseFloat(filterMinSqmLot.value) : 0;
+        const maxSqmLot = filterMaxSqmLot && filterMaxSqmLot.value ? parseFloat(filterMaxSqmLot.value) : Infinity;
+
+        // Amenities
+        const reqPool = filterPool ? filterPool.checked : false;
+        const reqPets = filterPets ? filterPets.checked : false;
+        const reqFurnished = filterFurnished ? filterFurnished.checked : false;
 
         const filtered = properties.filter(prop => {
+            // Buscador global
             const matchesSearch = !valSearch || 
                 prop.address.toLowerCase().includes(valSearch) || 
                 prop.category.toLowerCase().includes(valSearch);
+
+            // Operación y Tipo
             const matchesType = !valType || prop.category === valType;
             const matchesOp = !valOp || prop.type === valOp;
-            const matchesPrice = isNaN(valMaxPrice) || prop.price <= valMaxPrice;
 
-            return matchesSearch && matchesType && matchesOp && matchesPrice;
+            // Rango de Precios
+            const matchesPrice = prop.price >= minPrice && prop.price <= maxPrice;
+
+            // Distribución
+            const matchesBeds = prop.beds >= minBeds;
+            const matchesBaths = prop.baths >= minBaths;
+            const matchesParking = (prop.parking || 0) >= minParking;
+
+            // Superficies
+            const matchesSqmBuild = (prop.sqmBuild || 0) >= minSqmBuild && (prop.sqmBuild || 0) <= maxSqmBuild;
+            const matchesSqmLot = (prop.sqmLot || 0) >= minSqmLot && (prop.sqmLot || 0) <= maxSqmLot;
+
+            // Amenities
+            const matchesPool = !reqPool || prop.pool === true;
+            const matchesPets = !reqPets || prop.pets === true;
+            const matchesFurnished = !reqFurnished || prop.furnished === true;
+
+            return matchesSearch && matchesType && matchesOp && matchesPrice &&
+                   matchesBeds && matchesBaths && matchesParking &&
+                   matchesSqmBuild && matchesSqmLot &&
+                   matchesPool && matchesPets && matchesFurnished;
         });
 
         grid.innerHTML = '';
+        if (filteredCountBadge) {
+            filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble encontrado' : 'inmuebles encontrados'}`;
+        }
+
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 20px 0;">No se encontraron inmuebles.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades que coincidan con estos criterios de búsqueda.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
@@ -143,7 +261,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="property-specs">
                             <span>🛏️ ${prop.beds} Hab</span>
                             <span>🛁 ${prop.baths} Baños</span>
-                            <span>📐 ${prop.sqm}m²</span>
+                            <span>🚗 ${prop.parking || 0} Estac.</span>
+                            <span>📐 ${prop.sqmBuild || 0}m² const.</span>
+                        </div>
+                        <div class="card-amenities-tags">
+                            ${prop.pool ? '<span class="mini-amenity-tag">🏊‍♂️ Piscina</span>' : ''}
+                            ${prop.pets ? '<span class="mini-amenity-tag">🐾 Mascotas</span>' : ''}
+                            ${prop.furnished ? '<span class="mini-amenity-tag">🛋️ Amoblado</span>' : ''}
                         </div>
                     </div>
                     <div class="card-actions">
@@ -158,11 +282,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats();
     }
 
+    // Listeners para todos los filtros
     document.querySelectorAll('input[name="facet-type"], input[name="facet-op"]').forEach(radio => {
         radio.addEventListener('change', renderProperties);
     });
 
-    if (filterMaxPrice) filterMaxPrice.addEventListener('input', renderProperties);
+    [
+        filterMinPrice, filterMaxPrice,
+        filterMinSqmBuild, filterMaxSqmBuild,
+        filterMinSqmLot, filterMaxSqmLot
+    ].forEach(input => {
+        if (input) input.addEventListener('input', renderProperties);
+    });
+
+    [filterPool, filterPets, filterFurnished].forEach(chk => {
+        if (chk) chk.addEventListener('change', renderProperties);
+    });
 
     if (btnClearAllFilters) {
         btnClearAllFilters.addEventListener('click', () => {
@@ -170,7 +305,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const defaultOp = document.querySelector('input[name="facet-op"][value=""]');
             if (defaultType) defaultType.checked = true;
             if (defaultOp) defaultOp.checked = true;
-            if (filterMaxPrice) filterMaxPrice.value = '';
+
+            [filterMinPrice, filterMaxPrice, filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
+            [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
+
+            ['filter-beds-pills', 'filter-baths-pills', 'filter-parking-pills'].forEach(id => {
+                const btns = document.querySelectorAll(`#${id} .pill-btn`);
+                btns.forEach(b => b.classList.remove('active'));
+                const first = document.querySelector(`#${id} .pill-btn[data-val=""]`);
+                if (first) first.classList.add('active');
+            });
+
             if (globalSearch) globalSearch.value = '';
             renderProperties();
         });
@@ -212,8 +357,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-meta-item"><strong>Operación</strong><span>${prop.type}</span></div>
                 <div class="detail-meta-item"><strong>Habitaciones</strong><span>${prop.beds}</span></div>
                 <div class="detail-meta-item"><strong>Baños</strong><span>${prop.baths}</span></div>
-                <div class="detail-meta-item"><strong>Área</strong><span>${prop.sqm} m²</span></div>
+                <div class="detail-meta-item"><strong>Estacionamiento</strong><span>${prop.parking || 0} puestos</span></div>
+                <div class="detail-meta-item"><strong>Construcción</strong><span>${prop.sqmBuild || 0} m²</span></div>
+                <div class="detail-meta-item"><strong>Terreno Total</strong><span>${prop.sqmLot || 0} m²</span></div>
                 <div class="detail-meta-item"><strong>Estado</strong><span style="color: #10b981;">Disponible</span></div>
+            </div>
+            <div style="margin-top: 10px;">
+                <strong style="font-size: 0.8rem; color: var(--text-muted);">Amenities:</strong>
+                <p style="font-size: 0.88rem; margin-top: 4px;">
+                    ${[prop.pool ? 'Piscina' : null, prop.pets ? 'Acepta Mascotas' : null, prop.furnished ? 'Amoblado' : null].filter(Boolean).join(' • ') || 'Sin extras especificados'}
+                </p>
             </div>
         `;
 
@@ -385,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 8. MOBILE FAB '+' POPOVER (PandaDoc Style)
+    // 8. MOBILE FAB '+' POPOVER
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
@@ -452,8 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
             price: rawPrice,
             type: document.getElementById('prop-type').value,
             beds: parseInt(document.getElementById('prop-beds').value, 10) || 0,
-            baths: parseInt(document.getElementById('prop-baths').value, 10) || 0,
-            sqm: parseInt(document.getElementById('prop-sqm').value, 10) || 0
+            baths: parseFloat(document.getElementById('prop-baths').value) || 0,
+            parking: parseInt(document.getElementById('prop-parking').value, 10) || 0,
+            sqmBuild: parseFloat(document.getElementById('prop-sqm-build').value) || 0,
+            sqmLot: parseFloat(document.getElementById('prop-sqm-lot').value) || 0,
+            pool: document.getElementById('prop-pool').checked,
+            pets: document.getElementById('prop-pets').checked,
+            furnished: document.getElementById('prop-furnished').checked
         };
 
         properties.push(newProp);
