@@ -212,6 +212,18 @@ body {
     color: white;
 }
 
+.category-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.7);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
 .status-active { background-color: #10b981; }
 .status-rent { background-color: #f59e0b; }
 
@@ -352,6 +364,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 80px;
 }
 
 .column-content.drag-over {
@@ -458,9 +471,9 @@ body {
 .kpi-trend.positive { color: #10b981; }
 .kpi-trend.neutral { color: var(--text-muted); }
 
-/* --- MODAL (NUEVA PROPIEDAD) --- */
+/* --- MODALES --- */
 .modal-backdrop {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -504,7 +517,7 @@ body {
 
 .modal-close:hover { color: var(--text-main); }
 
-#property-form {
+#property-form, #lead-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
