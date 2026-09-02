@@ -64,7 +64,7 @@
             <header class="global-topbar">
                 <div class="search-container">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="global-search" placeholder="Buscar propiedades, leads...">
+                    <input type="text" id="global-search" placeholder="Buscar propiedades, leads, direcciones...">
                 </div>
                 <div class="topbar-right">
                     <div class="topbar-icon" title="Ayuda">❓</div>
@@ -141,38 +141,15 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO -->
+                <!-- VISTA 1: INVENTARIO CON FILTROS POTENTES TIPO ZILLOW -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
+                        
+                        <!-- SUB-SIDEBAR DE FILTROS SUPER COMPLETO -->
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
-                            <div class="sub-nav-group">
-                                <span class="sub-nav-header">TIPO DE INMUEBLE</span>
-                                <div class="facets-wrapper">
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="" checked>
-                                        <span class="facet-dot"></span> Todos
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Apartamento">
-                                        <span class="facet-dot"></span> Apartamentos
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Casa">
-                                        <span class="facet-dot"></span> Casas
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Local">
-                                        <span class="facet-dot"></span> Locales
-                                    </label>
-                                    <label class="facet-option">
-                                        <input type="radio" name="facet-type" value="Terreno">
-                                        <span class="facet-dot"></span> Terrenos
-                                    </label>
-                                </div>
-                            </div>
-
+                            <!-- 1. Operación -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">OPERACIÓN</span>
                                 <div class="facets-wrapper">
@@ -191,17 +168,133 @@
                                 </div>
                             </div>
 
+                            <!-- 2. Tipo de Inmueble -->
                             <div class="sub-nav-group">
-                                <span class="sub-nav-header">PRECIO MÁXIMO</span>
-                                <input type="number" id="filter-max-price" class="facet-input" placeholder="Ej. 100000">
+                                <span class="sub-nav-header">TIPO DE INMUEBLE</span>
+                                <div class="facets-wrapper">
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="" checked>
+                                        <span class="facet-dot"></span> Todos
+                                    </label>
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="Apartamento">
+                                        <span class="facet-dot"></span> Apartamentos
+                                    </label>
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="Casa">
+                                        <span class="facet-dot"></span> Casas
+                                    </label>
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="Townhouse">
+                                        <span class="facet-dot"></span> Townhouse
+                                    </label>
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="Local">
+                                        <span class="facet-dot"></span> Locales / Oficinas
+                                    </label>
+                                    <label class="facet-option">
+                                        <input type="radio" name="facet-type" value="Terreno">
+                                        <span class="facet-dot"></span> Terrenos / Lotes
+                                    </label>
+                                </div>
                             </div>
 
-                            <button class="btn-text-small" id="btn-clear-all-filters">Restablecer filtros</button>
+                            <!-- 3. Rango de Precios -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">RANGO DE PRECIO ($)</span>
+                                <div class="facet-range-row">
+                                    <input type="number" id="filter-min-price" class="facet-input" placeholder="Mínimo">
+                                    <span>-</span>
+                                    <input type="number" id="filter-max-price" class="facet-input" placeholder="Máximo">
+                                </div>
+                            </div>
+
+                            <!-- 4. Habitaciones -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">HABITACIONES</span>
+                                <div class="pill-group" id="filter-beds-pills">
+                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn" data-val="1">1+</button>
+                                    <button class="pill-btn" data-val="2">2+</button>
+                                    <button class="pill-btn" data-val="3">3+</button>
+                                    <button class="pill-btn" data-val="4">4+</button>
+                                    <button class="pill-btn" data-val="5">5+</button>
+                                </div>
+                            </div>
+
+                            <!-- 5. Baños -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">BAÑOS</span>
+                                <div class="pill-group" id="filter-baths-pills">
+                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn" data-val="1">1+</button>
+                                    <button class="pill-btn" data-val="2">2+</button>
+                                    <button class="pill-btn" data-val="3">3+</button>
+                                    <button class="pill-btn" data-val="4">4+</button>
+                                </div>
+                            </div>
+
+                            <!-- 6. Estacionamientos / Garaje -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
+                                <div class="pill-group" id="filter-parking-pills">
+                                    <button class="pill-btn active" data-val="">Cualquiera</button>
+                                    <button class="pill-btn" data-val="1">1+</button>
+                                    <button class="pill-btn" data-val="2">2+</button>
+                                    <button class="pill-btn" data-val="3">3+</button>
+                                </div>
+                            </div>
+
+                            <!-- 7. Metraje Construido (m²) -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
+                                <div class="facet-range-row">
+                                    <input type="number" id="filter-min-sqm-build" class="facet-input" placeholder="Mín m²">
+                                    <span>-</span>
+                                    <input type="number" id="filter-max-sqm-build" class="facet-input" placeholder="Máx m²">
+                                </div>
+                            </div>
+
+                            <!-- 8. Metraje Total de Terreno (m²) -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">TERRENO / LOTE TOTAL (m²)</span>
+                                <div class="facet-range-row">
+                                    <input type="number" id="filter-min-sqm-lot" class="facet-input" placeholder="Mín m²">
+                                    <span>-</span>
+                                    <input type="number" id="filter-max-sqm-lot" class="facet-input" placeholder="Máx m²">
+                                </div>
+                            </div>
+
+                            <!-- 9. Amenities / Extras (Estilo Zillow) -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">CARACTERÍSTICAS & AMENITIES</span>
+                                <div class="checkbox-group">
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" id="filter-pool">
+                                        <span>🏊‍♂️ Piscina / Alberca</span>
+                                    </label>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" id="filter-pets">
+                                        <span>🐾 Acepta Mascotas</span>
+                                    </label>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" id="filter-furnished">
+                                        <span>🛋️ Amoblado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn-text-small" id="btn-clear-all-filters" style="margin-top: 10px; font-weight: 600; color: #ef4444;">
+                                ✕ Restablecer todos los filtros
+                            </button>
                         </aside>
 
                         <div class="nested-content-area">
                             <div class="content-header-row">
-                                <h2>Propiedades registradas</h2>
+                                <div>
+                                    <h2>Propiedades coincidentes</h2>
+                                    <span id="filtered-count-badge" style="font-size: 0.85rem; color: var(--text-muted);">Cargando...</span>
+                                </div>
                             </div>
                             <div class="property-grid" id="property-grid"></div>
                         </div>
@@ -275,20 +368,15 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             MOBILE FLOATING UI (PandaDoc Style)
-             ========================================== -->
-        <!-- Botón Menú Drawer (Inferior Izquierdo) -->
+        <!-- MOBILE FLOATING UI -->
         <button class="mobile-fab-menu" id="mobile-fab-menu" aria-label="Abrir menú">
             <span class="fab-icon-bars">☰</span>
         </button>
 
-        <!-- Botón Quick Create (Inferior Derecho) -->
         <div class="mobile-fab-container">
             <button class="mobile-fab-create" id="mobile-fab-create" aria-label="Crear nuevo">
                 <span>+</span>
             </button>
-            <!-- Overlay Popover chiquito -->
             <div class="mobile-create-popover" id="mobile-create-popover">
                 <button class="popover-item" id="popover-btn-prop">
                     <span class="popover-icon">🏢</span> Nueva Propiedad
@@ -304,9 +392,9 @@
 
     </div>
 
-    <!-- MODAL 1: NUEVA PROPIEDAD -->
+    <!-- MODAL 1: NUEVA PROPIEDAD CON TODOS LOS CAMPOS DE FILTRO -->
     <div class="modal-backdrop" id="property-modal">
-        <div class="modal-window">
+        <div class="modal-window" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3>Agregar Nueva Propiedad</h3>
                 <button class="modal-close" id="close-modal-btn">✕</button>
@@ -316,14 +404,16 @@
                     <label>Título / Dirección</label>
                     <input type="text" id="prop-address" placeholder="Ej. Residencias Vista Alta, Apto 4B" required>
                 </div>
+                
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tipo de Inmueble</label>
                         <select id="prop-category" required>
                             <option value="Apartamento">Apartamento</option>
                             <option value="Casa">Casa</option>
-                            <option value="Local">Local</option>
-                            <option value="Terreno">Terreno</option>
+                            <option value="Townhouse">Townhouse</option>
+                            <option value="Local">Local / Oficina</option>
+                            <option value="Terreno">Terreno / Lote</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -334,10 +424,12 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Precio ($)</label>
                     <input type="number" id="prop-price" placeholder="Ej. 95000" min="0" step="any" required>
                 </div>
+
                 <div class="form-row-3">
                     <div class="form-group">
                         <label>Habitaciones</label>
@@ -345,13 +437,43 @@
                     </div>
                     <div class="form-group">
                         <label>Baños</label>
-                        <input type="number" id="prop-baths" min="0" max="20" placeholder="2" required>
+                        <input type="number" id="prop-baths" min="0" max="20" step="0.5" placeholder="2" required>
                     </div>
                     <div class="form-group">
-                        <label>Metros (m²)</label>
-                        <input type="number" id="prop-sqm" min="5" placeholder="120" required>
+                        <label>Estacionamientos</label>
+                        <input type="number" id="prop-parking" min="0" max="10" placeholder="1" required>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Área Construida (m²)</label>
+                        <input type="number" id="prop-sqm-build" min="0" placeholder="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Terreno / Lote Total (m²)</label>
+                        <input type="number" id="prop-sqm-lot" min="0" placeholder="180" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="margin-bottom: 4px;">Amenities / Extras</label>
+                    <div class="checkbox-row" style="display: flex; gap: 14px; flex-wrap: wrap;">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="prop-pool">
+                            <span>Piscina</span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="prop-pets">
+                            <span>Mascotas permitidas</span>
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="prop-furnished">
+                            <span>Amoblado</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancelar</button>
                     <button type="submit" class="btn-primary">Guardar Inmueble</button>
