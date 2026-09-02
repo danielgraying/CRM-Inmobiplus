@@ -12,8 +12,9 @@
 <body>
     <div class="app-container">
         
-        <!-- BACKDROP DEL DRAWER MÓVIL -->
+        <!-- BACKDROP DEL DRAWER MÓVIL Y DRAWER LATERAL -->
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+        <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
         <!-- SIDEBAR PRINCIPAL (NIVEL 1) -->
         <aside class="primary-sidebar" id="primary-sidebar">
@@ -141,17 +142,15 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO CON FILTROS Y TAGS DE OPERACIÓN -->
+                <!-- VISTA 1: INVENTARIO -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
-                        
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
-                            <!-- 1. Localización -->
+                            <!-- Localización -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">📍 LOCALIZACIÓN (LATAM)</span>
-                                
                                 <div class="form-group-filter">
                                     <label class="filter-mini-label">País</label>
                                     <select id="filter-country" class="facet-select">
@@ -164,14 +163,12 @@
                                         <option value="Perú">Perú 🇵🇪</option>
                                     </select>
                                 </div>
-
                                 <div class="form-group-filter" id="filter-subdiv-container" style="display: none;">
                                     <label class="filter-mini-label" id="filter-subdiv-label">Estado</label>
                                     <select id="filter-subdivision" class="facet-select">
                                         <option value="">Todos</option>
                                     </select>
                                 </div>
-
                                 <div class="form-group-filter" id="filter-city-container" style="display: none;">
                                     <label class="filter-mini-label" id="filter-city-label">Ciudad / Municipio</label>
                                     <select id="filter-city" class="facet-select">
@@ -180,7 +177,7 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Operación en formato Píldoras / Tags -->
+                            <!-- Operación Comercial -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">OPERACIÓN COMERCIAL</span>
                                 <div class="operation-tags-group" id="filter-operation-tags">
@@ -190,7 +187,7 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Tipo de Inmueble -->
+                            <!-- Tipo de Inmueble -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">TIPO DE INMUEBLE</span>
                                 <div class="facets-wrapper">
@@ -221,10 +218,9 @@
                                 </div>
                             </div>
 
-                            <!-- 4. Rango de Precios con Histograma -->
+                            <!-- Rango de Precios con Histograma -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">RANGO DE PRECIO</span>
-                                
                                 <div class="price-histogram-card">
                                     <div class="histogram-bars" id="histogram-bars"></div>
                                     <div class="range-slider-wrapper">
@@ -237,7 +233,6 @@
                                         <span id="label-max-price">$500K+</span>
                                     </div>
                                 </div>
-
                                 <div class="facet-range-row" style="margin-top: 8px;">
                                     <div class="range-input-box">
                                         <label>Mín ($)</label>
@@ -251,7 +246,7 @@
                                 </div>
                             </div>
 
-                            <!-- 5. Habitaciones -->
+                            <!-- Habitaciones -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">HABITACIONES</span>
                                 <div class="pill-group" id="filter-beds-pills">
@@ -264,7 +259,7 @@
                                 </div>
                             </div>
 
-                            <!-- 6. Baños -->
+                            <!-- Baños -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">BAÑOS</span>
                                 <div class="pill-group" id="filter-baths-pills">
@@ -276,7 +271,7 @@
                                 </div>
                             </div>
 
-                            <!-- 7. Estacionamientos -->
+                            <!-- Estacionamientos -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
                                 <div class="pill-group" id="filter-parking-pills">
@@ -287,7 +282,7 @@
                                 </div>
                             </div>
 
-                            <!-- 8. Metrajes -->
+                            <!-- Metrajes -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
                                 <div class="facet-range-row">
@@ -306,7 +301,7 @@
                                 </div>
                             </div>
 
-                            <!-- 9. Amenities Contextuales -->
+                            <!-- Amenities Contextuales -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">CARACTERÍSTICAS & AMENITIES</span>
                                 <div class="checkbox-group">
@@ -318,8 +313,7 @@
                                         <input type="checkbox" id="filter-furnished">
                                         <span>🛋️ Amoblado</span>
                                     </label>
-                                    <!-- Contextual: Solo se muestra si operación es Alquiler o Todos -->
-                                    <label class="custom-checkbox" id="container-filter-pets" style="display: flex;">
+                                    <label class="custom-checkbox" id="container-filter-pets">
                                         <input type="checkbox" id="filter-pets">
                                         <span>🐾 Acepta Mascotas</span>
                                     </label>
@@ -349,7 +343,7 @@
                         <div class="leads-header-row">
                             <div>
                                 <h2>Pipeline de Leads</h2>
-                                <p class="subtext">Arrastra prospectos según avancen en el embudo comercial</p>
+                                <p class="subtext">Haz clic en un prospecto para abrir su ficha y ver propiedades compatibles</p>
                             </div>
                             <button class="btn-primary hide-mobile" id="btn-open-lead-modal">+ Nuevo Lead</button>
                         </div>
@@ -409,6 +403,62 @@
 
             </div>
         </div>
+
+        <!-- ==========================================
+             DRAWER LATERAL DE LEAD (MATCHING INTELIGENTE)
+             ========================================== -->
+        <aside class="lead-drawer" id="lead-drawer">
+            <div class="lead-drawer-header">
+                <div class="drawer-user-title">
+                    <div class="lead-avatar" id="drawer-lead-avatar">CM</div>
+                    <div>
+                        <h3 id="drawer-lead-name">Carlos Mendoza</h3>
+                        <span class="time-tag" id="drawer-lead-time">Hace 2h</span>
+                    </div>
+                </div>
+                <button class="drawer-close-btn" id="close-lead-drawer-btn">✕</button>
+            </div>
+
+            <div class="lead-drawer-body">
+                <!-- Info de Requerimientos -->
+                <div class="drawer-section">
+                    <span class="drawer-label">REQUERIMIENTO PRINCIPAL</span>
+                    <p class="drawer-highlight-text" id="drawer-lead-intent">Busca apto 3 habs con 2 puestos</p>
+                    <div class="drawer-meta-row">
+                        <div>
+                            <span class="drawer-mini-label">Presupuesto</span>
+                            <strong id="drawer-lead-budget">$100k - $130k</strong>
+                        </div>
+                        <div>
+                            <span class="drawer-mini-label">Teléfono</span>
+                            <span id="drawer-lead-phone">+58 414-1234567</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notas Rápidas -->
+                <div class="drawer-section">
+                    <span class="drawer-label">NOTAS Y SEGUIMIENTO</span>
+                    <textarea class="lead-notes-area" id="drawer-lead-notes" placeholder="Escribe notas sobre las preferencias del cliente, fechas tentativas de visita, etc..."></textarea>
+                    <button class="btn-secondary full-width" id="btn-save-lead-notes" style="margin-top: 6px;">Guardar Nota</button>
+                </div>
+
+                <!-- Propiedades Compatibles (Matching) -->
+                <div class="drawer-section">
+                    <div class="drawer-section-header">
+                        <span class="drawer-label">PROPIEDADES SUGERIDAS (MATCHING)</span>
+                        <span class="match-count-badge" id="drawer-matches-count">0 matches</span>
+                    </div>
+                    <div class="drawer-matches-list" id="drawer-matches-list">
+                        <!-- Propiedades inyectadas por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="lead-drawer-footer">
+                <button class="btn-whatsapp full-width" id="drawer-whatsapp-btn">Conversar por WhatsApp 💬</button>
+            </div>
+        </aside>
 
         <!-- MOBILE FLOATING UI -->
         <button class="mobile-fab-menu" id="mobile-fab-menu" aria-label="Abrir menú">
@@ -495,7 +545,7 @@
                         <input type="number" id="prop-price" placeholder="Ej. 95000" min="0" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label>URL de Imagen (Opcional)</label>
+                        <label>URL de Imagen Principal (Opcional)</label>
                         <input type="url" id="prop-image" placeholder="https://images.unsplash.com/...">
                     </div>
                 </div>
@@ -564,14 +614,10 @@
                     <label>Nombre Completo</label>
                     <input type="text" id="lead-name" placeholder="Ej. Mariana Rondón" required>
                 </div>
-                <div class="form-group">
-                    <label>Interés / Requerimiento</label>
-                    <input type="text" id="lead-intent" placeholder="Ej. Busca casa 3 habs con jardín" required>
-                </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Presupuesto / Rango</label>
-                        <input type="text" id="lead-budget" placeholder="Ej. $70k - $90k" required>
+                        <label>Teléfono (WhatsApp)</label>
+                        <input type="tel" id="lead-phone" placeholder="Ej. +58 414 1234567" required>
                     </div>
                     <div class="form-group">
                         <label>Etapa Inicial</label>
@@ -583,6 +629,14 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Interés / Requerimiento</label>
+                    <input type="text" id="lead-intent" placeholder="Ej. Busca casa 3 habs con jardín" required>
+                </div>
+                <div class="form-group">
+                    <label>Presupuesto / Rango</label>
+                    <input type="text" id="lead-budget" placeholder="Ej. $70k - $90k" required>
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" id="cancel-lead-modal-btn">Cancelar</button>
                     <button type="submit" class="btn-primary">Guardar Lead</button>
@@ -591,15 +645,15 @@
         </div>
     </div>
 
-    <!-- MODAL 3: VER FICHA DETALLE -->
+    <!-- MODAL 3: VER FICHA DETALLE CON GALERÍA MULTIMEDIA -->
     <div class="modal-backdrop" id="details-modal">
-        <div class="modal-window" style="max-width: 520px;">
+        <div class="modal-window" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3>Ficha de la Propiedad</h3>
                 <button class="modal-close" id="close-details-modal-btn">✕</button>
             </div>
             <div id="detail-content"></div>
-            <div class="modal-actions" style="margin-top: 24px;">
+            <div class="modal-actions" style="margin-top: 20px;">
                 <button type="button" class="btn-secondary" id="close-details-bottom-btn">Cerrar</button>
                 <button type="button" class="btn-whatsapp" id="detail-whatsapp-btn">Compartir WhatsApp 💬</button>
             </div>
