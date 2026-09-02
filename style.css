@@ -67,7 +67,7 @@ body {
 }
 
 /* =======================================================
-   1. PRIMARY SIDEBAR & LOGO PLACEHOLDER
+   1. PRIMARY SIDEBAR & LOGO
    ======================================================= */
 .primary-sidebar {
     width: 220px;
@@ -366,6 +366,26 @@ body {
     border-color: #dadce0;
 }
 
+.btn-gmaps-link {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+}
+
+.btn-gmaps-link:hover {
+    border-color: var(--brand-blue-histogram);
+    color: var(--brand-blue-histogram);
+}
+
 .btn-icon-svg {
     display: inline-block;
     vertical-align: middle;
@@ -500,7 +520,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO & FILTROS (TAGS)
+   5. INVENTARIO & FILTROS
    ======================================================= */
 .nested-view-layout {
     display: flex;
