@@ -23,82 +23,641 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. ESTADO Y LOCALSTORAGE
+    // 2. DICCIONARIO DE LOCALIZACIÓN DINÁMICA (LATAM)
+    // ==========================================
+    const latamLocations = {
+        "Venezuela": {
+            subdivName: "Estado",
+            cityName: "Municipio / Ciudad",
+            subdivisions: {
+                "Táchira": ["San Cristóbal", "Táriba", "Palo Gordo", "Rubio", "San Antonio"],
+                "Miranda": ["Chacao", "Baruta", "El Hatillo", "Los Teques", "Guatire"],
+                "Distrito Capital": ["Caracas", "Libertador"],
+                "Carabobo": ["Valencia", "Naguanagua", "San Diego", "Puerto Cabello"],
+                "Zulia": ["Maracaibo", "San Francisco", "Cabimas"]
+            }
+        },
+        "Colombia": {
+            subdivName: "Departamento",
+            cityName: "Ciudad / Municipio",
+            subdivisions: {
+                "Cundinamarca": ["Bogotá", "Chía", "Zipaquirá", "Soacha", "Cota"],
+                "Antioquia": ["Medellín", "Envigado", "El Poblado", "Rionegro", "Sabaneta"],
+                "Valle del Cauca": ["Cali", "Palmira", "Buga", "Yumbo"],
+                "Santander": ["Bucaramanga", "Floridablanca", "Girón", "Piedecuesta"],
+                "Bolívar": ["Cartagena", "Turbaco", "Magangué"]
+            }
+        },
+        "México": {
+            subdivName: "Estado",
+            cityName: "Municipio / Alcaldía",
+            subdivisions: {
+                "CDMX": ["Cuauhtémoc", "Benito Juárez", "Miguel Hidalgo", "Coyoacán", "Polanco"],
+                "Jalisco": ["Guadalajara", "Zapopan", "Tlaquepaque", "Puerto Vallarta"],
+                "Nuevo León": ["Monterrey", "San Pedro Garza García", "San Nicolás", "Guadalupe"],
+                "Quintana Roo": ["Cancún", "Playa del Carmen", "Tulum"]
+            }
+        },
+        "Argentina": {
+            subdivName: "Provincia",
+            cityName: "Ciudad / Partido",
+            subdivisions: {
+                "Buenos Aires": ["CABA (Palermo)", "CABA (Recoleta)", "San Isidro", "Vicente López", "La Plata"],
+                "Córdoba": ["Córdoba Capital", "Villa Carlos Paz", "Río Cuarto"],
+                "Santa Fe": ["Rosario", "Santa Fe Capital"]
+            }
+        },
+        "Chile": {
+            subdivName: "Región",
+            cityName: "Comuna / Ciudad",
+            subdivisions: {
+                "Región Metropolitana": ["Santiago Centro", "Las Condes", "Providencia", "Vitacura", "Ñuñoa"],
+                "Valparaíso": ["Viña del Mar", "Valparaíso", "Concón"]
+            }
+        },
+        "Perú": {
+            subdivName: "Departamento",
+            cityName: "Provincia / Distrito",
+            subdivisions: {
+                "Lima": ["Miraflores", "San Isidro", "Santiago de Surco", "Barranco", "San Borja"],
+                "Arequipa": ["Arequipa", "Yanahuara", "Cayma"],
+                "Cusco": ["Cusco", "Wanchaq", "San Jerónimo"]
+            }
+        }
+    };
+
+    // ==========================================
+    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES CON IMÁGENES REALES Y LOCALIZACIÓN LATAM)
     // ==========================================
     const defaultProperties = [
         {
             id: 1,
             category: "Apartamento",
             price: 120000,
-            address: "Av. Principal, Sector Norte",
+            country: "Venezuela",
+            subdivision: "Táchira",
+            city: "San Cristóbal",
+            address: "Av. Ferrero Tamayo, Edificio Altamira Suite 4B",
             beds: 3,
             baths: 2,
             parking: 2,
-            sqmBuild: 150,
-            sqmLot: 150,
+            sqmBuild: 135,
+            sqmLot: 135,
             pool: false,
             pets: true,
             furnished: false,
+            image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
             type: "Venta"
         },
         {
             id: 2,
             category: "Casa",
             price: 850,
-            address: "Residencias El Bosque, Calle Los Pinos",
+            country: "Venezuela",
+            subdivision: "Táchira",
+            city: "San Cristóbal",
+            address: "Residencias El Bosque, Calle Los Pinos #12",
             beds: 2,
             baths: 2,
             parking: 1,
-            sqmBuild: 85,
-            sqmLot: 200,
+            sqmBuild: 90,
+            sqmLot: 180,
             pool: true,
             pets: true,
             furnished: true,
+            image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80",
             type: "Alquiler"
         },
         {
             id: 3,
             category: "Townhouse",
             price: 240000,
-            address: "Conjunto Residencial Las Villas",
+            country: "Venezuela",
+            subdivision: "Miranda",
+            city: "Chacao",
+            address: "Conjunto Residencial Las Villas, Casa 8",
             beds: 4,
             baths: 3.5,
             parking: 3,
             sqmBuild: 280,
-            sqmLot: 350,
+            sqmLot: 320,
             pool: true,
             pets: true,
             furnished: false,
+            image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
             type: "Venta"
         },
         {
             id: 4,
             category: "Apartamento",
-            price: 85000,
-            address: "Edificio Vista Real, Piso 6",
+            price: 65000,
+            country: "Venezuela",
+            subdivision: "Carabobo",
+            city: "Valencia",
+            address: "Edificio Vista Real, El Viñedo, Piso 6, Apto 62",
             beds: 2,
             baths: 1,
             parking: 1,
-            sqmBuild: 72,
-            sqmLot: 72,
+            sqmBuild: 68,
+            sqmLot: 68,
             pool: false,
             pets: false,
             furnished: true,
+            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
             type: "Venta"
         },
         {
             id: 5,
             category: "Casa",
-            price: 310000,
-            address: "Urbanización Alto Prado, Quinta Bella",
+            price: 340000,
+            country: "Venezuela",
+            subdivision: "Distrito Capital",
+            city: "Caracas",
+            address: "Urbanización Alto Prado, Quinta Bella Vista",
             beds: 5,
-            baths: 4,
+            baths: 4.5,
             parking: 4,
-            sqmBuild: 420,
-            sqmLot: 600,
+            sqmBuild: 410,
+            sqmLot: 650,
             pool: true,
             pets: true,
             furnished: true,
+            image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 6,
+            category: "Apartamento",
+            price: 450,
+            country: "Venezuela",
+            subdivision: "Táchira",
+            city: "Táriba",
+            address: "Centro Urbano, Torres del Parque 3A",
+            beds: 1,
+            baths: 1,
+            parking: 1,
+            sqmBuild: 48,
+            sqmLot: 48,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 7,
+            category: "Local",
+            price: 180000,
+            country: "Colombia",
+            subdivision: "Antioquia",
+            city: "Medellín",
+            address: "Centro Comercial El Tesoro, Nivel 1, Local 14",
+            beds: 0,
+            baths: 1,
+            parking: 2,
+            sqmBuild: 85,
+            sqmLot: 85,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 8,
+            category: "Terreno",
+            price: 95000,
+            country: "Colombia",
+            subdivision: "Cundinamarca",
+            city: "Chía",
+            address: "Sector La Campiña, Parcela B-12",
+            beds: 0,
+            baths: 0,
+            parking: 0,
+            sqmBuild: 0,
+            sqmLot: 850,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 9,
+            category: "Apartamento",
+            price: 165000,
+            country: "Colombia",
+            subdivision: "Antioquia",
+            city: "El Poblado",
+            address: "Torre Horizon, Penthouse 1402",
+            beds: 3,
+            baths: 3,
+            parking: 2,
+            sqmBuild: 190,
+            sqmLot: 190,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 10,
+            category: "Casa",
+            price: 1500,
+            country: "Colombia",
+            subdivision: "Cundinamarca",
+            city: "Bogotá",
+            address: "Usaquén, Calle 119 #5-20, Casa Colonial",
+            beds: 3,
+            baths: 3,
+            parking: 2,
+            sqmBuild: 210,
+            sqmLot: 300,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 11,
+            category: "Townhouse",
+            price: 195000,
+            country: "Colombia",
+            subdivision: "Santander",
+            city: "Bucaramanga",
+            address: "Residencias Cabecera, Módulo 3, Casa 11",
+            beds: 3,
+            baths: 2.5,
+            parking: 2,
+            sqmBuild: 165,
+            sqmLot: 190,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 12,
+            category: "Apartamento",
+            price: 550,
+            country: "Colombia",
+            subdivision: "Valle del Cauca",
+            city: "Cali",
+            address: "Ciudad Jardín, Edificio Primavera 2B",
+            beds: 2,
+            baths: 1.5,
+            parking: 1,
+            sqmBuild: 75,
+            sqmLot: 75,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 13,
+            category: "Casa",
+            price: 420000,
+            country: "México",
+            subdivision: "CDMX",
+            city: "Polanco",
+            address: "Campos Elíseos, Mansión Los Robles",
+            beds: 6,
+            baths: 5,
+            parking: 6,
+            sqmBuild: 560,
+            sqmLot: 1200,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 14,
+            category: "Local",
+            price: 1200,
+            country: "México",
+            subdivision: "Jalisco",
+            city: "Guadalajara",
+            address: "Avenida Chapultepec Sur, Local 4",
+            beds: 0,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 110,
+            sqmLot: 110,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 15,
+            category: "Apartamento",
+            price: 98000,
+            country: "México",
+            subdivision: "Nuevo León",
+            city: "Monterrey",
+            address: "San Jerónimo, Torre Norte 8C",
+            beds: 2,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 88,
+            sqmLot: 88,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 16,
+            category: "Terreno",
+            price: 145000,
+            country: "México",
+            subdivision: "Quintana Roo",
+            city: "Tulum",
+            address: "Región 15, Lote Ecoturístico 45",
+            beds: 0,
+            baths: 0,
+            parking: 0,
+            sqmBuild: 0,
+            sqmLot: 2400,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 17,
+            category: "Apartamento",
+            price: 1400,
+            country: "México",
+            subdivision: "CDMX",
+            city: "Cuauhtémoc",
+            address: "Colonia Roma Norte, Edificio Grand View 11A",
+            beds: 3,
+            baths: 3,
+            parking: 2,
+            sqmBuild: 160,
+            sqmLot: 160,
+            pool: true,
+            pets: false,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1502005229762-ee1b2b8ab00f?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 18,
+            category: "Casa",
+            price: 175000,
+            country: "Argentina",
+            subdivision: "Buenos Aires",
+            city: "San Isidro",
+            address: "Las Lomas de San Isidro, Casa 104",
+            beds: 4,
+            baths: 2,
+            parking: 2,
+            sqmBuild: 220,
+            sqmLot: 280,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 19,
+            category: "Townhouse",
+            price: 1250,
+            country: "Argentina",
+            subdivision: "Buenos Aires",
+            city: "CABA (Palermo)",
+            address: "Palermo Soho, Pasaje Russell, TH-19",
+            beds: 3,
+            baths: 2.5,
+            parking: 2,
+            sqmBuild: 175,
+            sqmLot: 210,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 20,
+            category: "Apartamento",
+            price: 78000,
+            country: "Argentina",
+            subdivision: "Córdoba",
+            city: "Córdoba Capital",
+            address: "Nueva Córdoba, Calle Obispo Trejo, Torre 2",
+            beds: 2,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 78,
+            sqmLot: 78,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 21,
+            category: "Casa",
+            price: 285000,
+            country: "Chile",
+            subdivision: "Región Metropolitana",
+            city: "Las Condes",
+            address: "Avenida Las Condes #12500, Casa 45",
+            beds: 4,
+            baths: 3,
+            parking: 3,
+            sqmBuild: 310,
+            sqmLot: 450,
+            pool: true,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 22,
+            category: "Local",
+            price: 750,
+            country: "Chile",
+            subdivision: "Región Metropolitana",
+            city: "Providencia",
+            address: "Avenida Providencia, Oficina 302",
+            beds: 0,
+            baths: 1,
+            parking: 1,
+            sqmBuild: 55,
+            sqmLot: 55,
+            pool: false,
+            pets: false,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 23,
+            category: "Apartamento",
+            price: 210000,
+            country: "Chile",
+            subdivision: "Valparaíso",
+            city: "Viña del Mar",
+            address: "Avenida Perú, Torre Platinum 901",
+            beds: 3,
+            baths: 3.5,
+            parking: 2,
+            sqmBuild: 185,
+            sqmLot: 185,
+            pool: true,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 24,
+            category: "Casa",
+            price: 680,
+            country: "Perú",
+            subdivision: "Arequipa",
+            city: "Yanahuara",
+            address: "Calle Los Cedros 204, Casa 7",
+            beds: 2,
+            baths: 1,
+            parking: 1,
+            sqmBuild: 80,
+            sqmLot: 150,
+            pool: false,
+            pets: true,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 25,
+            category: "Terreno",
+            price: 60000,
+            country: "Perú",
+            subdivision: "Cusco",
+            city: "San Jerónimo",
+            address: "Valle Sagrado, Lote 18",
+            beds: 0,
+            baths: 0,
+            parking: 0,
+            sqmBuild: 0,
+            sqmLot: 500,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 26,
+            category: "Townhouse",
+            price: 320000,
+            country: "Perú",
+            subdivision: "Lima",
+            city: "Miraflores",
+            address: "Malecón de la Reserva, TH-01",
+            beds: 4,
+            baths: 4,
+            parking: 3,
+            sqmBuild: 340,
+            sqmLot: 390,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 27,
+            category: "Apartamento",
+            price: 89000,
+            country: "Perú",
+            subdivision: "Lima",
+            city: "San Isidro",
+            address: "Calle Los Conquistadores, Apto 5B",
+            beds: 3,
+            baths: 2,
+            parking: 1,
+            sqmBuild: 95,
+            sqmLot: 95,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 28,
+            category: "Casa",
+            price: 2200,
+            country: "Colombia",
+            subdivision: "Bolívar",
+            city: "Cartagena",
+            address: "Ciudad Amurallada, Quinta Coral",
+            beds: 4,
+            baths: 4.5,
+            parking: 3,
+            sqmBuild: 350,
+            sqmLot: 500,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80",
+            type: "Alquiler"
+        },
+        {
+            id: 29,
+            category: "Local",
+            price: 350000,
+            country: "México",
+            subdivision: "Nuevo León",
+            city: "San Pedro Garza García",
+            address: "Calzada del Valle, Edificio Corporativo",
+            beds: 0,
+            baths: 4,
+            parking: 6,
+            sqmBuild: 420,
+            sqmLot: 420,
+            pool: false,
+            pets: false,
+            furnished: false,
+            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80",
+            type: "Venta"
+        },
+        {
+            id: 30,
+            category: "Apartamento",
+            price: 155000,
+            country: "Venezuela",
+            subdivision: "Miranda",
+            city: "Baruta",
+            address: "Las Mercedes, Torre Santa María, Piso 8",
+            beds: 3,
+            baths: 2.5,
+            parking: 2,
+            sqmBuild: 142,
+            sqmLot: 142,
+            pool: true,
+            pets: true,
+            furnished: true,
+            image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
             type: "Venta"
         }
     ];
@@ -130,41 +689,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    let properties = JSON.parse(localStorage.getItem('inmo_properties')) || defaultProperties;
-    let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
+    let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
+    // Si no tiene las nuevas propiedades o no tienen país asignado, inicializar con las 30 completas
+    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].country) ? savedProps : defaultProperties;
+    localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
-    // Normalizar tipos
-    properties.forEach(p => {
-        if (typeof p.price === 'string') p.price = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
-        p.beds = parseInt(p.beds, 10) || 0;
-        p.baths = parseFloat(p.baths) || 0;
-        p.parking = parseInt(p.parking, 10) || 0;
-        p.sqmBuild = parseFloat(p.sqmBuild || p.sqm) || 0;
-        p.sqmLot = parseFloat(p.sqmLot || p.sqmBuild || p.sqm) || 0;
-        p.pool = Boolean(p.pool);
-        p.pets = Boolean(p.pets);
-        p.furnished = Boolean(p.furnished);
-    });
+    let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
 
     function formatCurrency(val, type) {
         return `$${Number(val).toLocaleString('en-US')}${type === 'Alquiler' ? ' / mes' : ''}`;
     }
 
     // ==========================================
-    // 3. MOTOR DE FILTRADO & HISTOGRAMA ZILLOW
+    // 4. CONTROLADORES DE LOCALIZACIÓN DINÁMICA
+    // ==========================================
+    // Sidebar de Filtros
+    const filterCountry = document.getElementById('filter-country');
+    const filterSubdivContainer = document.getElementById('filter-subdiv-container');
+    const filterSubdivLabel = document.getElementById('filter-subdiv-label');
+    const filterSubdivision = document.getElementById('filter-subdivision');
+    const filterCityContainer = document.getElementById('filter-city-container');
+    const filterCityLabel = document.getElementById('filter-city-label');
+    const filterCity = document.getElementById('filter-city');
+
+    // Modal de Nueva Propiedad
+    const propCountry = document.getElementById('prop-country');
+    const propSubdivLabel = document.getElementById('prop-subdiv-label');
+    const propSubdivision = document.getElementById('prop-subdivision');
+    const propCityLabel = document.getElementById('prop-city-label');
+    const propCity = document.getElementById('prop-city');
+
+    function updateLocationSelectors(countryVal, subdivLabelEl, subdivSelectEl, cityLabelEl, citySelectEl, isFilter = true) {
+        if (!countryVal || !latamLocations[countryVal]) {
+            if (isFilter) {
+                filterSubdivContainer.style.display = 'none';
+                filterCityContainer.style.display = 'none';
+            }
+            subdivSelectEl.innerHTML = '<option value="">Todos</option>';
+            citySelectEl.innerHTML = '<option value="">Todas</option>';
+            return;
+        }
+
+        const countryData = latamLocations[countryVal];
+        subdivLabelEl.textContent = countryData.subdivName;
+        cityLabelEl.textContent = countryData.cityName;
+
+        if (isFilter) {
+            filterSubdivContainer.style.display = 'flex';
+            filterCityContainer.style.display = 'none';
+        }
+
+        // Poblar subdivisiones
+        subdivSelectEl.innerHTML = isFilter ? `<option value="">Todos los ${countryData.subdivName.toLowerCase()}s</option>` : '';
+        Object.keys(countryData.subdivisions).forEach(subdiv => {
+            const opt = document.createElement('option');
+            opt.value = subdiv;
+            opt.textContent = subdiv;
+            subdivSelectEl.appendChild(opt);
+        });
+
+        // Trigger ciudades inicial
+        updateCitySelector(countryVal, subdivSelectEl.value, cityLabelEl, citySelectEl, isFilter);
+    }
+
+    function updateCitySelector(countryVal, subdivVal, cityLabelEl, citySelectEl, isFilter = true) {
+        if (!countryVal || !subdivVal || !latamLocations[countryVal] || !latamLocations[countryVal].subdivisions[subdivVal]) {
+            if (isFilter) filterCityContainer.style.display = 'none';
+            citySelectEl.innerHTML = '<option value="">Todas</option>';
+            return;
+        }
+
+        const countryData = latamLocations[countryVal];
+        const cities = countryData.subdivisions[subdivVal];
+
+        if (isFilter) filterCityContainer.style.display = 'flex';
+        citySelectEl.innerHTML = isFilter ? `<option value="">Todas las ${countryData.cityName.toLowerCase()}s</option>` : '';
+
+        cities.forEach(city => {
+            const opt = document.createElement('option');
+            opt.value = city;
+            opt.textContent = city;
+            citySelectEl.appendChild(opt);
+        });
+    }
+
+    // Eventos Filtros
+    filterCountry.addEventListener('change', () => {
+        updateLocationSelectors(filterCountry.value, filterSubdivLabel, filterSubdivision, filterCityLabel, filterCity, true);
+        renderProperties();
+    });
+
+    filterSubdivision.addEventListener('change', () => {
+        updateCitySelector(filterCountry.value, filterSubdivision.value, filterCityLabel, filterCity, true);
+        renderProperties();
+    });
+
+    filterCity.addEventListener('change', renderProperties);
+
+    // Eventos Modal
+    propCountry.addEventListener('change', () => {
+        updateLocationSelectors(propCountry.value, propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
+    });
+
+    propSubdivision.addEventListener('change', () => {
+        updateCitySelector(propCountry.value, propSubdivision.value, propCityLabel, propCity, false);
+    });
+
+    // Inicializar selectores en el modal
+    updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
+
+    // ==========================================
+    // 5. MOTOR DE FILTRADO & HISTOGRAMA ZILLOW
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
     const globalSearch = document.getElementById('global-search');
 
-    // Histograma y Sliders
     const histogramBarsContainer = document.getElementById('histogram-bars');
     const rangeSliderMin = document.getElementById('range-slider-min');
     const rangeSliderMax = document.getElementById('range-slider-max');
     const labelMinPrice = document.getElementById('label-min-price');
     const labelMaxPrice = document.getElementById('label-max-price');
 
-    // Inputs directos
     const filterMinPrice = document.getElementById('filter-min-price');
     const filterMaxPrice = document.getElementById('filter-max-price');
     const filterMinSqmBuild = document.getElementById('filter-min-sqm-build');
@@ -172,16 +818,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterMinSqmLot = document.getElementById('filter-min-sqm-lot');
     const filterMaxSqmLot = document.getElementById('filter-max-sqm-lot');
 
-    // Checkboxes
     const filterPool = document.getElementById('filter-pool');
     const filterPets = document.getElementById('filter-pets');
     const filterFurnished = document.getElementById('filter-furnished');
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
 
-    const HISTOGRAM_BUCKETS = 18;
+    const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
 
-    // Renderizar barras del histograma basadas en la distribución real de precios
     function renderHistogram(currentMin, currentMax) {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
@@ -199,13 +843,13 @@ document.addEventListener('DOMContentLoaded', () => {
         counts.forEach((count, i) => {
             const bucketPriceMin = i * bucketSize;
             const bucketPriceMax = (i + 1) * bucketSize;
-            const heightPct = Math.max((count / maxCount) * 100, 10);
+            const heightPct = count > 0 ? Math.max((count / maxCount) * 100, 15) : 6;
 
             const bar = document.createElement('div');
             bar.className = 'histogram-bar';
             bar.style.height = `${heightPct}%`;
+            bar.title = `${count} inmuebles ($${bucketPriceMin.toLocaleString()} - $${bucketPriceMax.toLocaleString()})`;
 
-            // Resaltar barras dentro del rango activo
             const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMax;
             if (inRange && count > 0) {
                 bar.classList.add('active');
@@ -251,7 +895,6 @@ document.addEventListener('DOMContentLoaded', () => {
         filterMaxPrice.addEventListener('input', () => syncPriceSlidersAndInputs('input'));
     }
 
-    // Pill group helper
     function getPillValue(containerId) {
         const activeBtn = document.querySelector(`#${containerId} .pill-btn.active`);
         return activeBtn ? activeBtn.getAttribute('data-val') : '';
@@ -281,6 +924,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!grid) return;
 
         const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
+        const valCountry = filterCountry.value;
+        const valSubdiv = filterSubdivision.value;
+        const valCity = filterCity.value;
         const valType = getSelectedFacet('facet-type');
         const valOp = getSelectedFacet('facet-op');
 
@@ -309,7 +955,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = properties.filter(prop => {
             const matchesSearch = !valSearch || 
                 prop.address.toLowerCase().includes(valSearch) || 
-                prop.category.toLowerCase().includes(valSearch);
+                prop.category.toLowerCase().includes(valSearch) ||
+                (prop.city && prop.city.toLowerCase().includes(valSearch)) ||
+                (prop.subdivision && prop.subdivision.toLowerCase().includes(valSearch));
+
+            const matchesCountry = !valCountry || prop.country === valCountry;
+            const matchesSubdiv = !valSubdiv || prop.subdivision === valSubdiv;
+            const matchesCity = !valCity || prop.city === valCity;
 
             const matchesType = !valType || prop.category === valType;
             const matchesOp = !valOp || prop.type === valOp;
@@ -326,7 +978,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesPets = !reqPets || prop.pets === true;
             const matchesFurnished = !reqFurnished || prop.furnished === true;
 
-            return matchesSearch && matchesType && matchesOp && matchesPrice &&
+            return matchesSearch && matchesCountry && matchesSubdiv && matchesCity &&
+                   matchesType && matchesOp && matchesPrice &&
                    matchesBeds && matchesBaths && matchesParking &&
                    matchesSqmBuild && matchesSqmLot &&
                    matchesPool && matchesPets && matchesFurnished;
@@ -338,24 +991,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros.</p>';
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; padding: 30px 0; text-align: center;">No hay propiedades coincidentes con estos filtros en esta localización.</p>';
         } else {
             filtered.forEach(prop => {
                 const isVenta = prop.type === 'Venta';
                 const badgeClass = isVenta ? 'status-active' : 'status-rent';
+                const defaultImg = isVenta ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80' : 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80';
+                
                 const card = document.createElement('article');
                 card.className = 'property-card';
                 card.innerHTML = `
                     <div class="card-media">
                         <span class="status-badge ${badgeClass}">En ${prop.type}</span>
                         <span class="category-tag">${prop.category || 'Inmueble'}</span>
-                        <div class="photo-placeholder" style="background-color: ${isVenta ? '#526071' : '#7c8ba1'};"></div>
+                        <img src="${prop.image || defaultImg}" alt="${prop.address}" class="card-img" onerror="this.src='${defaultImg}'">
                     </div>
                     <div class="card-body">
-                        <div>
-                            <h3 class="property-price">${formatCurrency(prop.price, prop.type)}</h3>
-                            <p class="property-address">${prop.address}</p>
-                        </div>
+                        <span class="property-location-tag">📍 ${prop.city || 'Ubicación'}, ${prop.country || 'LATAM'}</span>
+                        <h3 class="property-price">${formatCurrency(prop.price, prop.type)}</h3>
+                        <p class="property-address">${prop.address}</p>
+                        
                         <div class="property-specs">
                             <span>🛏️ ${prop.beds} Hab</span>
                             <span>🛁 ${prop.baths} Baños</span>
@@ -380,7 +1035,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats();
     }
 
-    // Listeners de filtros
     document.querySelectorAll('input[name="facet-type"], input[name="facet-op"]').forEach(radio => {
         radio.addEventListener('change', renderProperties);
     });
@@ -395,6 +1049,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnClearAllFilters) {
         btnClearAllFilters.addEventListener('click', () => {
+            filterCountry.value = '';
+            filterSubdivision.innerHTML = '<option value="">Todos</option>';
+            filterCity.innerHTML = '<option value="">Todas</option>';
+            filterSubdivContainer.style.display = 'none';
+            filterCityContainer.style.display = 'none';
+
             const defaultType = document.querySelector('input[name="facet-type"][value=""]');
             const defaultOp = document.querySelector('input[name="facet-op"][value=""]');
             if (defaultType) defaultType.checked = true;
@@ -435,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 4. DETALLE MODAL
+    // 6. DETALLE MODAL
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -448,9 +1108,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!prop) return;
 
         const formattedPrice = formatCurrency(prop.price, prop.type);
+        const defaultImg = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80';
+        
         detailContent.innerHTML = `
-            <h4 style="font-size: 1.25rem; color: var(--brand-green); margin-bottom: 4px;">${formattedPrice}</h4>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;">${prop.address}</p>
+            <img src="${prop.image || defaultImg}" alt="${prop.address}" class="detail-img-preview" onerror="this.src='${defaultImg}'">
+            <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
+            <h4 style="font-size: 1.35rem; color: var(--brand-green); margin: 4px 0;">${formattedPrice}</h4>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px;">${prop.address}</p>
             <div class="detail-meta-grid">
                 <div class="detail-meta-item"><strong>Tipo</strong><span>${prop.category}</span></div>
                 <div class="detail-meta-item"><strong>Operación</strong><span>${prop.type}</span></div>
@@ -478,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeDetailsBottomBtn) closeDetailsBottomBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 5. KANBAN LEADS
+    // 7. KANBAN LEADS
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -579,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. STATS DASHBOARD
+    // 8. STATS DASHBOARD
     // ==========================================
     function updateDashboardStats() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -594,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. SPA NAVIGATION & DRAWER MOBILE
+    // 9. SPA NAVIGATION & DRAWER MOBILE
     // ==========================================
     const navItems = document.querySelectorAll('.p-nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
@@ -640,7 +1304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 8. MOBILE FAB '+' POPOVER
+    // 10. MOBILE FAB '+' POPOVER
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
@@ -664,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 9. FORMULARIOS Y MODALES
+    // 11. FORMULARIOS Y MODALES
     // ==========================================
     const propModal = document.getElementById('property-modal');
     const leadModal = document.getElementById('lead-modal');
@@ -699,10 +1363,14 @@ document.addEventListener('DOMContentLoaded', () => {
     propForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const rawPrice = parseFloat(document.getElementById('prop-price').value) || 0;
+        const imgInput = document.getElementById('prop-image').value.trim();
 
         const newProp = {
             id: Date.now(),
             category: document.getElementById('prop-category').value,
+            country: document.getElementById('prop-country').value,
+            subdivision: document.getElementById('prop-subdivision').value,
+            city: document.getElementById('prop-city').value,
             address: document.getElementById('prop-address').value.trim(),
             price: rawPrice,
             type: document.getElementById('prop-type').value,
@@ -713,7 +1381,8 @@ document.addEventListener('DOMContentLoaded', () => {
             sqmLot: parseFloat(document.getElementById('prop-sqm-lot').value) || 0,
             pool: document.getElementById('prop-pool').checked,
             pets: document.getElementById('prop-pets').checked,
-            furnished: document.getElementById('prop-furnished').checked
+            furnished: document.getElementById('prop-furnished').checked,
+            image: imgInput || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
         };
 
         properties.push(newProp);
@@ -741,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 10. EXPORTAR / IMPORTAR BACKUP JSON
+    // 12. EXPORTAR / IMPORTAR BACKUP JSON
     // ==========================================
     function exportData() {
         const data = {
@@ -786,7 +1455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // Inicializar vistas e histograma inicial
+    // Inicializar renders e histograma
     renderHistogram(0, MAX_RANGE_LIMIT);
     renderProperties();
     renderLeads();
