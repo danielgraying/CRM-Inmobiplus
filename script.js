@@ -1181,7 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 6. DETALLE MODAL CON GALERÍA Y GOOGLE MAPS
+    // 6. DETALLE MODAL CON GALERÍA Y MAPA EMBEDDED
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -1197,7 +1197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const imagesList = (prop.images && prop.images.length > 0) ? prop.images : [prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
         
         const fullAddressQuery = encodeURIComponent(`${prop.address}, ${prop.city}, ${prop.subdivision}, ${prop.country}`);
-        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddressQuery}`;
+        const googleMapsEmbedUrl = `https://maps.google.com/maps?q=${fullAddressQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        const googleMapsDirectUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddressQuery}`;
 
         detailContent.innerHTML = `
             <div class="gallery-container">
@@ -1211,9 +1212,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
-                <a href="${googleMapsUrl}" target="_blank" class="btn-gmaps-link">
-                    🗺️ Ver en Google Maps
-                </a>
             </div>
 
             <h4 style="font-size: 1.35rem; color: var(--brand-green); margin: 4px 0;">${formattedPrice}</h4>
@@ -1229,11 +1227,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-meta-item"><strong>Terreno Total</strong><span>${prop.sqmLot || 0} m²</span></div>
                 <div class="detail-meta-item"><strong>Estado</strong><span style="color: #10b981;">Disponible</span></div>
             </div>
+
             <div style="margin-top: 10px;">
                 <strong style="font-size: 0.8rem; color: var(--text-muted);">Amenities:</strong>
                 <p style="font-size: 0.88rem; margin-top: 4px;">
                     ${[prop.pool ? 'Piscina' : null, prop.pets ? 'Acepta Mascotas' : null, prop.furnished ? 'Amoblado' : null].filter(Boolean).join(' • ') || 'Sin extras especificados'}
                 </p>
+            </div>
+
+            <!-- CONTENEDOR DE MAPA EMBEDDED -->
+            <div class="embedded-map-container no-print">
+                <div class="map-header-row">
+                    <strong style="font-size: 0.8rem; color: var(--text-muted);">Ubicación en el Mapa:</strong>
+                    <a href="${googleMapsDirectUrl}" target="_blank" class="btn-gmaps-link">
+                        🔍 Pantalla Completa
+                    </a>
+                </div>
+                <iframe class="embedded-map-frame" src="${googleMapsEmbedUrl}" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         `;
 
@@ -1275,7 +1285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. KANBAN LEADS & DRAWER (EDICIÓN Y ELIMINACIÓN)
+    // 8. KANBAN LEADS & DRAWER
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1707,7 +1717,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 12. POPOVERS (DESKTOP & MOBILE FAB)
     // ==========================================
-    // Mobile FAB Popover
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
     const popoverBtnProp = document.getElementById('popover-btn-prop');
@@ -1730,7 +1739,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Desktop Popover
     const btnQuickCreate = document.getElementById('btn-quick-create');
     const desktopCreatePopover = document.getElementById('desktop-create-popover');
     const deskPopoverBtnProp = document.getElementById('desk-popover-btn-prop');
