@@ -11,6 +11,7 @@
     --brand-green: #0b7b62;
     --brand-green-hover: #08614d;
     --brand-green-light: #e6f4f1;
+    --brand-blue-histogram: #2563eb;
     
     --text-main: #1d2129;
     --text-muted: #5e6c84;
@@ -34,6 +35,7 @@
     --brand-green: #10b981;
     --brand-green-hover: #059669;
     --brand-green-light: rgba(16, 185, 129, 0.15);
+    --brand-blue-histogram: #3b82f6;
     
     --text-main: #f0f6fc;
     --text-muted: #8b949e;
@@ -427,7 +429,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO & NUEVOS COMPONENTES DE FILTRO (ZILLOW STYLE)
+   5. INVENTARIO & HISTOGRAMA ZILLOW STYLE
    ======================================================= */
 .nested-view-layout {
     display: flex;
@@ -436,8 +438,8 @@ body {
 }
 
 .secondary-sidebar {
-    width: 280px;
-    min-width: 280px;
+    width: 290px;
+    min-width: 290px;
     background-color: var(--bg-secondary-sidebar);
     border-right: 1px solid var(--border-color);
     padding: 20px 16px;
@@ -494,16 +496,127 @@ body {
 .facet-dot.status-green { background-color: #10b981; }
 .facet-dot.status-orange { background-color: #f59e0b; }
 
-/* Rango de dos inputs (Min / Max) */
+/* COMPONENTE HISTOGRAMA ZILLOW */
+.price-histogram-card {
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 12px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.histogram-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 52px;
+    width: 100%;
+    padding: 0 4px;
+}
+
+.histogram-bar {
+    flex: 1;
+    background-color: #94a3b8;
+    border-radius: 2px 2px 0 0;
+    min-height: 4px;
+    transition: background-color 0.2s, height 0.3s;
+}
+
+.histogram-bar.active {
+    background-color: var(--brand-blue-histogram);
+}
+
+/* Slider de Rango Dual Superpuesto */
+.range-slider-wrapper {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.slider-track {
+    position: absolute;
+    height: 4px;
+    width: 100%;
+    background-color: #cbd5e1;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.range-slider-wrapper input[type="range"] {
+    position: absolute;
+    width: 100%;
+    background: none;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    z-index: 2;
+    margin: 0;
+}
+
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 2px solid var(--brand-blue-histogram);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.range-slider-wrapper input[type="range"]::-moz-range-thumb {
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 2px solid var(--brand-blue-histogram);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+.histogram-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Rango con Inputs Numéricos */
 .facet-range-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.facet-range-row span {
+.range-input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.range-input-box label {
+    font-size: 0.7rem;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.range-sep {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding-top: 14px;
 }
 
 .facet-input {
@@ -521,17 +634,20 @@ body {
     border-color: var(--brand-green);
 }
 
-/* Pill Buttons para Habitaciones y Baños (Estilo Zillow) */
+/* PILL BUTTONS CORREGIDOS (NO SE CORTA EL TEXTO) */
 .pill-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     gap: 4px;
-    flex-wrap: wrap;
+}
+
+#filter-baths-pills.pill-group,
+#filter-parking-pills.pill-group {
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .pill-btn {
-    flex: 1;
-    min-width: 38px;
-    padding: 6px 4px;
+    padding: 7px 2px;
     background-color: var(--bg-app);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
@@ -541,6 +657,9 @@ body {
     cursor: pointer;
     transition: all 0.15s;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pill-btn:hover {
@@ -553,7 +672,7 @@ body {
     border-color: var(--brand-green);
 }
 
-/* Custom Checkboxes para Amenities */
+/* Checkboxes */
 .checkbox-group {
     display: flex;
     flex-direction: column;
@@ -1015,7 +1134,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         border-bottom: 1px solid var(--border-color);
         padding: 12px 16px;
         gap: 12px;
-        max-height: 240px;
+        max-height: 280px;
     }
 
     .facets-wrapper {
