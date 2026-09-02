@@ -86,26 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const sampleGalleries = [
-        [
-            "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
-        ],
-        [
-            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
-        ],
-        [
-            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
-        ]
-    ];
-
     // ==========================================
-    // 3. BASE DE DATOS INICIAL
+    // 3. BASE DE DATOS INICIAL (FOTOS VARIADAS + COORDENADAS GPS)
     // ==========================================
     const defaultProperties = [
         {
@@ -116,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subdivision: "Táchira",
             city: "San Cristóbal",
             address: "Av. Ferrero Tamayo, Edificio Altamira Suite 4B",
+            lat: 7.7854,
+            lng: -72.2185,
             beds: 3,
             baths: 2,
             parking: 2,
@@ -126,8 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             furnished: false,
             images: [
                 "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
         },
@@ -139,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subdivision: "Táchira",
             city: "San Cristóbal",
             address: "Residencias El Bosque, Calle Los Pinos #12",
+            lat: 7.7780,
+            lng: -72.2240,
             beds: 2,
             baths: 2,
             parking: 1,
@@ -149,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
             furnished: true,
             images: [
                 "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Alquiler"
         },
@@ -161,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Miranda",
             city: "Chacao",
-            address: "Conjunto Residencial Las Villas, Casa 8",
+            address: "Altamira Norte, Conjunto Las Villas Casa 8",
+            lat: 10.5012,
+            lng: -66.8490,
             beds: 4,
             baths: 3.5,
             parking: 3,
@@ -172,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
             furnished: false,
             images: [
                 "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
             ],
             type: "Venta"
         },
@@ -184,7 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Carabobo",
             city: "Valencia",
-            address: "Edificio Vista Real, El Viñedo, Piso 6, Apto 62",
+            address: "El Viñedo, Edificio Vista Real Piso 6",
+            lat: 10.2180,
+            lng: -68.0055,
             beds: 2,
             baths: 1,
             parking: 1,
@@ -193,7 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: true,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1502005229762-ee152da915d6?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -203,7 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Distrito Capital",
             city: "Caracas",
-            address: "Urbanización Alto Prado, Quinta Bella Vista",
+            address: "Alto Prado, Quinta Bella Vista Calle Los Pinos",
+            lat: 10.4430,
+            lng: -66.8625,
             beds: 5,
             baths: 4.5,
             parking: 4,
@@ -212,7 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -222,7 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Táchira",
             city: "Táriba",
-            address: "Centro Urbano, Torres del Parque 3A",
+            address: "Av. 1, Torres del Parque Bloque A-3",
+            lat: 7.8180,
+            lng: -72.2245,
             beds: 1,
             baths: 1,
             parking: 1,
@@ -231,7 +231,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -241,7 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Antioquia",
             city: "Medellín",
-            address: "Centro Comercial El Tesoro, Nivel 1, Local 14",
+            address: "El Tesoro Parque Comercial, Local 140",
+            lat: 6.1985,
+            lng: -75.5580,
             beds: 0,
             baths: 1,
             parking: 2,
@@ -250,7 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -260,7 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Cundinamarca",
             city: "Chía",
-            address: "Sector La Campiña, Parcela B-12",
+            address: "Vereda La Balsa, Sector La Campiña Lote 12",
+            lat: 4.8620,
+            lng: -74.0530,
             beds: 0,
             baths: 0,
             parking: 0,
@@ -269,7 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -279,7 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Antioquia",
             city: "El Poblado",
-            address: "Torre Horizon, Penthouse 1402",
+            address: "Calle 10A, Torre Horizon Penthouse 1402",
+            lat: 6.2085,
+            lng: -75.5670,
             beds: 3,
             baths: 3,
             parking: 2,
@@ -288,7 +302,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -298,7 +315,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Cundinamarca",
             city: "Bogotá",
-            address: "Usaquén, Calle 119 #5-20, Casa Colonial",
+            address: "Usaquén, Carrera 6 #118-20",
+            lat: 4.6975,
+            lng: -74.0305,
             beds: 3,
             baths: 3,
             parking: 2,
@@ -307,7 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
+                "https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -317,7 +339,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Santander",
             city: "Bucaramanga",
-            address: "Residencias Cabecera, Módulo 3, Casa 11",
+            address: "Cabecera del Llano, Calle 48 #34-11",
+            lat: 7.1165,
+            lng: -73.1090,
             beds: 3,
             baths: 2.5,
             parking: 2,
@@ -326,7 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -336,7 +362,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Valle del Cauca",
             city: "Cali",
-            address: "Ciudad Jardín, Edificio Primavera 2B",
+            address: "Ciudad Jardín, Carrera 105 #14-30",
+            lat: 3.3680,
+            lng: -76.5340,
             beds: 2,
             baths: 1.5,
             parking: 1,
@@ -345,7 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -355,7 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "CDMX",
             city: "Polanco",
-            address: "Campos Elíseos, Mansión Los Robles",
+            address: "Campos Elíseos 204, Polanco V Sección",
+            lat: 19.4285,
+            lng: -99.1930,
             beds: 6,
             baths: 5,
             parking: 6,
@@ -364,7 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -374,7 +408,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "Jalisco",
             city: "Guadalajara",
-            address: "Avenida Chapultepec Sur, Local 4",
+            address: "Avenida Chapultepec Sur 340",
+            lat: 20.6720,
+            lng: -103.3685,
             beds: 0,
             baths: 2,
             parking: 1,
@@ -383,7 +419,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -393,7 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "Nuevo León",
             city: "Monterrey",
-            address: "San Jerónimo, Torre Norte 8C",
+            address: "San Jerónimo, Av. Anillo Periférico 101",
+            lat: 25.6790,
+            lng: -100.3640,
             beds: 2,
             baths: 2,
             parking: 1,
@@ -402,7 +442,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -412,7 +454,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "Quintana Roo",
             city: "Tulum",
-            address: "Región 15, Lote Ecoturístico 45",
+            address: "Región 15, Calle 7 Poniente Lote 45",
+            lat: 20.2010,
+            lng: -87.4720,
             beds: 0,
             baths: 0,
             parking: 0,
@@ -421,7 +465,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -431,7 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "CDMX",
             city: "Cuauhtémoc",
-            address: "Colonia Roma Norte, Edificio Grand View 11A",
+            address: "Colonia Roma Norte, Calle Orizaba 84",
+            lat: 19.4180,
+            lng: -99.1595,
             beds: 3,
             baths: 3,
             parking: 2,
@@ -440,7 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: false,
             furnished: true,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -450,7 +500,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Argentina",
             subdivision: "Buenos Aires",
             city: "San Isidro",
-            address: "Las Lomas de San Isidro, Casa 104",
+            address: "Las Lomas de San Isidro, Calle Blanco Encalada 1200",
+            lat: -34.4820,
+            lng: -58.5380,
             beds: 4,
             baths: 2,
             parking: 2,
@@ -459,7 +511,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -469,7 +523,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Argentina",
             subdivision: "Buenos Aires",
             city: "CABA (Palermo)",
-            address: "Palermo Soho, Pasaje Russell, TH-19",
+            address: "Palermo Soho, Pasaje Russell 5020",
+            lat: -34.5880,
+            lng: -58.4285,
             beds: 3,
             baths: 2.5,
             parking: 2,
@@ -478,7 +534,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -488,7 +546,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Argentina",
             subdivision: "Córdoba",
             city: "Córdoba Capital",
-            address: "Nueva Córdoba, Calle Obispo Trejo, Torre 2",
+            address: "Nueva Córdoba, Calle Obispo Trejo 740",
+            lat: -31.4250,
+            lng: -64.1880,
             beds: 2,
             baths: 2,
             parking: 1,
@@ -497,7 +557,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -507,7 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Chile",
             subdivision: "Región Metropolitana",
             city: "Las Condes",
-            address: "Avenida Las Condes #12500, Casa 45",
+            address: "Av. Las Condes 12500, San Damián",
+            lat: -33.3820,
+            lng: -70.5250,
             beds: 4,
             baths: 3,
             parking: 3,
@@ -516,7 +580,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: false,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -526,7 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Chile",
             subdivision: "Región Metropolitana",
             city: "Providencia",
-            address: "Avenida Providencia, Oficina 302",
+            address: "Avenida Providencia 1650, Oficina 302",
+            lat: -33.4265,
+            lng: -70.6180,
             beds: 0,
             baths: 1,
             parking: 1,
@@ -535,7 +603,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: true,
-            images: ["https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -545,7 +615,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Chile",
             subdivision: "Valparaíso",
             city: "Viña del Mar",
-            address: "Avenida Perú, Torre Platinum 901",
+            address: "Avenida Perú 100, Torre Platinum 901",
+            lat: -33.0210,
+            lng: -71.5580,
             beds: 3,
             baths: 3.5,
             parking: 2,
@@ -554,7 +626,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: false,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -564,7 +638,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Perú",
             subdivision: "Arequipa",
             city: "Yanahuara",
-            address: "Calle Los Cedros 204, Casa 7",
+            address: "Calle Los Cedros 204, Yanahuara Tradicional",
+            lat: -16.3880,
+            lng: -71.5420,
             beds: 2,
             baths: 1,
             parking: 1,
@@ -573,7 +649,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: true,
             furnished: false,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -583,7 +661,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Perú",
             subdivision: "Cusco",
             city: "San Jerónimo",
-            address: "Valle Sagrado, Lote 18",
+            address: "Valle Sur, Sector Huaccoto Lote 18",
+            lat: -13.5480,
+            lng: -71.8840,
             beds: 0,
             baths: 0,
             parking: 0,
@@ -592,7 +672,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -602,7 +684,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Perú",
             subdivision: "Lima",
             city: "Miraflores",
-            address: "Malecón de la Reserva, TH-01",
+            address: "Malecón de la Reserva 610, TH-01",
+            lat: -12.1320,
+            lng: -77.0280,
             beds: 4,
             baths: 4,
             parking: 3,
@@ -611,7 +695,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[2],
+            images: [
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -621,7 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Perú",
             subdivision: "Lima",
             city: "San Isidro",
-            address: "Calle Los Conquistadores, Apto 5B",
+            address: "Av. Los Conquistadores 450, Apto 5B",
+            lat: -12.1020,
+            lng: -77.0390,
             beds: 3,
             baths: 2,
             parking: 1,
@@ -630,7 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -640,7 +730,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Colombia",
             subdivision: "Bolívar",
             city: "Cartagena",
-            address: "Ciudad Amurallada, Quinta Coral",
+            address: "Centro Histórico, Calle de la Mantilla #3-44",
+            lat: 10.4240,
+            lng: -75.5515,
             beds: 4,
             baths: 4.5,
             parking: 3,
@@ -649,7 +741,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[1],
+            images: [
+                "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Alquiler"
         },
         {
@@ -659,7 +753,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "México",
             subdivision: "Nuevo León",
             city: "San Pedro Garza García",
-            address: "Calzada del Valle, Edificio Corporativo",
+            address: "Calzada del Valle 400 Ote",
+            lat: 25.6580,
+            lng: -100.3590,
             beds: 0,
             baths: 4,
             parking: 6,
@@ -668,7 +764,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: false,
             pets: false,
             furnished: false,
-            images: ["https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"],
+            images: [
+                "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         },
         {
@@ -678,7 +776,9 @@ document.addEventListener('DOMContentLoaded', () => {
             country: "Venezuela",
             subdivision: "Miranda",
             city: "Baruta",
-            address: "Las Mercedes, Torre Santa María, Piso 8",
+            address: "Las Mercedes, Calle París, Torre Santa María Piso 8",
+            lat: 10.4820,
+            lng: -66.8610,
             beds: 3,
             baths: 2.5,
             parking: 2,
@@ -687,7 +787,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pool: true,
             pets: true,
             furnished: true,
-            images: sampleGalleries[0],
+            images: [
+                "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+            ],
             type: "Venta"
         }
     ];
@@ -750,8 +852,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    // Forzar actualización si no tienen latitud
     let savedProps = JSON.parse(localStorage.getItem('inmo_properties'));
-    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].images) ? savedProps : defaultProperties;
+    let properties = (savedProps && savedProps.length >= 10 && savedProps[0].lat) ? savedProps : defaultProperties;
     localStorage.setItem('inmo_properties', JSON.stringify(properties));
 
     let leads = JSON.parse(localStorage.getItem('inmo_leads')) || defaultLeads;
@@ -761,8 +864,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return `$${Number(val).toLocaleString('en-US')}${type === 'Alquiler' ? ' / mes' : ''}`;
     }
 
+    function formatShortPrice(val) {
+        const num = Number(val);
+        if (num >= 1000) return `$${Math.round(num / 1000)}K`;
+        return `$${num}`;
+    }
+
     // ==========================================
-    // 4. CONTROLADORES DE LOCALIZACIÓN DINÁMICA
+    // 4. CONTROLADORES DE LOCALIZACIÓN
     // ==========================================
     const filterCountry = document.getElementById('filter-country');
     const filterSubdivContainer = document.getElementById('filter-subdiv-container');
@@ -853,7 +962,101 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
 
     // ==========================================
-    // 5. MOTOR DE FILTRADO Y LISTENERS REACTIVOS
+    // 5. MAPA INTERACTIVO LEAFLET (SPLIT-SCREEN)
+    // ==========================================
+    let leafletMap = null;
+    let markersLayer = null;
+    let isMapPanelOpen = false;
+
+    const btnToggleMapView = document.getElementById('btn-toggle-map-view');
+    const inventoryMapPanel = document.getElementById('inventory-map-panel');
+    const btnCloseMapPanel = document.getElementById('btn-close-map-panel');
+
+    function initLeafletMap() {
+        if (leafletMap) return;
+        
+        // Inicializar mapa centrado en San Cristóbal / Táchira por defecto
+        leafletMap = L.map('interactive-results-map', {
+            zoomControl: true
+        }).setView([7.7780, -72.2240], 13);
+
+        // Capa de mosaicos OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(leafletMap);
+
+        markersLayer = L.layerGroup().addTo(leafletMap);
+    }
+
+    function toggleMapPanel() {
+        isMapPanelOpen = !isMapPanelOpen;
+        if (isMapPanelOpen) {
+            inventoryMapPanel.classList.add('open');
+            btnToggleMapView.classList.add('active');
+            btnToggleMapView.innerHTML = '<span>✕</span> Ocultar mapa';
+            initLeafletMap();
+            setTimeout(() => {
+                leafletMap.invalidateSize();
+                renderMapMarkers(lastFilteredProperties);
+            }, 300);
+        } else {
+            inventoryMapPanel.classList.remove('open');
+            btnToggleMapView.classList.remove('active');
+            btnToggleMapView.innerHTML = '<span>🗺️</span> Ver mapa';
+        }
+    }
+
+    if (btnToggleMapView) btnToggleMapView.addEventListener('click', toggleMapPanel);
+    if (btnCloseMapPanel) btnCloseMapPanel.addEventListener('click', toggleMapPanel);
+
+    function renderMapMarkers(propsList) {
+        if (!leafletMap || !markersLayer) return;
+        markersLayer.clearLayers();
+
+        const validMarkers = [];
+
+        propsList.forEach(prop => {
+            if (!prop.lat || !prop.lng) return;
+
+            const shortPrice = formatShortPrice(prop.price);
+            const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80');
+
+            // Crear ícono personalizado HTML con el badge de precio
+            const customIcon = L.divIcon({
+                className: 'custom-map-icon',
+                html: `<div class="map-price-badge">${shortPrice}</div>`,
+                iconSize: [54, 26],
+                iconAnchor: [27, 13]
+            });
+
+            const marker = L.marker([prop.lat, prop.lng], { icon: customIcon });
+
+            // Popup overlay con card de la propiedad
+            const popupHtml = `
+                <div class="map-popup-card">
+                    <img src="${mainImg}" class="map-popup-img" alt="${prop.address}">
+                    <div class="map-popup-body">
+                        <span class="map-popup-price">${formatCurrency(prop.price, prop.type)}</span>
+                        <h5 class="map-popup-title">${prop.address}</h5>
+                        <p class="map-popup-specs">🛏️ ${prop.beds}h • 🛁 ${prop.baths}b • 📐 ${prop.sqmBuild}m²</p>
+                        <button class="map-popup-btn" onclick="viewPropertyDetails(${prop.id})">Ver Ficha Completa</button>
+                    </div>
+                </div>
+            `;
+
+            marker.bindPopup(popupHtml);
+            markersLayer.addLayer(marker);
+            validMarkers.push([prop.lat, prop.lng]);
+        });
+
+        if (validMarkers.length > 0) {
+            leafletMap.fitBounds(validMarkers, { padding: [40, 40], maxZoom: 15 });
+        }
+    }
+
+    // ==========================================
+    // 6. MOTOR DE FILTRADO Y RENDER DE PROPIEDADES
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
@@ -880,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const HISTOGRAM_BUCKETS = 20;
     const MAX_RANGE_LIMIT = 500000;
+    let lastFilteredProperties = [];
 
     let selectedOperation = "";
     const opTags = document.querySelectorAll('#filter-operation-tags .tag-filter-btn');
@@ -1064,6 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                    matchesPool && matchesPets && matchesFurnished;
         });
 
+        lastFilteredProperties = filtered;
         grid.innerHTML = '';
         if (filteredCountBadge) {
             filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble disponible' : 'inmuebles disponibles'}`;
@@ -1114,6 +1319,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        if (isMapPanelOpen) {
+            renderMapMarkers(filtered);
         }
 
         updateDashboardStats();
@@ -1181,13 +1390,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 6. DETALLE MODAL CON GALERÍA Y MAPA EMBEDDED
+    // 7. DETALLE MODAL CON MAPA EMBEDDED
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
     const detailWhatsAppBtn = document.getElementById('detail-whatsapp-btn');
     const closeDetailsModalBtn = document.getElementById('close-details-modal-btn');
-    const closeDetailsBottomBtn = document.getElementById('close-details-bottom-btn');
 
     window.viewPropertyDetails = (id) => {
         const prop = properties.find(p => p.id === id);
@@ -1197,7 +1405,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const imagesList = (prop.images && prop.images.length > 0) ? prop.images : [prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
         
         const fullAddressQuery = encodeURIComponent(`${prop.address}, ${prop.city}, ${prop.subdivision}, ${prop.country}`);
-        const googleMapsEmbedUrl = `https://maps.google.com/maps?q=${fullAddressQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        const googleMapsEmbedUrl = prop.lat && prop.lng 
+            ? `https://maps.google.com/maps?q=${prop.lat},${prop.lng}&t=&z=16&ie=UTF8&iwloc=&output=embed`
+            : `https://maps.google.com/maps?q=${fullAddressQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
         const googleMapsDirectUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddressQuery}`;
 
         detailContent.innerHTML = `
@@ -1235,12 +1445,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>
             </div>
 
-            <!-- CONTENEDOR DE MAPA EMBEDDED -->
             <div class="embedded-map-container no-print">
                 <div class="map-header-row">
-                    <strong style="font-size: 0.8rem; color: var(--text-muted);">Ubicación en el Mapa:</strong>
+                    <strong style="font-size: 0.8rem; color: var(--text-muted);">Ubicación Exacta:</strong>
                     <a href="${googleMapsDirectUrl}" target="_blank" class="btn-gmaps-link">
-                        🔍 Pantalla Completa
+                        🗺️ Abrir en Google Maps
                     </a>
                 </div>
                 <iframe class="embedded-map-frame" src="${googleMapsEmbedUrl}" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -1260,10 +1469,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeDetailsModal() { detailsModal.style.display = 'none'; }
     if (closeDetailsModalBtn) closeDetailsModalBtn.addEventListener('click', closeDetailsModal);
-    if (closeDetailsBottomBtn) closeDetailsBottomBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 7. MOTOR DE MATCHING INTELIGENTE
+    // 8. CIERRE DE MODALES AL HACER CLICK EN BACKDROP
+    // ==========================================
+    const allModals = document.querySelectorAll('.modal-backdrop');
+    allModals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                const form = modal.querySelector('form');
+                if (form) form.reset();
+            }
+        });
+    });
+
+    // ==========================================
+    // 9. MOTOR DE MATCHING INTELIGENTE
     // ==========================================
     function findMatchingPropertiesForLead(lead) {
         const intentText = (lead.intent + ' ' + lead.budget).toLowerCase();
@@ -1285,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. KANBAN LEADS & DRAWER
+    // 10. KANBAN LEADS & DRAWER
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1554,7 +1776,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 9. GESTIÓN DE AGENDA Y VINCULACIÓN A GOOGLE CALENDAR
+    // 11. GESTIÓN DE AGENDA Y GOOGLE CALENDAR
     // ==========================================
     const visitsList = document.getElementById('visits-list');
     const visitLeadSelect = document.getElementById('visit-lead-select');
@@ -1653,7 +1875,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 10. STATS DASHBOARD
+    // 12. STATS DASHBOARD
     // ==========================================
     function updateDashboardStats() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -1668,7 +1890,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 11. SPA NAVIGATION & DRAWER MOBILE
+    // 13. SPA NAVIGATION & DRAWER MOBILE
     // ==========================================
     const navItems = document.querySelectorAll('.p-nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
@@ -1715,7 +1937,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 12. POPOVERS (DESKTOP & MOBILE FAB)
+    // 14. POPOVERS (DESKTOP & MOBILE FAB)
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
@@ -1778,7 +2000,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 13. FORMULARIOS Y MODALES
+    // 15. FORMULARIOS Y MODALES
     // ==========================================
     const propModal = document.getElementById('property-modal');
     const leadModal = document.getElementById('lead-modal');
@@ -1842,6 +2064,10 @@ document.addEventListener('DOMContentLoaded', () => {
             "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=800&q=80"
         ];
 
+        // Centro referencial según ciudad
+        const defaultCityLat = 7.7780;
+        const defaultCityLng = -72.2240;
+
         const newProp = {
             id: Date.now(),
             category: document.getElementById('prop-category').value,
@@ -1849,6 +2075,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subdivision: document.getElementById('prop-subdivision').value,
             city: document.getElementById('prop-city').value,
             address: document.getElementById('prop-address').value.trim(),
+            lat: defaultCityLat + (Math.random() - 0.5) * 0.02,
+            lng: defaultCityLng + (Math.random() - 0.5) * 0.02,
             price: rawPrice,
             type: document.getElementById('prop-type').value,
             beds: parseInt(document.getElementById('prop-beds').value, 10) || 0,
@@ -1917,7 +2145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 14. EXPORTAR / IMPORTAR BACKUP JSON
+    // 16. EXPORTAR / IMPORTAR BACKUP JSON
     // ==========================================
     function exportData() {
         const data = {
