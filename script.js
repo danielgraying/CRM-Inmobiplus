@@ -1196,7 +1196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const formattedPrice = formatCurrency(prop.price, prop.type);
         const imagesList = (prop.images && prop.images.length > 0) ? prop.images : [prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
         
-        // URL integrada para Google Maps
         const fullAddressQuery = encodeURIComponent(`${prop.address}, ${prop.city}, ${prop.subdivision}, ${prop.country}`);
         const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${fullAddressQuery}`;
 
@@ -1706,8 +1705,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 12. MOBILE FAB '+' POPOVER
+    // 12. POPOVERS (DESKTOP & MOBILE FAB)
     // ==========================================
+    // Mobile FAB Popover
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
     const popoverBtnProp = document.getElementById('popover-btn-prop');
@@ -1730,6 +1730,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Desktop Popover
+    const btnQuickCreate = document.getElementById('btn-quick-create');
+    const desktopCreatePopover = document.getElementById('desktop-create-popover');
+    const deskPopoverBtnProp = document.getElementById('desk-popover-btn-prop');
+    const deskPopoverBtnLead = document.getElementById('desk-popover-btn-lead');
+    const deskPopoverBtnVisit = document.getElementById('desk-popover-btn-visit');
+    const deskPopoverBtnBackup = document.getElementById('desk-popover-btn-backup');
+
+    if (btnQuickCreate && desktopCreatePopover) {
+        btnQuickCreate.addEventListener('click', (e) => {
+            e.stopPropagation();
+            desktopCreatePopover.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!desktopCreatePopover.contains(e.target) && e.target !== btnQuickCreate) {
+                desktopCreatePopover.classList.remove('show');
+            }
+        });
+    }
+
+    if (deskPopoverBtnProp) deskPopoverBtnProp.addEventListener('click', () => {
+        desktopCreatePopover.classList.remove('show');
+        openM(propModal);
+    });
+    if (deskPopoverBtnLead) deskPopoverBtnLead.addEventListener('click', () => {
+        desktopCreatePopover.classList.remove('show');
+        openM(leadModal);
+    });
+    if (deskPopoverBtnVisit) deskPopoverBtnVisit.addEventListener('click', () => {
+        desktopCreatePopover.classList.remove('show');
+        populateVisitSelects();
+        openM(visitModal);
+    });
+    if (deskPopoverBtnBackup) deskPopoverBtnBackup.addEventListener('click', () => {
+        desktopCreatePopover.classList.remove('show');
+        exportData();
+    });
+
     // ==========================================
     // 13. FORMULARIOS Y MODALES
     // ==========================================
@@ -1747,13 +1786,16 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileCreatePopover.classList.remove('show');
             mobileFabCreate.classList.remove('active');
         }
+        if (desktopCreatePopover) {
+            desktopCreatePopover.classList.remove('show');
+        }
     }
     function closeM(el, f) { el.style.display = 'none'; if(f) f.reset(); }
 
-    document.getElementById('btn-quick-create').addEventListener('click', () => openM(propModal));
     const btnOpenPropDesktop = document.getElementById('btn-open-prop-modal');
     if (btnOpenPropDesktop) btnOpenPropDesktop.addEventListener('click', () => openM(propModal));
-    document.getElementById('dash-btn-add-prop').addEventListener('click', () => openM(propModal));
+    const dashBtnAddProp = document.getElementById('dash-btn-add-prop');
+    if (dashBtnAddProp) dashBtnAddProp.addEventListener('click', () => openM(propModal));
     const btnOpenLeadDesktop = document.getElementById('btn-open-lead-modal');
     if (btnOpenLeadDesktop) btnOpenLeadDesktop.addEventListener('click', () => openM(leadModal));
     const btnOpenVisitDesktop = document.getElementById('btn-open-visit-modal');
