@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES)
+    // 3. BASE DE DATOS INICIAL
     // ==========================================
     const defaultProperties = [
         {
@@ -1265,7 +1265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 8. KANBAN LEADS & DRAWER
+    // 8. KANBAN LEADS & DRAWER (EDICIÓN Y ELIMINACIÓN)
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1282,9 +1282,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
     let isDragging = false;
 
+    // Elementos del Drawer
     const leadDrawer = document.getElementById('lead-drawer');
     const drawerBackdrop = document.getElementById('drawer-backdrop');
     const closeLeadDrawerBtn = document.getElementById('close-lead-drawer-btn');
+    const btnToggleEditLead = document.getElementById('btn-toggle-edit-lead');
+    const btnDeleteLead = document.getElementById('btn-delete-lead');
+    
+    // Contenedores Vista vs Edición
+    const drawerViewMode = document.getElementById('drawer-view-mode');
+    const drawerEditForm = document.getElementById('drawer-edit-form');
+    const drawerViewFooter = document.getElementById('drawer-view-footer');
+    const btnCancelEditLead = document.getElementById('btn-cancel-edit-lead');
+
+    // Elementos de Vista
     const drawerLeadAvatar = document.getElementById('drawer-lead-avatar');
     const drawerLeadName = document.getElementById('drawer-lead-name');
     const drawerLeadTime = document.getElementById('drawer-lead-time');
@@ -1296,6 +1307,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawerMatchesCount = document.getElementById('drawer-matches-count');
     const drawerMatchesList = document.getElementById('drawer-matches-list');
     const drawerWhatsAppBtn = document.getElementById('drawer-whatsapp-btn');
+
+    // Inputs de Edición
+    const editLeadName = document.getElementById('edit-lead-name');
+    const editLeadPhone = document.getElementById('edit-lead-phone');
+    const editLeadStatus = document.getElementById('edit-lead-status');
+    const editLeadIntent = document.getElementById('edit-lead-intent');
+    const editLeadBudget = document.getElementById('edit-lead-budget');
 
     let currentActiveLeadId = null;
 
@@ -1362,8 +1380,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!lead) return;
 
         currentActiveLeadId = lead.id;
-        const initials = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+        showViewMode();
 
+        const initials = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
         drawerLeadAvatar.textContent = initials;
         drawerLeadName.textContent = lead.name;
         drawerLeadTime.textContent = lead.time || 'Reciente';
@@ -1372,6 +1391,14 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerLeadPhone.textContent = lead.phone || '+58 414-0000000';
         drawerLeadNotes.value = lead.notes || '';
 
+        // Precargar inputs de edición
+        editLeadName.value = lead.name;
+        editLeadPhone.value = lead.phone || '';
+        editLeadStatus.value = lead.status || 'new';
+        editLeadIntent.value = lead.intent;
+        editLeadBudget.value = lead.budget;
+
+        // Matches
         const matches = findMatchingPropertiesForLead(lead);
         drawerMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia' : 'coincidencias'}`;
         drawerMatchesList.innerHTML = '';
@@ -1406,14 +1433,68 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerBackdrop.style.display = 'block';
     }
 
+    function showViewMode() {
+        drawerViewMode.style.display = 'block';
+        drawerEditForm.style.display = 'none';
+        drawerViewFooter.style.display = 'block';
+    }
+
+    function showEditMode() {
+        drawerViewMode.style.display = 'none';
+        drawerEditForm.style.display = 'flex';
+        drawerViewFooter.style.display = 'none';
+    }
+
     function closeLeadDrawer() {
         leadDrawer.classList.remove('open');
         drawerBackdrop.style.display = 'none';
         currentActiveLeadId = null;
+        showViewMode();
     }
 
     if (closeLeadDrawerBtn) closeLeadDrawerBtn.addEventListener('click', closeLeadDrawer);
     if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeLeadDrawer);
+
+    if (btnToggleEditLead) btnToggleEditLead.addEventListener('click', showEditMode);
+    if (btnCancelEditLead) btnCancelEditLead.addEventListener('click', showViewMode);
+
+    // Guardar Edición del Lead
+    drawerEditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!currentActiveLeadId) return;
+
+        const lead = leads.find(l => l.id == currentActiveLeadId);
+        if (lead) {
+            lead.name = editLeadName.value.trim();
+            lead.phone = editLeadPhone.value.trim();
+            lead.status = editLeadStatus.value;
+            lead.intent = editLeadIntent.value.trim();
+            lead.budget = editLeadBudget.value.trim();
+
+            saveLeadsState();
+            renderLeads();
+            openLeadDrawer(lead.id); // Refrescar drawer en modo vista
+        }
+    });
+
+    // Eliminar Lead
+    if (btnDeleteLead) {
+        btnDeleteLead.addEventListener('click', () => {
+            if (!currentActiveLeadId) return;
+            const lead = leads.find(l => l.id == currentActiveLeadId);
+            if (lead && confirm(`¿Deseas eliminar permanentemente al prospecto "${lead.name}"?`)) {
+                leads = leads.filter(l => l.id !== currentActiveLeadId);
+                // Eliminar también visitas asociadas a este lead
+                visits = visits.filter(v => v.leadId !== currentActiveLeadId);
+                localStorage.setItem('inmo_visits', JSON.stringify(visits));
+
+                saveLeadsState();
+                renderLeads();
+                renderVisits();
+                closeLeadDrawer();
+            }
+        });
+    }
 
     if (btnSaveLeadNotes) {
         btnSaveLeadNotes.addEventListener('click', () => {
