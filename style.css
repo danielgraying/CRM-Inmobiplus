@@ -105,7 +105,7 @@ body {
     color: var(--text-muted);
     font-size: 1rem;
     cursor: pointer;
-    display: none; /* Solo visible en mobile */
+    display: none;
 }
 
 .quick-create-wrapper { margin-top: 4px; }
@@ -188,7 +188,6 @@ body {
 .user-name { font-size: 0.82rem; font-weight: 600; }
 .user-role { font-size: 0.7rem; color: var(--text-muted); }
 
-/* Backdrop para Drawer Móvil */
 .sidebar-backdrop {
     display: none;
     position: fixed;
@@ -199,7 +198,7 @@ body {
 }
 
 /* =======================================================
-   2. MAIN WORKSPACE & TOPBAR
+   2. TOPBAR & WORKSPACE
    ======================================================= */
 .workspace-main {
     flex: 1;
@@ -428,7 +427,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO (NESTED SIDEBAR)
+   5. INVENTARIO & NUEVOS COMPONENTES DE FILTRO (ZILLOW STYLE)
    ======================================================= */
 .nested-view-layout {
     display: flex;
@@ -437,14 +436,14 @@ body {
 }
 
 .secondary-sidebar {
-    width: 240px;
-    min-width: 240px;
+    width: 280px;
+    min-width: 280px;
     background-color: var(--bg-secondary-sidebar);
     border-right: 1px solid var(--border-color);
     padding: 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
     overflow-y: auto;
 }
 
@@ -452,6 +451,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .sub-nav-header {
@@ -493,27 +494,97 @@ body {
 .facet-dot.status-green { background-color: #10b981; }
 .facet-dot.status-orange { background-color: #f59e0b; }
 
+/* Rango de dos inputs (Min / Max) */
+.facet-range-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.facet-range-row span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
 .facet-input {
-    padding: 8px 10px;
+    width: 100%;
+    padding: 7px 10px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     background-color: var(--bg-app);
     color: var(--text-main);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     outline: none;
+}
+
+.facet-input:focus {
+    border-color: var(--brand-green);
+}
+
+/* Pill Buttons para Habitaciones y Baños (Estilo Zillow) */
+.pill-group {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.pill-btn {
+    flex: 1;
+    min-width: 38px;
+    padding: 6px 4px;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.pill-btn:hover {
+    border-color: var(--brand-green);
+}
+
+.pill-btn.active {
+    background-color: var(--brand-green);
+    color: white;
+    border-color: var(--brand-green);
+}
+
+/* Custom Checkboxes para Amenities */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-main);
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-checkbox input {
+    accent-color: var(--brand-green);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
 }
 
 .btn-text-small {
     background: none;
     border: none;
-    color: var(--text-subtle);
     font-size: 0.8rem;
     text-align: left;
     cursor: pointer;
     padding: 4px 0;
 }
-
-.btn-text-small:hover { color: var(--text-main); }
 
 .nested-content-area {
     flex: 1;
@@ -583,7 +654,7 @@ body {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     flex: 1;
 }
 
@@ -592,11 +663,28 @@ body {
 
 .property-specs {
     display: flex;
-    gap: 12px;
-    padding-top: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
     border-top: 1px solid var(--border-color);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
+}
+
+.card-amenities-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.mini-amenity-tag {
+    background-color: var(--bg-app);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
 }
 
 .card-actions {
@@ -801,7 +889,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .detail-meta-item span { font-size: 0.95rem; font-weight: 600; }
 
 /* =======================================================
-   8. MOBILE FLOATING ACTION BUTTONS (PandaDoc Style)
+   8. MOBILE FLOATING ACTION BUTTONS
    ======================================================= */
 .mobile-fab-menu {
     display: none;
@@ -846,11 +934,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     transition: transform 0.2s;
 }
 
-.mobile-fab-create.active {
-    transform: rotate(45deg);
-}
+.mobile-fab-create.active { transform: rotate(45deg); }
 
-/* Popover chiquito hacia arriba */
 .mobile-create-popover {
     display: none;
     position: absolute;
@@ -866,9 +951,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     gap: 4px;
 }
 
-.mobile-create-popover.show {
-    display: flex;
-}
+.mobile-create-popover.show { display: flex; }
 
 .popover-item {
     display: flex;
@@ -886,22 +969,17 @@ input:checked + .slider:before { transform: translateX(20px); }
     cursor: pointer;
 }
 
-.popover-item:hover, .popover-item:active {
-    background-color: var(--bg-app);
-}
-
+.popover-item:hover, .popover-item:active { background-color: var(--bg-app); }
 .popover-icon { font-size: 1rem; }
 
 /* =======================================================
-   9. MEDIA QUERIES (MOBILE OPTIMIZATION)
+   9. MEDIA QUERIES (MOBILE)
    ======================================================= */
 @media (max-width: 768px) {
-    /* Mostrar Botones Flotantes */
     .mobile-fab-menu { display: flex; }
     .mobile-fab-container { display: block; }
     .hide-mobile { display: none !important; }
 
-    /* Drawer Sidebar */
     .primary-sidebar {
         position: fixed;
         top: 0;
@@ -912,22 +990,13 @@ input:checked + .slider:before { transform: translateX(20px); }
         box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     }
 
-    .primary-sidebar.open {
-        transform: translateX(0);
-    }
-
+    .primary-sidebar.open { transform: translateX(0); }
     .collapse-btn { display: block; }
 
-    /* Topbar */
     .global-topbar { padding: 0 16px; }
     .search-container { width: 100%; max-width: 240px; }
 
-    /* Dashboard Mobile */
-    .dashboard-layout {
-        grid-template-columns: 1fr;
-        height: auto;
-    }
-
+    .dashboard-layout { grid-template-columns: 1fr; height: auto; }
     .dashboard-main-col { padding: 20px 16px 80px 16px; }
     .dashboard-side-col {
         border-left: none;
@@ -935,21 +1004,10 @@ input:checked + .slider:before { transform: translateX(20px); }
         padding: 24px 16px 100px 16px;
     }
 
-    .status-tabs-strip {
-        gap: 6px;
-        margin-bottom: 20px;
-    }
+    .status-tabs-strip { gap: 6px; margin-bottom: 20px; }
+    .status-tab { min-width: 110px; padding: 6px 10px; }
 
-    .status-tab {
-        min-width: 110px;
-        padding: 6px 10px;
-    }
-
-    /* Nested Views & Sub-sidebar Mobile */
-    .nested-view-layout {
-        flex-direction: column;
-    }
-
+    .nested-view-layout { flex-direction: column; }
     .secondary-sidebar {
         width: 100%;
         min-width: 100%;
@@ -957,7 +1015,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         border-bottom: 1px solid var(--border-color);
         padding: 12px 16px;
         gap: 12px;
-        max-height: 140px;
+        max-height: 240px;
     }
 
     .facets-wrapper {
@@ -973,29 +1031,12 @@ input:checked + .slider:before { transform: translateX(20px); }
         white-space: nowrap;
     }
 
-    .nested-content-area {
-        padding: 16px 16px 90px 16px;
-    }
+    .nested-content-area { padding: 16px 16px 90px 16px; }
+    .property-grid { grid-template-columns: 1fr; }
 
-    .property-grid {
-        grid-template-columns: 1fr;
-    }
+    .leads-layout { padding: 16px 16px 90px 16px; }
+    .kanban-board { height: calc(100vh - 160px); }
 
-    /* Leads Mobile */
-    .leads-layout {
-        padding: 16px 16px 90px 16px;
-    }
-
-    .kanban-board {
-        height: calc(100vh - 160px);
-    }
-
-    /* Ajustes Mobile */
-    .settings-container {
-        padding: 20px 16px 90px 16px;
-    }
-
-    .settings-actions {
-        flex-direction: column;
-    }
+    .settings-container { padding: 20px 16px 90px 16px; }
+    .settings-actions { flex-direction: column; }
 }
