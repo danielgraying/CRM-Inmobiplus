@@ -8,26 +8,104 @@
 </head>
 <body>
     <div class="crm-layout">
+        <!-- Barra Lateral (Navegación) -->
         <aside class="sidebar">
             <div class="logo">InmoCRM</div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item active">Dashboard</a>
-                <a href="#" class="nav-item">Propiedades</a>
+                <a href="#" class="nav-item">Dashboard</a>
+                <a href="#" class="nav-item active">Propiedades</a>
                 <a href="#" class="nav-item">Leads</a>
                 <a href="#" class="nav-item">Configuración</a>
             </nav>
         </aside>
 
+        <!-- Espacio de Trabajo Principal -->
         <main class="main-content">
+            <!-- Barra Superior -->
             <header class="topbar">
                 <input type="text" placeholder="Buscar propiedades o clientes..." class="search-bar">
                 <button class="btn-primary">+ Nueva Propiedad</button>
             </header>
 
+            <!-- Área de Contenido Dinámico (Inventario inyectado aquí) -->
             <div class="content-area" id="app-content">
-                <h2>Resumen de Actividad</h2>
-                <p>Aquí inyectaremos las tarjetas del inventario o el tablero de clientes.</p>
-            </div>
+                
+                <!-- Cabecera del Inventario y Filtros -->
+                <div class="inventory-header">
+                    <h2>Inventario de Propiedades</h2>
+                    <div class="filters-bar">
+                        <select class="filter-select">
+                            <option value="">Tipo de Inmueble</option>
+                            <option value="casa">Casa</option>
+                            <option value="apartamento">Apartamento</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">Operación</option>
+                            <option value="venta">Venta</option>
+                            <option value="alquiler">Alquiler</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">Habitaciones</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                        </select>
+                        <button class="btn-text">Borrar filtros</button>
+                    </div>
+                </div>
+
+                <!-- Grilla de Tarjetas de Propiedades -->
+                <div class="property-grid">
+                    
+                    <!-- Tarjeta de Propiedad 1 -->
+                    <article class="property-card">
+                        <div class="card-media">
+                            <span class="status-badge status-active">En Venta</span>
+                            <div class="photo-placeholder"></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-header">
+                                <h3 class="property-price">$120,000</h3>
+                                <p class="property-address">Av. Principal, Sector Norte</p>
+                            </div>
+                            <div class="property-specs">
+                                <div class="spec-item"><span>🛏️</span> 3 Hab</div>
+                                <div class="spec-item"><span>🛁</span> 2 Baños</div>
+                                <div class="spec-item"><span>📐</span> 150m²</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-secondary">Ver Ficha</button>
+                            <button class="btn-whatsapp">Enviar a Lead 💬</button>
+                        </div>
+                    </article>
+
+                    <!-- Tarjeta de Propiedad 2 -->
+                    <article class="property-card">
+                        <div class="card-media">
+                            <span class="status-badge status-rent">Alquiler</span>
+                            <div class="photo-placeholder" style="background-color: #cbd5e1;"></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-header">
+                                <h3 class="property-price">$850 / mes</h3>
+                                <p class="property-address">Residencias El Bosque, Torre B</p>
+                            </div>
+                            <div class="property-specs">
+                                <div class="spec-item"><span>🛏️</span> 2 Hab</div>
+                                <div class="spec-item"><span>🛁</span> 2 Baños</div>
+                                <div class="spec-item"><span>📐</span> 85m²</div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-secondary">Ver Ficha</button>
+                            <button class="btn-whatsapp">Enviar a Lead 💬</button>
+                        </div>
+                    </article>
+                    
+                </div> <!-- Fin de property-grid -->
+
+            </div> <!-- Fin de content-area -->
         </main>
     </div>
 </body>
