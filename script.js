@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES + LEADS + VISITAS)
+    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES)
     // ==========================================
     const defaultProperties = [
         {
@@ -1104,7 +1104,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="card-actions">
                         <button class="btn-secondary" onclick="viewPropertyDetails(${prop.id})">Ver Ficha</button>
-                        <button class="btn-whatsapp" onclick="sendWhatsApp('${encodeURIComponent(prop.address)}', '${formatCurrency(prop.price, prop.type)}')">WhatsApp 💬</button>
+                        <button class="btn-whatsapp" onclick="sendWhatsApp('${encodeURIComponent(prop.address)}', '${formatCurrency(prop.price, prop.type)}')">
+                            <svg class="btn-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.59c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.71 4.3 3.8 2.52 1.1 2.52.73 2.98.69.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/>
+                            </svg>
+                            WhatsApp
+                        </button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1393,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         drawerWhatsAppBtn.onclick = () => {
             const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
-            const msg = `Hola ${lead.name}, te contacto de InmoCRM respecto a tu búsqueda de inmueble: "${lead.intent}". ¿Cómo estás?`;
+            const msg = `Hola ${lead.name}, te contacto de inmoderno respecto a tu búsqueda de inmueble: "${lead.intent}". ¿Cómo estás?`;
             window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
@@ -1483,15 +1488,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Generador de URL para Google Calendar
     function generateGoogleCalendarUrl(visit) {
-        const title = encodeURIComponent(`Visita InmoCRM: ${visit.leadName}`);
+        const title = encodeURIComponent(`Visita inmoderno: ${visit.leadName}`);
         const location = encodeURIComponent(visit.propAddress);
         const details = encodeURIComponent(`Cita programada con el cliente ${visit.leadName} (${visit.leadPhone}).\nPropiedad: ${visit.propAddress}\nNotas: ${visit.notes || 'Ninguna'}`);
 
-        // Formato ISO: YYYYMMDDTHHmmssZ
         const startDateTime = new Date(`${visit.date}T${visit.time}:00`);
-        const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // 1 hora de duración
+        const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
 
         const formatIsoUtc = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
         const datesParam = `${formatIsoUtc(startDateTime)}/${formatIsoUtc(endDateTime)}`;
@@ -1525,8 +1528,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 ${v.notes ? `<p style="font-size: 0.8rem; color: var(--text-muted);">📝 ${v.notes}</p>` : ''}
                 <div class="visit-actions-strip">
-                    <a href="${gcalUrl}" target="_blank" class="btn-gcal">📅 Google Calendar</a>
-                    <a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" class="btn-whatsapp" style="font-size: 0.78rem; text-decoration: none;">WhatsApp 💬</a>
+                    <a href="${gcalUrl}" target="_blank" class="btn-gcal" title="Añadir a Google Calendar">
+                        <svg class="btn-icon-svg" viewBox="0 0 24 24" width="16" height="16">
+                            <rect x="3" y="4" width="18" height="18" rx="2" fill="#fff" stroke="#dadce0"/>
+                            <path d="M3 4h18v4H3z" fill="#4285F4"/>
+                            <path d="M7 2v4M17 2v4" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+                            <text x="12" y="17" font-size="9" font-family="Inter,sans-serif" font-weight="bold" fill="#3c4043" text-anchor="middle">31</text>
+                        </svg>
+                        Google Calendar
+                    </a>
+                    <a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" class="btn-whatsapp" style="font-size: 0.78rem;">
+                        <svg class="btn-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.59c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.71 4.3 3.8 2.52 1.1 2.52.73 2.98.69.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/>
+                        </svg>
+                        WhatsApp
+                    </a>
                     <button class="btn-secondary" style="font-size: 0.78rem;" onclick="deleteVisit('${v.id}')">Eliminar</button>
                 </div>
             `;
@@ -1781,7 +1797,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `inmocrm_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `inmoderno_backup_${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
     }
