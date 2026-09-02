@@ -12,7 +12,7 @@
 <body>
     <div class="app-container">
         
-        <!-- BACKDROP DEL DRAWER MÓVIL Y DRAWER LATERAL -->
+        <!-- BACKDROPS -->
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
         <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
@@ -42,6 +42,9 @@
                 </a>
                 <a href="#" class="p-nav-item" data-target="view-leads">
                     <span class="nav-icon">👥</span> Leads (Pipeline)
+                </a>
+                <a href="#" class="p-nav-item" data-target="view-calendar">
+                    <span class="nav-icon">📅</span> Agenda / Visitas
                 </a>
                 <a href="#" class="p-nav-item" data-target="view-settings">
                     <span class="nav-icon">⚙️</span> Ajustes
@@ -130,7 +133,7 @@
                                     </div>
                                     <div class="checklist-item">
                                         <div class="chk-bullet">4</div>
-                                        <span>Probar envío por WhatsApp</span>
+                                        <span>Sincronizar visitas con Google Calendar</span>
                                     </div>
                                 </div>
 
@@ -142,14 +145,12 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO CON FILTROS REACTIVOS -->
+                <!-- VISTA 1: INVENTARIO -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
-                        
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
-                            <!-- 1. Localización LATAM -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">📍 LOCALIZACIÓN (LATAM)</span>
                                 <div class="form-group-filter">
@@ -178,7 +179,6 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Operación Comercial (Tags) -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">OPERACIÓN COMERCIAL</span>
                                 <div class="tags-flex-group" id="filter-operation-tags">
@@ -188,7 +188,6 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Tipo de Inmueble (Tags) -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">TIPO DE INMUEBLE</span>
                                 <div class="tags-flex-group" id="filter-category-tags">
@@ -201,7 +200,6 @@
                                 </div>
                             </div>
 
-                            <!-- 4. Rango de Precios con Histograma -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">RANGO DE PRECIO</span>
                                 <div class="price-histogram-card">
@@ -229,7 +227,6 @@
                                 </div>
                             </div>
 
-                            <!-- 5. Habitaciones -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">HABITACIONES</span>
                                 <div class="pill-group" id="filter-beds-pills">
@@ -242,7 +239,6 @@
                                 </div>
                             </div>
 
-                            <!-- 6. Baños -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">BAÑOS</span>
                                 <div class="pill-group" id="filter-baths-pills">
@@ -254,7 +250,6 @@
                                 </div>
                             </div>
 
-                            <!-- 7. Estacionamientos -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
                                 <div class="pill-group" id="filter-parking-pills">
@@ -265,7 +260,6 @@
                                 </div>
                             </div>
 
-                            <!-- 8. Metrajes -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
                                 <div class="facet-range-row">
@@ -284,7 +278,6 @@
                                 </div>
                             </div>
 
-                            <!-- 9. Amenities Contextuales -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">CARACTERÍSTICAS & AMENITIES</span>
                                 <div class="checkbox-group">
@@ -351,7 +344,26 @@
                     </div>
                 </div>
 
-                <!-- VISTA 3: AJUSTES -->
+                <!-- VISTA 3: AGENDA / VISITAS (NUEVO) -->
+                <div id="view-calendar" class="view-section" style="display: none;">
+                    <div class="calendar-layout">
+                        <div class="calendar-header-row">
+                            <div>
+                                <h2>Agenda de Visitas</h2>
+                                <p class="subtext">Programa recorridos con prospectos y sincronízalos directamente a Google Calendar</p>
+                            </div>
+                            <button class="btn-primary hide-mobile" id="btn-open-visit-modal">+ Agendar Nueva Visita</button>
+                        </div>
+
+                        <div class="visits-container">
+                            <div class="visits-list" id="visits-list">
+                                <!-- Inyectado dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISTA 4: AJUSTES -->
                 <div id="view-settings" class="view-section" style="display: none;">
                     <div class="settings-container">
                         <h2>Configuración</h2>
@@ -451,6 +463,9 @@
                 </button>
                 <button class="popover-item" id="popover-btn-lead">
                     <span class="popover-icon">👤</span> Nuevo Lead
+                </button>
+                <button class="popover-item" id="popover-btn-visit">
+                    <span class="popover-icon">📅</span> Agendar Visita
                 </button>
                 <button class="popover-item" id="popover-btn-backup">
                     <span class="popover-icon">📥</span> Exportar Backup
@@ -621,16 +636,54 @@
         </div>
     </div>
 
-    <!-- MODAL 3: VER FICHA DETALLE CON GALERÍA -->
-    <div class="modal-backdrop" id="details-modal">
-        <div class="modal-window" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+    <!-- MODAL 3: AGENDAR NUEVA VISITA (NUEVO) -->
+    <div class="modal-backdrop" id="visit-modal">
+        <div class="modal-window" style="max-width: 500px;">
             <div class="modal-header">
-                <h3>Ficha de la Propiedad</h3>
+                <h3>Agendar Recorrido / Visita</h3>
+                <button class="modal-close" id="close-visit-modal-btn">✕</button>
+            </div>
+            <form id="visit-form">
+                <div class="form-group">
+                    <label>Seleccionar Prospecto / Lead</label>
+                    <select id="visit-lead-select" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Seleccionar Propiedad a Visitar</label>
+                    <select id="visit-prop-select" required></select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" id="visit-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora</label>
+                        <input type="time" id="visit-time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notas de la Cita (Opcional)</label>
+                    <input type="text" id="visit-notes" placeholder="Ej. Llevar llaves de la terraza, cliente va con su esposa">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-visit-modal-btn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar en Agenda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: VER FICHA DETALLE CON GALERÍA E IMPRESIÓN PDF -->
+    <div class="modal-backdrop" id="details-modal">
+        <div class="modal-window printable-area" style="max-width: 620px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header no-print">
+                <h3>Ficha Técnica del Inmueble</h3>
                 <button class="modal-close" id="close-details-modal-btn">✕</button>
             </div>
             <div id="detail-content"></div>
-            <div class="modal-actions" style="margin-top: 20px;">
-                <button type="button" class="btn-secondary" id="close-details-bottom-btn">Cerrar</button>
+            <div class="modal-actions no-print" style="margin-top: 20px;">
+                <button type="button" class="btn-secondary" onclick="window.print()">Imprimir / PDF 📄</button>
                 <button type="button" class="btn-whatsapp" id="detail-whatsapp-btn">Compartir WhatsApp 💬</button>
             </div>
         </div>
