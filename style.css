@@ -323,6 +323,23 @@ body {
 }
 
 .btn-whatsapp:hover { background-color: #1ebc5a; }
+
+.btn-gcal {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-gcal:hover { background-color: #3367d6; }
 .full-width { width: 100%; }
 
 /* =======================================================
@@ -430,7 +447,7 @@ body {
 }
 
 /* =======================================================
-   5. INVENTARIO & FILTROS (TAGS UNIFORMES)
+   5. INVENTARIO & FILTROS (TAGS)
    ======================================================= */
 .nested-view-layout {
     display: flex;
@@ -465,7 +482,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* GRUPO DE TAGS PARA OPERACIÓN Y TIPO DE INMUEBLE */
 .tags-flex-group {
     display: flex;
     flex-wrap: wrap;
@@ -485,10 +501,7 @@ body {
     user-select: none;
 }
 
-.tag-filter-btn:hover {
-    border-color: var(--brand-green);
-}
-
+.tag-filter-btn:hover { border-color: var(--brand-green); }
 .tag-filter-btn.active {
     background-color: var(--brand-green);
     color: white;
@@ -851,9 +864,9 @@ body {
 }
 
 /* =======================================================
-   6. LEADS (KANBAN)
+   6. LEADS (KANBAN) & AGENDA / CALENDARIO
    ======================================================= */
-.leads-layout {
+.leads-layout, .calendar-layout {
     padding: 24px 32px;
     display: flex;
     flex-direction: column;
@@ -861,14 +874,14 @@ body {
     background-color: var(--bg-app);
 }
 
-.leads-header-row {
+.leads-header-row, .calendar-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.leads-header-row h2 { font-size: 1.25rem; font-weight: 700; }
+.leads-header-row h2, .calendar-header-row h2 { font-size: 1.25rem; font-weight: 700; }
 
 .kanban-board {
     display: flex;
@@ -965,6 +978,68 @@ body {
     background-color: rgba(37, 99, 235, 0.1);
     padding: 2px 6px;
     border-radius: 4px;
+}
+
+/* AGENDA DE VISITAS */
+.visits-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.visits-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.visit-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.visit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+}
+
+.visit-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.visit-date-badge {
+    background-color: var(--brand-green-light);
+    color: var(--brand-green);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.visit-lead-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.visit-prop-title {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.visit-actions-strip {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
 }
 
 /* =======================================================
@@ -1268,7 +1343,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .modal-header h3 { font-size: 1.15rem; font-weight: 700; }
 .modal-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--text-muted); }
 
-#property-form, #lead-form { display: flex; flex-direction: column; gap: 14px; }
+#property-form, #lead-form, #visit-form { display: flex; flex-direction: column; gap: 14px; }
 .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 .form-group input, .form-group select {
@@ -1377,7 +1452,28 @@ input:checked + .slider:before { transform: translateX(20px); }
 .popover-icon { font-size: 1rem; }
 
 /* =======================================================
-   10. MEDIA QUERIES (MOBILE)
+   10. ESTILOS DE IMPRESIÓN / PDF (EXPORTACIÓN LIMPIA)
+   ======================================================= */
+@media print {
+    body * { visibility: hidden; }
+    .printable-area, .printable-area * { visibility: visible; }
+    .printable-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+    }
+    .no-print { display: none !important; }
+}
+
+/* =======================================================
+   11. MEDIA QUERIES (MOBILE)
    ======================================================= */
 @media (max-width: 768px) {
     .mobile-fab-menu { display: flex; }
@@ -1422,10 +1518,16 @@ input:checked + .slider:before { transform: translateX(20px); }
         max-height: 280px;
     }
 
+    .facets-wrapper {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
     .nested-content-area { padding: 16px 16px 90px 16px; }
     .property-grid { grid-template-columns: 1fr; }
 
-    .leads-layout { padding: 16px 16px 90px 16px; }
+    .leads-layout, .calendar-layout { padding: 16px 16px 90px 16px; }
     .kanban-board { height: calc(100vh - 160px); }
 
     .settings-container { padding: 20px 16px 90px 16px; }
