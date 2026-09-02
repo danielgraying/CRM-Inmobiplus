@@ -141,14 +141,46 @@
                     </div>
                 </div>
 
-                <!-- VISTA 1: INVENTARIO CON FILTRO HISTOGRAMA ZILLOW -->
+                <!-- VISTA 1: INVENTARIO CON FILTROS DE LOCALIZACIÓN LATAM -->
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
                         
                         <aside class="secondary-sidebar">
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
-                            <!-- 1. Operación -->
+                            <!-- 1. Localización Dinámica LATAM -->
+                            <div class="sub-nav-group">
+                                <span class="sub-nav-header">📍 LOCALIZACIÓN (LATAM)</span>
+                                
+                                <div class="form-group-filter">
+                                    <label class="filter-mini-label">País</label>
+                                    <select id="filter-country" class="facet-select">
+                                        <option value="">Todos los países</option>
+                                        <option value="Venezuela">Venezuela 🇻🇪</option>
+                                        <option value="Colombia">Colombia 🇨🇴</option>
+                                        <option value="México">México 🇲🇽</option>
+                                        <option value="Argentina">Argentina 🇦🇷</option>
+                                        <option value="Chile">Chile 🇨🇱</option>
+                                        <option value="Perú">Perú 🇵🇪</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-filter" id="filter-subdiv-container" style="display: none;">
+                                    <label class="filter-mini-label" id="filter-subdiv-label">Estado</label>
+                                    <select id="filter-subdivision" class="facet-select">
+                                        <option value="">Todos</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-filter" id="filter-city-container" style="display: none;">
+                                    <label class="filter-mini-label" id="filter-city-label">Ciudad / Municipio</label>
+                                    <select id="filter-city" class="facet-select">
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 2. Operación -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">OPERACIÓN</span>
                                 <div class="facets-wrapper">
@@ -167,7 +199,7 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Tipo de Inmueble -->
+                            <!-- 3. Tipo de Inmueble -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">TIPO DE INMUEBLE</span>
                                 <div class="facets-wrapper">
@@ -198,21 +230,17 @@
                                 </div>
                             </div>
 
-                            <!-- 3. Rango de Precios con Histograma estilo Zillow -->
+                            <!-- 4. Rango de Precios con Histograma -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">RANGO DE PRECIO</span>
                                 
                                 <div class="price-histogram-card">
-                                    <!-- Contenedor dinámico de barras -->
                                     <div class="histogram-bars" id="histogram-bars"></div>
-                                    
-                                    <!-- Sliders superpuestos -->
                                     <div class="range-slider-wrapper">
                                         <div class="slider-track" id="slider-track"></div>
                                         <input type="range" id="range-slider-min" min="0" max="500000" step="5000" value="0">
                                         <input type="range" id="range-slider-max" min="0" max="500000" step="5000" value="500000">
                                     </div>
-                                    
                                     <div class="histogram-labels">
                                         <span id="label-min-price">$0</span>
                                         <span id="label-max-price">$500K+</span>
@@ -232,7 +260,7 @@
                                 </div>
                             </div>
 
-                            <!-- 4. Habitaciones -->
+                            <!-- 5. Habitaciones -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">HABITACIONES</span>
                                 <div class="pill-group" id="filter-beds-pills">
@@ -245,7 +273,7 @@
                                 </div>
                             </div>
 
-                            <!-- 5. Baños -->
+                            <!-- 6. Baños -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">BAÑOS</span>
                                 <div class="pill-group" id="filter-baths-pills">
@@ -257,7 +285,7 @@
                                 </div>
                             </div>
 
-                            <!-- 6. Estacionamientos / Garaje -->
+                            <!-- 7. Estacionamientos -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">PUESTOS DE ESTACIONAMIENTO</span>
                                 <div class="pill-group" id="filter-parking-pills">
@@ -268,7 +296,7 @@
                                 </div>
                             </div>
 
-                            <!-- 7. Metraje Construido (m²) -->
+                            <!-- 8. Metrajes -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">ÁREA CONSTRUIDA (m²)</span>
                                 <div class="facet-range-row">
@@ -278,7 +306,6 @@
                                 </div>
                             </div>
 
-                            <!-- 8. Metraje Total de Terreno (m²) -->
                             <div class="sub-nav-group">
                                 <span class="sub-nav-header">TERRENO / LOTE TOTAL (m²)</span>
                                 <div class="facet-range-row">
@@ -415,17 +442,44 @@
 
     </div>
 
-    <!-- MODAL 1: NUEVA PROPIEDAD -->
+    <!-- MODAL 1: NUEVA PROPIEDAD CON LOCALIZACIÓN DINÁMICA -->
     <div class="modal-backdrop" id="property-modal">
-        <div class="modal-window" style="max-width: 540px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-window" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3>Agregar Nueva Propiedad</h3>
                 <button class="modal-close" id="close-modal-btn">✕</button>
             </div>
             <form id="property-form">
                 <div class="form-group">
-                    <label>Título / Dirección</label>
+                    <label>Título / Dirección Corta</label>
                     <input type="text" id="prop-address" placeholder="Ej. Residencias Vista Alta, Apto 4B" required>
+                </div>
+
+                <!-- Bloque de Localización Dinámica en el Modal -->
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>País</label>
+                        <select id="prop-country" required>
+                            <option value="Venezuela">Venezuela</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="México">México</option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Chile">Chile</option>
+                            <option value="Perú">Perú</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="prop-subdiv-label">Estado</label>
+                        <select id="prop-subdivision" required>
+                            <!-- Inyectado dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="prop-city-label">Ciudad / Municipio</label>
+                        <select id="prop-city" required>
+                            <!-- Inyectado dinámicamente -->
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-row">
@@ -448,9 +502,15 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Precio ($)</label>
-                    <input type="number" id="prop-price" placeholder="Ej. 95000" min="0" step="any" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="number" id="prop-price" placeholder="Ej. 95000" min="0" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL de Imagen (Opcional)</label>
+                        <input type="url" id="prop-image" placeholder="https://images.unsplash.com/...">
+                    </div>
                 </div>
 
                 <div class="form-row-3">
@@ -546,7 +606,7 @@
 
     <!-- MODAL 3: VER FICHA DETALLE -->
     <div class="modal-backdrop" id="details-modal">
-        <div class="modal-window">
+        <div class="modal-window" style="max-width: 520px;">
             <div class="modal-header">
                 <h3>Ficha de la Propiedad</h3>
                 <button class="modal-close" id="close-details-modal-btn">✕</button>
