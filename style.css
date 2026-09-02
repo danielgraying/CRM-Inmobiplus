@@ -311,24 +311,34 @@ body {
 
 .btn-secondary:hover { background-color: var(--bg-app); }
 
+/* BOTÓN WHATSAPP */
 .btn-whatsapp {
     background-color: #25D366;
-    color: white;
+    color: #ffffff;
     border: none;
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
 }
 
-.btn-whatsapp:hover { background-color: #1ebc5a; }
+.btn-whatsapp:hover {
+    background-color: #20ba59;
+}
 
+/* BOTÓN GOOGLE CALENDAR */
 .btn-gcal {
-    background-color: #4285f4;
-    color: white;
-    border: none;
-    padding: 6px 10px;
+    background-color: #ffffff;
+    color: #3c4043;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
     border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: 0.78rem;
@@ -336,10 +346,23 @@ body {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    gap: 6px;
+    transition: background-color 0.15s, border-color 0.15s;
+    box-shadow: 0 1px 2px rgba(60,64,67,0.08);
 }
 
-.btn-gcal:hover { background-color: #3367d6; }
+.btn-gcal:hover {
+    background-color: #f8f9fa;
+    border-color: #dadce0;
+}
+
+.btn-icon-svg {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
 .full-width { width: 100%; }
 
 /* =======================================================
@@ -864,7 +887,7 @@ body {
 }
 
 /* =======================================================
-   6. LEADS (KANBAN) & AGENDA / CALENDARIO
+   6. LEADS (KANBAN) & AGENDA
    ======================================================= */
 .leads-layout, .calendar-layout {
     padding: 24px 32px;
@@ -1452,7 +1475,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .popover-icon { font-size: 1rem; }
 
 /* =======================================================
-   10. ESTILOS DE IMPRESIÓN / PDF (EXPORTACIÓN LIMPIA)
+   10. ESTILOS DE IMPRESIÓN / PDF
    ======================================================= */
 @media print {
     body * { visibility: hidden; }
@@ -1522,6 +1545,13 @@ input:checked + .slider:before { transform: translateX(20px); }
         flex-direction: row;
         overflow-x: auto;
         padding-bottom: 4px;
+    }
+
+    .facet-option {
+        background-color: var(--bg-app);
+        padding: 6px 12px;
+        border-radius: 16px;
+        white-space: nowrap;
     }
 
     .nested-content-area { padding: 16px 16px 90px 16px; }
