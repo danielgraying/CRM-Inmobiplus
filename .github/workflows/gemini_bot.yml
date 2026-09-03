@@ -23,6 +23,7 @@ jobs:
     - name: Ejecutar Inteligencia Artificial
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        ISSUE_TITLE: ${{ github.event.issue.title }}
         ISSUE_BODY: ${{ github.event.issue.body }}
       run: python gemini_update.py
 
@@ -30,6 +31,6 @@ jobs:
       run: |
         git config --global user.name "GeminiBot"
         git config --global user.email "gemini-bot@github.com"
-        git add app.py
+        git add .
         git commit -m "🤖 Código actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
         git push
