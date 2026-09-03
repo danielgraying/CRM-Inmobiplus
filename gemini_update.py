@@ -2,13 +2,11 @@ import os
 import re
 import google.generativeai as genai
 
-# 1. Configurar Gemini
+# 1. Configurar Gemini con la API Key gratuita
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-
-# 2. Capturar el prompt del usuario
 prompt_usuario = os.environ.get("ISSUE_BODY", "")
 
-# 3. Leer los tres archivos principales de tu proyecto
+# 2. Leer los archivos del repositorio para enviarlos como contexto
 archivos = ["index.html", "style.css", "script.js"]
 contexto_codigo = ""
 
@@ -16,39 +14,42 @@ for nombre_archivo in archivos:
     if os.path.exists(nombre_archivo):
         with open(nombre_archivo, "r", encoding="utf-8") as f:
             contenido = f.read()
-        contexto_codigo += f"--- ARCHIVO: {nombre_archivo} ---\n{contenido}\n\n"
+        contexto_codigo += f"=== INICIO ARCHIVO ORIGINAL: {nombre_archivo} ===\n{contenido}\n=== FIN ARCHIVO ORIGINAL ===\n\n"
 
-# 4. Crear un súper prompt donde Gemini analiza todo el contexto
+# 3. Instrucciones ultra-específicas para formatear la respuesta
 prompt_final = (
-    f"Instrucción del usuario: {prompt_usuario}\n\n"
-    f"Aquí tienes el código actual de todo el proyecto:\n\n{contexto_codigo}\n"
-    f"Tu tarea es decidir qué archivo o archivos deben ser modificados para cumplir con la instrucción del usuario. "
-    f"Puedes modificar uno solo, dos, o los tres si es necesario.\n\n"
-    f"Devuelve tu respuesta usando estrictamente este formato para cada archivo que decidas cambiar (no agregues texto fuera de estos bloques):\n"
-    f"[INICIO_ARCHIVO:nombre_del_archivo]\n"
-    f"Aquí pones todo el código completo y actualizado de ese archivo\n"
-    f"[FIN_ARCHIVO:nombre_del_archivo]\n"
+    f"Instrucción de cambio solicitada por el usuario:\n{prompt_usuario}\n\n"
+    f"Código actual del proyecto:\n{contexto_codigo}\n"
+    f"Modifica los archivos necesarios (pueden ser uno, dos o los tres) para cumplir la instrucción.\n"
+    f"Devuelve tu respuesta estructurada exactamente usando estos delimitadores para envolver el código de cada archivo modificado:\n\n"
+    f"@@@INICIO:{nombre_archivo}@@@\n"
+    f"(Escribe aquí el código completo actualizado del archivo)\n"
+    f"@@@FIN:{nombre_archivo}@@@\n\n"
+    f"Importante: No uses bloques de markdown adicionales (como ```html o ```css) dentro de las etiquetas @@@. Solo el código puro."
 )
 
-# 5. Llamar a Gemini (Usamos 1.5 Flash)
+# 4. Llamar al modelo
 model = genai.GenerativeModel('gemini-1.5-flash')
 response = model.generate_content(prompt_final)
 respuesta_ia = response.text
 
-# 6. Procesar la respuesta de Gemini y guardar los cambios en los archivos correspondientes
-bloques = re.findall(r'\[INICIO_ARCHIVO:(.*?)\](.*?)\[FIN_ARCHIVO:\1\]', respuesta_ia, re.DOTALL)
+# 5. Extraer y guardar los cambios usando expresiones regulares robustas
+bloques = re.findall(r'@@@INICIO:(.*?)@@@(.*?)@@@FIN:\1@@@', respuesta_ia, re.DOTALL)
 
 if not bloques:
-    print("⚠️ Gemini no devolvió cambios en el formato solicitado o no consideró necesario cambiar nada.")
-    print("Respuesta recibida:", respuesta_ia)
-else:
-    for nombre_archivo, nuevo_contenido in bloques:
-        nombre_archivo = nombre_archivo.strip()
-        # Limpieza de seguridad por si Gemini mete marcas markdown de código inside del bloque
-        nuevo_contenido = re.sub(r'^```[a-zA-Z]*\n', '', nuevo_contenido)
-        nuevo_contenido = re.sub(r'\n```$', '', nuevo_contenido).strip()
-        
-        if nombre_archivo in archivos:
-            with open(nombre_archivo, "w", encoding="utf-8") as f:
-                f.write(nuevo_contenido)
-            print(f"✅ ¡Archivo '{nombre_archivo}' actualizado con éxito!")
+    print("❌ Error crítico: Gemini no devolvió los bloques con el formato @@@INICIO y @@@FIN esperado.")
+    print("Respuesta cruda de la IA para diagnóstico:\n", respuesta_ia)
+    exit(1)
+
+for nombre_archivo, nuevo_contenido in bloques:
+    nombre_archivo = nombre_archivo.strip()
+    # Limpieza extrema de formato markdown por si la IA ignora las órdenes
+    nuevo_contenido = re.sub(r'^```[a-zA-Z]*\n', '', nuevo_contenido)
+    nuevo_contenido = re.sub(r'\n```$', '', nuevo_contenido).strip()
+    
+    if nombre_archivo in archivos:
+        with open(nombre_archivo, "w", encoding="utf-8") as f:
+            f.write(nuevo_contenido)
+        print(f"✅ ¡Archivo '{nombre_archivo}' actualizado correctamente!")
+    else:
+        print(f"⚠️ Se detectó un intento de modificar un archivo no autorizado: {nombre_archivo}")
