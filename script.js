@@ -1226,6 +1226,38 @@ document.addEventListener('DOMContentLoaded', () => {
         filterMaxPrice.value = '';
     }
 
+    function clampSliderToAvailableInventory(filteredProps) {
+        if (filteredProps.length === 0) return;
+
+        const prices = filteredProps.map(p => p.price);
+        const minAvailable = Math.min(...prices);
+        const maxAvailable = Math.max(...prices);
+
+        let currentMin = parseFloat(rangeSliderMin.value) || 0;
+        let currentMax = parseFloat(rangeSliderMax.value) || getContextualMaxPrice();
+
+        let updated = false;
+
+        if (currentMax > maxAvailable) {
+            currentMax = maxAvailable;
+            rangeSliderMax.value = currentMax;
+            filterMaxPrice.value = '';
+            updated = true;
+        }
+
+        if (currentMin < minAvailable) {
+            currentMin = minAvailable;
+            rangeSliderMin.value = currentMin;
+            filterMinPrice.value = '';
+            updated = true;
+        }
+
+        if (updated) {
+            labelMinPrice.textContent = `$${Number(currentMin).toLocaleString('en-US')}`;
+            labelMaxPrice.textContent = `$${Number(currentMax).toLocaleString('en-US')}`;
+        }
+    }
+
     function renderHistogram(currentMin, currentMax, dataset = properties) {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
@@ -1349,7 +1381,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const reqPets = (valOp !== 'Venta' && filterPets) ? filterPets.checked : false;
         const reqFurnished = filterFurnished ? filterFurnished.checked : false;
 
-        const filtered = properties.filter(prop => {
+        // 1. Filtrar primero por todo EXCEPTO por el precio, para evaluar qué hay disponible en el inventario actual
+        const contextualFiltered = properties.filter(prop => {
             const matchesSearch = !valSearch || 
                 normalizeText(prop.address).includes(valSearch) || 
                 normalizeText(prop.category).includes(valSearch) ||
@@ -1363,7 +1396,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const matchesType = !valType || prop.category.toLowerCase() === valType.toLowerCase();
             const matchesOp = !valOp || prop.type.toLowerCase() === valOp.toLowerCase();
-            const matchesPrice = prop.price >= minPrice && prop.price <= maxPrice;
 
             const matchesBeds = prop.beds >= minBeds;
             const matchesBaths = prop.baths >= minBaths;
@@ -1377,11 +1409,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesFurnished = !reqFurnished || prop.furnished === true;
 
             return matchesSearch && matchesCountry && matchesSubdiv && matchesCity &&
-                   matchesType && matchesOp && matchesPrice &&
+                   matchesType && matchesOp &&
                    matchesBeds && matchesBaths && matchesParking &&
                    matchesSqmBuild && matchesSqmLot &&
                    matchesPool && matchesPets && matchesFurnished;
         });
+
+        // 2. Aplicamos tu regla: si el slider del usuario se quedó con un límite mayor al inmueble más caro disponible, lo encogemos automáticamente
+        clampSliderToAvailableInventory(contextualFiltered);
+
+        const currentSliderMin = parseFloat(filterMinPrice.value) || parseFloat(rangeSliderMin.value) || 0;
+        const currentSliderMax = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : (parseFloat(rangeSliderMax.value) || dynamicMax);
+
+        // 3. Filtro final incluyendo el precio del slider
+        const filtered = contextualFiltered.filter(prop => prop.price >= currentSliderMin && prop.price <= currentSliderMax);
 
         lastFilteredProperties = filtered;
         grid.innerHTML = '';
@@ -1440,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMapMarkers(filtered);
         }
 
-        renderHistogram(minPrice, maxPrice === Infinity ? dynamicMax : maxPrice, filtered);
+        renderHistogram(currentSliderMin, currentSliderMax, contextualFiltered);
         updateDashboardStats();
     }
 
