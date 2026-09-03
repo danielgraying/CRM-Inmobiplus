@@ -962,19 +962,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filterCountry.addEventListener('change', () => {
-        window._lockedDynamicMax = false;
         updateLocationSelectors(filterCountry.value, filterSubdivLabel, filterSubdivision, filterCityLabel, filterCity, true);
+        resetSliderToContext();
         renderProperties();
     });
 
     filterSubdivision.addEventListener('change', () => {
-        window._lockedDynamicMax = false;
         updateCitySelector(filterCountry.value, filterSubdivision.value, filterCityLabel, filterCity, true);
+        resetSliderToContext();
         renderProperties();
     });
 
     filterCity.addEventListener('change', () => {
-        window._lockedDynamicMax = false;
+        resetSliderToContext();
         renderProperties();
     });
 
@@ -1065,7 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const marker = L.marker([prop.lat, prop.lng], { icon: customIcon });
 
-            // Popup con indicador claro de Operación (Venta / Alquiler)
             const popupHtml = `
                 <div class="map-popup-card">
                     <div class="map-popup-media">
@@ -1163,7 +1162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
 
     const HISTOGRAM_BUCKETS = 20;
-    let currentDynamicMax = 500000;
     let lastFilteredProperties = [];
 
     let selectedOperation = "";
@@ -1174,8 +1172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tag.classList.add('active');
             selectedOperation = tag.getAttribute('data-val');
 
-            window._lockedDynamicMax = false; // <-- Esto fuerza a que el slider recalcule su escala (ej: de miles a cientos para alquiler)
-
             if (selectedOperation === 'Venta') {
                 if (containerFilterPets) containerFilterPets.style.display = 'none';
                 if (filterPets) filterPets.checked = false;
@@ -1183,44 +1179,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (containerFilterPets) containerFilterPets.style.display = 'flex';
             }
 
+            resetSliderToContext();
             renderProperties();
         });
     });
 
+    let selectedCategory = "";
+    const catTags = document.querySelectorAll('#filter-category-tags .tag-filter-btn');
     catTags.forEach(tag => {
         tag.addEventListener('click', () => {
             catTags.forEach(t => t.classList.remove('active'));
             tag.classList.add('active');
             selectedCategory = tag.getAttribute('data-val');
-            window._lockedDynamicMax = false; // <-- Forzar actualización de escala
+            resetSliderToContext();
             renderProperties();
         });
     });
+
+    function getContextualMaxPrice() {
+        const valCountry = filterCountry.value;
+        const valSubdiv = filterSubdivision.value;
+        const valCity = filterCity.value;
+        const valType = selectedCategory;
+        const valOp = selectedOperation;
+
+        const contextualProps = properties.filter(prop => {
+            const matchesCountry = !valCountry || prop.country === valCountry;
+            const matchesSubdiv = !valSubdiv || prop.subdivision === valSubdiv;
+            const matchesCity = !valCity || prop.city === valCity;
+            const matchesType = !valType || prop.category.toLowerCase() === valType.toLowerCase();
+            const matchesOp = !valOp || prop.type.toLowerCase() === valOp.toLowerCase();
+            return matchesCountry && matchesSubdiv && matchesCity && matchesType && matchesOp;
+        });
+
+        const prices = contextualProps.map(p => p.price);
+        return prices.length > 0 ? Math.max(...prices, 100) : 500000;
+    }
+
+    function resetSliderToContext() {
+        const maxLimit = getContextualMaxPrice();
+        rangeSliderMax.max = maxLimit;
+        rangeSliderMin.max = maxLimit;
+        rangeSliderMin.value = 0;
+        rangeSliderMax.value = maxLimit;
+        filterMinPrice.value = '';
+        filterMaxPrice.value = '';
+    }
 
     function renderHistogram(currentMin, currentMax, dataset = properties) {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
 
-        // Obtenemos los precios del dataset actual (que ya viene filtrado por ubicación/operación)
-        const prices = dataset.map(p => p.price);
-        const highestPrice = prices.length > 0 ? Math.max(...prices, 100) : 500000;
-
-        // Si cambió el contexto (ej: pasaste de Venta a Alquiler o de país), recalculamos el max del slider
-        if (!window._lockedDynamicMax) {
-            // Si es alquiler, redondeamos hacia arriba con un margen cómodo; si es venta, ajustamos al techo real
-            currentDynamicMax = highestPrice;
-            rangeSliderMin.max = currentDynamicMax;
-            rangeSliderMax.max = currentDynamicMax;
-            
-            // Si el slider guardaba un valor viejo muy alto, lo reseteamos al nuevo max
-            if (parseFloat(rangeSliderMax.value) > currentDynamicMax || filterMaxPrice.value === '') {
-                rangeSliderMax.value = currentDynamicMax;
-                filterMaxPrice.value = '';
-            }
-            window._lockedDynamicMax = true;
-        }
-
-        const bucketSize = currentDynamicMax / HISTOGRAM_BUCKETS || 1;
+        const dynamicMax = getContextualMaxPrice();
+        const bucketSize = dynamicMax / HISTOGRAM_BUCKETS;
         const counts = new Array(HISTOGRAM_BUCKETS).fill(0);
 
         dataset.forEach(p => {
@@ -1239,7 +1250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bar.className = 'histogram-bar';
             bar.style.height = `${heightPct}%`;
 
-            const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMin + (currentMax - currentMin);
+            const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMax;
             if (inRange && count > 0) {
                 bar.classList.add('active');
             }
@@ -1249,8 +1260,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function syncPriceSlidersAndInputs(source) {
-        let minVal = parseFloat(rangeSliderMin.value);
-        let maxVal = parseFloat(rangeSliderMax.value);
+        const dynamicMax = getContextualMaxPrice();
+        let minVal = parseFloat(rangeSliderMin.value) || 0;
+        let maxVal = parseFloat(rangeSliderMax.value) || dynamicMax;
 
         if (source === 'slider') {
             if (minVal > maxVal) {
@@ -1259,18 +1271,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 maxVal = temp;
             }
             filterMinPrice.value = minVal === 0 ? '' : minVal;
-            filterMaxPrice.value = maxVal >= currentDynamicMax ? '' : maxVal;
+            filterMaxPrice.value = maxVal >= dynamicMax ? '' : maxVal;
         } else if (source === 'input') {
             minVal = filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
-            maxVal = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : currentDynamicMax;
-            rangeSliderMin.value = Math.min(minVal, currentDynamicMax);
-            rangeSliderMax.value = Math.min(maxVal, currentDynamicMax);
+            maxVal = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : dynamicMax;
+            rangeSliderMin.value = Math.min(minVal, dynamicMax);
+            rangeSliderMax.value = Math.min(maxVal, dynamicMax);
         }
 
         labelMinPrice.textContent = `$${Number(minVal).toLocaleString('en-US')}`;
-        labelMaxPrice.textContent = maxVal >= currentDynamicMax ? `$${formatShortPrice(currentDynamicMax)}+` : `$${Number(maxVal).toLocaleString('en-US')}`;
+        labelMaxPrice.textContent = maxVal >= dynamicMax ? `$${formatShortPrice(dynamicMax)}+` : `$${Number(maxVal).toLocaleString('en-US')}`;
 
-        renderHistogram(minVal, maxVal, lastFilteredProperties.length > 0 ? lastFilteredProperties : properties);
+        renderHistogram(minVal, maxVal, lastFilteredProperties);
         renderProperties();
     }
 
@@ -1314,6 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const valType = selectedCategory;
         const valOp = selectedOperation;
 
+        const dynamicMax = getContextualMaxPrice();
         const minPrice = filterMinPrice && filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
         const maxPrice = filterMaxPrice && filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : Infinity;
 
@@ -1427,7 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMapMarkers(filtered);
         }
 
-        renderHistogram(minPrice, maxPrice, filtered);
+        renderHistogram(minPrice, maxPrice === Infinity ? dynamicMax : maxPrice, filtered);
         updateDashboardStats();
     }
 
@@ -1460,20 +1473,9 @@ document.addEventListener('DOMContentLoaded', () => {
             [filterMinSqmBuild, filterMaxSqmBuild, filterMinSqmLot, filterMaxSqmLot].forEach(i => { if (i) i.value = ''; });
             [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
 
-            if (rangeSliderMin) rangeSliderMin.value = 0;
-            if (rangeSliderMax) rangeSliderMax.value = currentDynamicMax;
-            if (filterMinPrice) filterMinPrice.value = '';
-            if (filterMaxPrice) filterMaxPrice.value = '';
-
-            ['filter-beds-pills', 'filter-baths-pills', 'filter-parking-pills'].forEach(id => {
-                const btns = document.querySelectorAll(`#${id} .pill-btn`);
-                btns.forEach(b => b.classList.remove('active'));
-                const first = document.querySelector(`#${id} .pill-btn[data-val=""]`);
-                if (first) first.classList.add('active');
-            });
-
+            resetSliderToContext();
             if (globalSearch) globalSearch.value = '';
-            syncPriceSlidersAndInputs('slider');
+            renderProperties();
         });
     }
 
@@ -1543,7 +1545,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('inmo_properties', JSON.stringify(properties));
             localStorage.setItem('inmo_visits', JSON.stringify(visits));
 
-            renderHistogram(0, currentDynamicMax);
+            resetSliderToContext();
             renderProperties();
             renderVisits();
             closeDetailsModal();
@@ -2108,7 +2110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (globalSearch) globalSearch.value = '';
             if (targetId === 'view-inventory') {
-                renderHistogram(0, currentDynamicMax);
+                resetSliderToContext();
                 renderProperties();
             }
             if (targetId === 'view-leads') renderLeads();
@@ -2313,7 +2315,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         localStorage.setItem('inmo_properties', JSON.stringify(properties));
-        renderHistogram(0, currentDynamicMax);
+        resetSliderToContext();
         renderProperties();
         closeM(propModal, propForm);
     });
@@ -2402,7 +2404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('inmo_properties', JSON.stringify(properties));
                     localStorage.setItem('inmo_leads', JSON.stringify(leads));
                     localStorage.setItem('inmo_visits', JSON.stringify(visits));
-                    renderHistogram(0, currentDynamicMax);
+                    resetSliderToContext();
                     renderProperties();
                     renderLeads();
                     renderVisits();
@@ -2416,7 +2418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Inicializar vistas
-    renderHistogram(0, currentDynamicMax);
+    resetSliderToContext();
     renderProperties();
     renderLeads();
     renderVisits();
