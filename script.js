@@ -962,16 +962,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filterCountry.addEventListener('change', () => {
+        window._lockedDynamicMax = false; // Permite recalcular el techo de precio para el nuevo país
         updateLocationSelectors(filterCountry.value, filterSubdivLabel, filterSubdivision, filterCityLabel, filterCity, true);
         renderProperties();
     });
 
     filterSubdivision.addEventListener('change', () => {
+        window._lockedDynamicMax = false;
         updateCitySelector(filterCountry.value, filterSubdivision.value, filterCityLabel, filterCity, true);
         renderProperties();
     });
 
-    filterCity.addEventListener('change', renderProperties);
+    filterCity.addEventListener('change', () => {
+        window._lockedDynamicMax = false;
+        renderProperties();
+    });
 
     propCountry.addEventListener('change', () => {
         updateLocationSelectors(propCountry.value, propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
@@ -1195,15 +1200,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
 
-        // Calcular límites dinámicos según el dataset actual
+        // Solo actualizamos el max global si cambia el contexto de ubicación/categoría, 
+        // para evitar que el slider brinque mientras el usuario hace drag.
         const prices = dataset.map(p => p.price);
         const dynamicMax = prices.length > 0 ? Math.max(...prices, 1000) : 500000;
-        currentDynamicMax = dynamicMax;
+        
+        // Solo reasignamos si el dataset base cambió significativamente
+        if (!window._lockedDynamicMax) {
+            currentDynamicMax = dynamicMax;
+            rangeSliderMin.max = currentDynamicMax;
+            rangeSliderMax.max = currentDynamicMax;
+            window._lockedDynamicMax = true;
+        }
 
-        rangeSliderMin.max = dynamicMax;
-        rangeSliderMax.max = dynamicMax;
-
-        const bucketSize = dynamicMax / HISTOGRAM_BUCKETS;
+        const bucketSize = currentDynamicMax / HISTOGRAM_BUCKETS;
         const counts = new Array(HISTOGRAM_BUCKETS).fill(0);
 
         dataset.forEach(p => {
@@ -1222,7 +1232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bar.className = 'histogram-bar';
             bar.style.height = `${heightPct}%`;
 
-            const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMax;
+            const inRange = bucketPriceMax >= currentMin && bucketPriceMin <= currentMin + (currentMax - currentMin);
             if (inRange && count > 0) {
                 bar.classList.add('active');
             }
