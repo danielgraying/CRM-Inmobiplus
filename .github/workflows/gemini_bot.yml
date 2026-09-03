@@ -17,8 +17,8 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Instalar librería de Google
-      run: pip install google-generativeai
+    - name: Instalar la nueva librería oficial de Google
+      run: pip install google-genai
 
     - name: Ejecutar Inteligencia Artificial
       env:
