@@ -23,23 +23,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. DICCIONARIO DE LOCALIZACIÓN DINÁMICA (LATAM)
+    // 2. FUNCIÓN DE NORMALIZACIÓN DE TEXTO (IGNORA MAYÚSCULAS/TILDES)
+    // ==========================================
+    function normalizeText(str) {
+        if (!str) return '';
+        return str
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+    }
+
+    // ==========================================
+    // 3. DICCIONARIO DE LOCALIZACIÓN DINÁMICA
     // ==========================================
     const latamLocations = {
-        "Venezuela": {
-            subdivName: "Estado",
-            cityName: "Municipio / Ciudad",
+        "Argentina": {
+            subdivName: "Provincia",
+            cityName: "Ciudad / Partido",
+            defaultCoords: [-34.6037, -58.3816],
             subdivisions: {
-                "Táchira": ["San Cristóbal", "Táriba", "Palo Gordo", "Rubio", "San Antonio"],
-                "Miranda": ["Chacao", "Baruta", "El Hatillo", "Los Teques", "Guatire"],
-                "Distrito Capital": ["Caracas", "Libertador"],
-                "Carabobo": ["Valencia", "Naguanagua", "San Diego", "Puerto Cabello"],
-                "Zulia": ["Maracaibo", "San Francisco", "Cabimas"]
+                "Buenos Aires": ["CABA (Palermo)", "CABA (Recoleta)", "San Isidro", "Vicente López", "La Plata"],
+                "Córdoba": ["Córdoba Capital", "Villa Carlos Paz", "Río Cuarto"],
+                "Santa Fe": ["Rosario", "Santa Fe Capital"]
+            }
+        },
+        "Chile": {
+            subdivName: "Región",
+            cityName: "Comuna / Ciudad",
+            defaultCoords: [-33.4489, -70.6693],
+            subdivisions: {
+                "Región Metropolitana": ["Santiago Centro", "Las Condes", "Providencia", "Vitacura", "Ñuñoa"],
+                "Valparaíso": ["Viña del Mar", "Valparaíso", "Concón"]
             }
         },
         "Colombia": {
             subdivName: "Departamento",
             cityName: "Ciudad / Municipio",
+            defaultCoords: [4.7110, -74.0721],
             subdivisions: {
                 "Cundinamarca": ["Bogotá", "Chía", "Zipaquirá", "Soacha", "Cota"],
                 "Antioquia": ["Medellín", "Envigado", "El Poblado", "Rionegro", "Sabaneta"],
@@ -51,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "México": {
             subdivName: "Estado",
             cityName: "Municipio / Alcaldía",
+            defaultCoords: [19.4326, -99.1332],
             subdivisions: {
                 "CDMX": ["Cuauhtémoc", "Benito Juárez", "Miguel Hidalgo", "Coyoacán", "Polanco"],
                 "Jalisco": ["Guadalajara", "Zapopan", "Tlaquepaque", "Puerto Vallarta"],
@@ -58,36 +80,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 "Quintana Roo": ["Cancún", "Playa del Carmen", "Tulum"]
             }
         },
-        "Argentina": {
-            subdivName: "Provincia",
-            cityName: "Ciudad / Partido",
-            subdivisions: {
-                "Buenos Aires": ["CABA (Palermo)", "CABA (Recoleta)", "San Isidro", "Vicente López", "La Plata"],
-                "Córdoba": ["Córdoba Capital", "Villa Carlos Paz", "Río Cuarto"],
-                "Santa Fe": ["Rosario", "Santa Fe Capital"]
-            }
-        },
-        "Chile": {
-            subdivName: "Región",
-            cityName: "Comuna / Ciudad",
-            subdivisions: {
-                "Región Metropolitana": ["Santiago Centro", "Las Condes", "Providencia", "Vitacura", "Ñuñoa"],
-                "Valparaíso": ["Viña del Mar", "Valparaíso", "Concón"]
-            }
-        },
         "Perú": {
             subdivName: "Departamento",
             cityName: "Provincia / Distrito",
+            defaultCoords: [-12.0464, -77.0428],
             subdivisions: {
                 "Lima": ["Miraflores", "San Isidro", "Santiago de Surco", "Barranco", "San Borja"],
                 "Arequipa": ["Arequipa", "Yanahuara", "Cayma"],
                 "Cusco": ["Cusco", "Wanchaq", "San Jerónimo"]
             }
+        },
+        "Uruguay": {
+            subdivName: "Departamento",
+            cityName: "Ciudad / Barrio",
+            defaultCoords: [-34.9011, -56.1645],
+            subdivisions: {
+                "Montevideo": ["Pocitos", "Carrasco", "Punta Carretas", "Buceo", "Cordón"],
+                "Maldonado": ["Punta del Este", "Maldonado", "Piriápolis"],
+                "Canelones": ["Ciudad de la Costa", "Atlántida"]
+            }
+        },
+        "Venezuela": {
+            subdivName: "Estado",
+            cityName: "Municipio / Ciudad",
+            defaultCoords: [7.7885, -72.2156],
+            subdivisions: {
+                "Táchira": ["San Cristóbal", "Táriba", "Palo Gordo", "Rubio", "San Antonio"],
+                "Miranda": ["Chacao", "Baruta", "El Hatillo", "Los Teques", "Guatire"],
+                "Distrito Capital": ["Caracas", "Libertador"],
+                "Carabobo": ["Valencia", "Naguanagua", "San Diego", "Puerto Cabello"],
+                "Zulia": ["Maracaibo", "San Francisco", "Cabimas"]
+            }
         }
     };
 
     // ==========================================
-    // 3. BASE DE DATOS INICIAL (30 PROPIEDADES REALES)
+    // 4. BASE DE DATOS INICIAL (30 PROPIEDADES REALES)
     // ==========================================
     const defaultProperties = [
         {
@@ -768,20 +796,20 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 30,
             category: "Apartamento",
-            price: 89000,
-            country: "Perú",
-            subdivision: "Lima",
-            city: "San Isidro",
-            address: "Av. Los Conquistadores 450, San Isidro",
-            lat: -12.1020,
-            lng: -77.0390,
+            price: 190000,
+            country: "Uruguay",
+            subdivision: "Montevideo",
+            city: "Pocitos",
+            address: "Rambla República del Perú 1120, Pocitos",
+            lat: -34.9140,
+            lng: -56.1480,
             beds: 3,
             baths: 2,
             parking: 1,
-            sqmBuild: 95,
-            sqmLot: 95,
+            sqmBuild: 110,
+            sqmLot: 110,
             pool: false,
-            pets: false,
+            pets: true,
             furnished: false,
             images: [
                 "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
@@ -865,7 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 4. CONTROLADORES DE LOCALIZACIÓN
+    // 5. CONTROLADORES DE LOCALIZACIÓN
     // ==========================================
     const filterCountry = document.getElementById('filter-country');
     const filterSubdivContainer = document.getElementById('filter-subdiv-container');
@@ -947,16 +975,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     propCountry.addEventListener('change', () => {
         updateLocationSelectors(propCountry.value, propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
+        const countryData = latamLocations[propCountry.value];
+        if (countryData && pickerMap && pickerMarker) {
+            pickerMap.setView(countryData.defaultCoords, 13);
+            pickerMarker.setLatLng(countryData.defaultCoords);
+            document.getElementById('prop-lat').value = countryData.defaultCoords[0];
+            document.getElementById('prop-lng').value = countryData.defaultCoords[1];
+        }
     });
 
     propSubdivision.addEventListener('change', () => {
         updateCitySelector(propCountry.value, propSubdivision.value, propCityLabel, propCity, false);
     });
 
-    updateLocationSelectors('Venezuela', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
+    updateLocationSelectors('Argentina', propSubdivLabel, propSubdivision, propCityLabel, propCity, false);
 
     // ==========================================
-    // 5. MAPA INTERACTIVO LEAFLET (SPLIT-SCREEN)
+    // 6. MAPA INTERACTIVO LEAFLET (SPLIT-SCREEN)
     // ==========================================
     let leafletMap = null;
     let markersLayer = null;
@@ -1046,7 +1081,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. MOTOR DE FILTRADO Y RENDER DE PROPIEDADES
+    // 7. MINI-MAPA SELECTOR INTERACTIVO EN MODAL
+    // ==========================================
+    let pickerMap = null;
+    let pickerMarker = null;
+
+    function initPickerMap(initialLat = 7.7885, initialLng = -72.2156) {
+        const lat = parseFloat(initialLat) || 7.7885;
+        const lng = parseFloat(initialLng) || -72.2156;
+
+        document.getElementById('prop-lat').value = lat;
+        document.getElementById('prop-lng').value = lng;
+
+        if (!pickerMap) {
+            pickerMap = L.map('modal-picker-map', {
+                zoomControl: true
+            }).setView([lat, lng], 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(pickerMap);
+
+            pickerMarker = L.marker([lat, lng], { draggable: true }).addTo(pickerMap);
+
+            pickerMarker.on('dragend', (e) => {
+                const pos = e.target.getLatLng();
+                document.getElementById('prop-lat').value = pos.lat;
+                document.getElementById('prop-lng').value = pos.lng;
+            });
+
+            pickerMap.on('click', (e) => {
+                pickerMarker.setLatLng(e.latlng);
+                document.getElementById('prop-lat').value = e.latlng.lat;
+                document.getElementById('prop-lng').value = e.latlng.lng;
+            });
+        } else {
+            pickerMap.setView([lat, lng], 14);
+            pickerMarker.setLatLng([lat, lng]);
+        }
+
+        setTimeout(() => {
+            pickerMap.invalidateSize();
+        }, 200);
+    }
+
+    // ==========================================
+    // 8. MOTOR DE FILTRADO Y RENDER DE PROPIEDADES
     // ==========================================
     const grid = document.getElementById('property-grid');
     const filteredCountBadge = document.getElementById('filtered-count-badge');
@@ -1196,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderProperties() {
         if (!grid) return;
 
-        const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
+        const valSearch = normalizeText(globalSearch ? globalSearch.value : '');
         const valCountry = filterCountry.value;
         const valSubdiv = filterSubdivision.value;
         const valCity = filterCity.value;
@@ -1227,10 +1307,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = properties.filter(prop => {
             const matchesSearch = !valSearch || 
-                prop.address.toLowerCase().includes(valSearch) || 
-                prop.category.toLowerCase().includes(valSearch) ||
-                (prop.city && prop.city.toLowerCase().includes(valSearch)) ||
-                (prop.subdivision && prop.subdivision.toLowerCase().includes(valSearch));
+                normalizeText(prop.address).includes(valSearch) || 
+                normalizeText(prop.category).includes(valSearch) ||
+                normalizeText(prop.city).includes(valSearch) ||
+                normalizeText(prop.subdivision).includes(valSearch) ||
+                normalizeText(prop.country).includes(valSearch);
 
             const matchesCountry = !valCountry || prop.country === valCountry;
             const matchesSubdiv = !valSubdiv || prop.subdivision === valSubdiv;
@@ -1281,7 +1362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${mainImg}" alt="${prop.address}" class="card-img" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80'">
                     </div>
                     <div class="card-body">
-                        <span class="property-location-tag">📍 ${prop.city || 'Ubicación'}, ${prop.country || 'LATAM'}</span>
+                        <span class="property-location-tag">📍 ${prop.city || 'Ubicación'}, ${prop.country || ''}</span>
                         <h3 class="property-price">${formatCurrency(prop.price, prop.type)}</h3>
                         <p class="property-address">${prop.address}</p>
                         
@@ -1380,7 +1461,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 7. GESTIÓN Y EDICIÓN DE PROPIEDADES
+    // 9. GESTIÓN Y EDICIÓN DE PROPIEDADES
     // ==========================================
     const propModalTitle = document.getElementById('property-modal-title');
     const propEditId = document.getElementById('prop-edit-id');
@@ -1419,6 +1500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeDetailsModal();
         openM(propModal);
+        initPickerMap(prop.lat, prop.lng);
     };
 
     window.deleteProperty = (id) => {
@@ -1437,7 +1519,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 8. DETALLE MODAL CON MAPA EMBEDDED
+    // 10. DETALLE MODAL CON MAPA EMBEDDED
     // ==========================================
     const detailsModal = document.getElementById('details-modal');
     const detailContent = document.getElementById('detail-content');
@@ -1468,7 +1550,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || 'LATAM'})</span>
+                <span class="property-location-tag" style="font-size: 0.8rem;">📍 ${prop.city || 'Ubicación'}, ${prop.subdivision || ''} (${prop.country || ''})</span>
                 <div class="no-print" style="display: flex; gap: 6px;">
                     <button class="btn-icon-action" onclick="openEditPropertyModal(${prop.id})" title="Editar Propiedad">✏️</button>
                     <button class="btn-icon-action delete" onclick="deleteProperty(${prop.id})" title="Eliminar Propiedad">🗑️</button>
@@ -1486,7 +1568,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-meta-item"><strong>Estacionamiento</strong><span>${prop.parking || 0} puestos</span></div>
                 <div class="detail-meta-item"><strong>Construcción</strong><span>${prop.sqmBuild || 0} m²</span></div>
                 <div class="detail-meta-item"><strong>Terreno Total</strong><span>${prop.sqmLot || 0} m²</span></div>
-                <div class="detail-meta-item"><strong>Coordenadas GPS</strong><span style="font-size: 0.78rem;">${prop.lat || 0}, ${prop.lng || 0}</span></div>
+                <div class="detail-meta-item"><strong>Estado</strong><span style="color: #10b981;">Disponible</span></div>
             </div>
 
             <div style="margin-top: 10px;">
@@ -1522,7 +1604,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeDetailsModalBtn) closeDetailsModalBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 9. CIERRE DE MODALES AL HACER CLICK EN BACKDROP
+    // 11. CIERRE DE MODALES AL HACER CLICK EN BACKDROP
     // ==========================================
     const allModals = document.querySelectorAll('.modal-backdrop');
     allModals.forEach(modal => {
@@ -1538,13 +1620,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 10. MOTOR DE MATCHING INTELIGENTE
+    // 12. MOTOR DE MATCHING INTELIGENTE
     // ==========================================
     function findMatchingPropertiesForLead(lead) {
-        const intentText = (lead.intent + ' ' + lead.budget).toLowerCase();
+        const intentText = normalizeText(lead.intent + ' ' + lead.budget);
         
         return properties.filter(prop => {
-            const matchesCat = intentText.includes(prop.category.toLowerCase()) || intentText.includes('propiedad') || intentText.includes('inmueble');
+            const propCat = normalizeText(prop.category);
+            const matchesCat = intentText.includes(propCat) || intentText.includes('propiedad') || intentText.includes('inmueble');
             const matchesOp = (intentText.includes('alquiler') && prop.type === 'Alquiler') ||
                               ((intentText.includes('venta') || intentText.includes('compra') || intentText.includes('busca')) && prop.type === 'Venta') ||
                               (!intentText.includes('alquiler') && !intentText.includes('venta'));
@@ -1560,7 +1643,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 11. KANBAN LEADS & DRAWER
+    // 13. KANBAN LEADS & DRAWER
     // ==========================================
     const colNew = document.getElementById('col-new');
     const colContacted = document.getElementById('col-contacted');
@@ -1610,12 +1693,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeads() {
         Object.values(columnMap).forEach(col => { if (col) col.innerHTML = ''; });
-        const valSearch = globalSearch ? globalSearch.value.toLowerCase().trim() : '';
+        const valSearch = normalizeText(globalSearch ? globalSearch.value : '');
 
         const filtered = leads.filter(l => {
             return !valSearch || 
-                l.name.toLowerCase().includes(valSearch) || 
-                l.intent.toLowerCase().includes(valSearch);
+                normalizeText(l.name).includes(valSearch) || 
+                normalizeText(l.intent).includes(valSearch);
         });
 
         filtered.forEach(lead => {
@@ -1829,7 +1912,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 12. GESTIÓN DE AGENDA Y GOOGLE CALENDAR
+    // 14. GESTIÓN DE AGENDA Y GOOGLE CALENDAR
     // ==========================================
     const visitsList = document.getElementById('visits-list');
     const visitLeadSelect = document.getElementById('visit-lead-select');
@@ -1928,7 +2011,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 13. STATS DASHBOARD
+    // 15. STATS DASHBOARD
     // ==========================================
     function updateDashboardStats() {
         const kpiProps = document.getElementById('kpi-properties-count');
@@ -1943,7 +2026,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 14. SPA NAVIGATION & DRAWER MOBILE
+    // 16. SPA NAVIGATION & DRAWER MOBILE
     // ==========================================
     const navItems = document.querySelectorAll('.p-nav-item[data-target]');
     const views = document.querySelectorAll('.view-section');
@@ -1990,7 +2073,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 15. POPOVERS (DESKTOP & MOBILE FAB)
+    // 17. POPOVERS (DESKTOP & MOBILE FAB)
     // ==========================================
     const mobileFabCreate = document.getElementById('mobile-fab-create');
     const mobileCreatePopover = document.getElementById('mobile-create-popover');
@@ -2037,6 +2120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deskPopoverBtnProp) deskPopoverBtnProp.addEventListener('click', () => {
         desktopCreatePopover.classList.remove('show');
         openM(propModal);
+        initPickerMap(7.7885, -72.2156);
     });
     if (deskPopoverBtnLead) deskPopoverBtnLead.addEventListener('click', () => {
         desktopCreatePopover.classList.remove('show');
@@ -2053,7 +2137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 16. FORMULARIOS Y MODALES
+    // 18. FORMULARIOS Y MODALES
     // ==========================================
     const propModal = document.getElementById('property-modal');
     const leadModal = document.getElementById('lead-modal');
@@ -2081,9 +2165,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const btnOpenPropDesktop = document.getElementById('btn-open-prop-modal');
-    if (btnOpenPropDesktop) btnOpenPropDesktop.addEventListener('click', () => openM(propModal));
+    if (btnOpenPropDesktop) btnOpenPropDesktop.addEventListener('click', () => {
+        openM(propModal);
+        initPickerMap(7.7885, -72.2156);
+    });
     const dashBtnAddProp = document.getElementById('dash-btn-add-prop');
-    if (dashBtnAddProp) dashBtnAddProp.addEventListener('click', () => openM(propModal));
+    if (dashBtnAddProp) dashBtnAddProp.addEventListener('click', () => {
+        openM(propModal);
+        initPickerMap(7.7885, -72.2156);
+    });
     const btnOpenLeadDesktop = document.getElementById('btn-open-lead-modal');
     if (btnOpenLeadDesktop) btnOpenLeadDesktop.addEventListener('click', () => openM(leadModal));
     const btnOpenVisitDesktop = document.getElementById('btn-open-visit-modal');
@@ -2094,7 +2184,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (popoverBtnProp) popoverBtnProp.addEventListener('click', () => openM(propModal));
+    if (popoverBtnProp) popoverBtnProp.addEventListener('click', () => {
+        openM(propModal);
+        initPickerMap(7.7885, -72.2156);
+    });
     if (popoverBtnLead) popoverBtnLead.addEventListener('click', () => openM(leadModal));
     if (popoverBtnVisit) {
         popoverBtnVisit.addEventListener('click', () => {
@@ -2227,7 +2320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 17. EXPORTAR / IMPORTAR BACKUP JSON
+    // 19. EXPORTAR / IMPORTAR BACKUP JSON
     // ==========================================
     function exportData() {
         const data = {
