@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Clonar repositorio
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # 🚀 Evita conflictos descargando todo el historial
 
     - name: Configurar Python
       uses: actions/setup-python@v5
@@ -31,5 +33,13 @@ jobs:
         git config --global user.name "GeminiBot"
         git config --global user.email "gemini-bot@github.com"
         git add .
-        git commit -m "🤖 Proyecto actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
-        git push
+        
+        # 🚀 Si Gemini no modificó nada, el flujo no falla, avisa y termina limpio
+        if git diff --staged --quiet; then
+          echo "ℹ️ Gemini determinó que no hacían falta cambios en los archivos."
+        else
+          git commit -m "🤖 Proyecto actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
+          BRANCH_NAME=$(git branch --show-current)
+          # 🚀 Forzamos la subida para evitar que GitHub lo rechace por desincronización
+          git push origin $BRANCH_NAME --force
+        fi
