@@ -1,0 +1,35 @@
+name: Gemini Auto Code Updater
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  update-code:
+    if: contains(github.event.issue.title, '[Gemini-Auto]')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Instalar librería de Google
+      run: pip install google-generativeai
+
+    - name: Ejecutar Inteligencia Artificial
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        ISSUE_BODY: ${{ github.event.issue.body }}
+      run: python gemini_update.py
+
+    - name: Guardar cambios en el repositorio
+      run: |
+        git config --global user.name "GeminiBot"
+        git config --global user.email "gemini-bot@github.com"
+        git add app.py
+        git commit -m "🤖 Código actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
+        git push
