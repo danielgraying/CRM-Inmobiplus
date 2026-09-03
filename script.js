@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. FUNCIÓN DE NORMALIZACIÓN DE TEXTO (IGNORA MAYÚSCULAS/TILDES)
+    // 2. FUNCIÓN DE NORMALIZACIÓN DE TEXTO
     // ==========================================
     function normalizeText(str) {
         if (!str) return '';
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // 4. BASE DE DATOS INICIAL (30 PROPIEDADES REALES)
+    // 4. BASE DE DATOS INICIAL
     // ==========================================
     const defaultProperties = [
         {
@@ -1047,6 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!prop.lat || !prop.lng) return;
 
             const shortPrice = formatShortPrice(prop.price);
+            const isVenta = prop.type === 'Venta';
+            const badgeClass = isVenta ? 'status-active' : 'status-rent';
             const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80');
 
             const customIcon = L.divIcon({
@@ -1058,9 +1060,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const marker = L.marker([prop.lat, prop.lng], { icon: customIcon });
 
+            // Popup con indicador claro de Operación (Venta / Alquiler)
             const popupHtml = `
                 <div class="map-popup-card">
-                    <img src="${mainImg}" class="map-popup-img" alt="${prop.address}">
+                    <div class="map-popup-media">
+                        <span class="status-badge ${badgeClass}">En ${prop.type}</span>
+                        <img src="${mainImg}" class="map-popup-img" alt="${prop.address}">
+                    </div>
                     <div class="map-popup-body">
                         <span class="map-popup-price">${formatCurrency(prop.price, prop.type)}</span>
                         <h5 class="map-popup-title">${prop.address}</h5>
@@ -1152,7 +1158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnClearAllFilters = document.getElementById('btn-clear-all-filters');
 
     const HISTOGRAM_BUCKETS = 20;
-    const MAX_RANGE_LIMIT = 500000;
+    let currentDynamicMax = 500000;
     let lastFilteredProperties = [];
 
     let selectedOperation = "";
@@ -1185,14 +1191,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function renderHistogram(currentMin, currentMax) {
+    function renderHistogram(currentMin, currentMax, dataset = properties) {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
 
-        const bucketSize = MAX_RANGE_LIMIT / HISTOGRAM_BUCKETS;
+        // Calcular límites dinámicos según el dataset actual
+        const prices = dataset.map(p => p.price);
+        const dynamicMax = prices.length > 0 ? Math.max(...prices, 1000) : 500000;
+        currentDynamicMax = dynamicMax;
+
+        rangeSliderMin.max = dynamicMax;
+        rangeSliderMax.max = dynamicMax;
+
+        const bucketSize = dynamicMax / HISTOGRAM_BUCKETS;
         const counts = new Array(HISTOGRAM_BUCKETS).fill(0);
 
-        properties.forEach(p => {
+        dataset.forEach(p => {
             const bucketIndex = Math.min(Math.floor(p.price / bucketSize), HISTOGRAM_BUCKETS - 1);
             counts[bucketIndex]++;
         });
@@ -1228,18 +1242,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 maxVal = temp;
             }
             filterMinPrice.value = minVal === 0 ? '' : minVal;
-            filterMaxPrice.value = maxVal === MAX_RANGE_LIMIT ? '' : maxVal;
+            filterMaxPrice.value = maxVal >= currentDynamicMax ? '' : maxVal;
         } else if (source === 'input') {
             minVal = filterMinPrice.value ? parseFloat(filterMinPrice.value) : 0;
-            maxVal = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : MAX_RANGE_LIMIT;
-            rangeSliderMin.value = Math.min(minVal, MAX_RANGE_LIMIT);
-            rangeSliderMax.value = Math.min(maxVal, MAX_RANGE_LIMIT);
+            maxVal = filterMaxPrice.value ? parseFloat(filterMaxPrice.value) : currentDynamicMax;
+            rangeSliderMin.value = Math.min(minVal, currentDynamicMax);
+            rangeSliderMax.value = Math.min(maxVal, currentDynamicMax);
         }
 
         labelMinPrice.textContent = `$${Number(minVal).toLocaleString('en-US')}`;
-        labelMaxPrice.textContent = maxVal >= MAX_RANGE_LIMIT ? `$500K+` : `$${Number(maxVal).toLocaleString('en-US')}`;
+        labelMaxPrice.textContent = maxVal >= currentDynamicMax ? `$${formatShortPrice(currentDynamicMax)}+` : `$${Number(maxVal).toLocaleString('en-US')}`;
 
-        renderHistogram(minVal, maxVal);
+        renderHistogram(minVal, maxVal, lastFilteredProperties.length > 0 ? lastFilteredProperties : properties);
         renderProperties();
     }
 
@@ -1342,7 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastFilteredProperties = filtered;
         grid.innerHTML = '';
         if (filteredCountBadge) {
-            filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble disponible' : 'inmuebles disponibles'}`;
+            filteredCountBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'inmueble' : 'inmuebles'}`;
         }
 
         if (filtered.length === 0) {
@@ -1396,6 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMapMarkers(filtered);
         }
 
+        renderHistogram(minPrice, maxPrice, filtered);
         updateDashboardStats();
     }
 
@@ -1429,7 +1444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             [filterPool, filterPets, filterFurnished].forEach(c => { if (c) c.checked = false; });
 
             if (rangeSliderMin) rangeSliderMin.value = 0;
-            if (rangeSliderMax) rangeSliderMax.value = MAX_RANGE_LIMIT;
+            if (rangeSliderMax) rangeSliderMax.value = currentDynamicMax;
             if (filterMinPrice) filterMinPrice.value = '';
             if (filterMaxPrice) filterMaxPrice.value = '';
 
@@ -1511,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('inmo_properties', JSON.stringify(properties));
             localStorage.setItem('inmo_visits', JSON.stringify(visits));
 
-            renderHistogram(0, MAX_RANGE_LIMIT);
+            renderHistogram(0, currentDynamicMax);
             renderProperties();
             renderVisits();
             closeDetailsModal();
@@ -1568,7 +1583,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="detail-meta-item"><strong>Estacionamiento</strong><span>${prop.parking || 0} puestos</span></div>
                 <div class="detail-meta-item"><strong>Construcción</strong><span>${prop.sqmBuild || 0} m²</span></div>
                 <div class="detail-meta-item"><strong>Terreno Total</strong><span>${prop.sqmLot || 0} m²</span></div>
-                <div class="detail-meta-item"><strong>Estado</strong><span style="color: #10b981;">Disponible</span></div>
+                <div class="detail-meta-item"><strong>Coordenadas GPS</strong><span style="font-size: 0.78rem;">${prop.lat || 0}, ${prop.lng || 0}</span></div>
             </div>
 
             <div style="margin-top: 10px;">
@@ -1604,84 +1619,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeDetailsModalBtn) closeDetailsModalBtn.addEventListener('click', closeDetailsModal);
 
     // ==========================================
-    // 11. CIERRE DE MODALES AL HACER CLICK EN BACKDROP
+    // 11. MODAL DEL LEAD (OVERLAY VIEW)
     // ==========================================
-    const allModals = document.querySelectorAll('.modal-backdrop');
-    allModals.forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-                const form = modal.querySelector('form');
-                if (form) form.reset();
-                if (propEditId) propEditId.value = '';
-                if (propModalTitle) propModalTitle.textContent = 'Agregar Nueva Propiedad';
-            }
-        });
-    });
-
-    // ==========================================
-    // 12. MOTOR DE MATCHING INTELIGENTE
-    // ==========================================
-    function findMatchingPropertiesForLead(lead) {
-        const intentText = normalizeText(lead.intent + ' ' + lead.budget);
-        
-        return properties.filter(prop => {
-            const propCat = normalizeText(prop.category);
-            const matchesCat = intentText.includes(propCat) || intentText.includes('propiedad') || intentText.includes('inmueble');
-            const matchesOp = (intentText.includes('alquiler') && prop.type === 'Alquiler') ||
-                              ((intentText.includes('venta') || intentText.includes('compra') || intentText.includes('busca')) && prop.type === 'Venta') ||
-                              (!intentText.includes('alquiler') && !intentText.includes('venta'));
-            
-            let matchesBeds = true;
-            if (intentText.includes('1 hab') && prop.beds < 1) matchesBeds = false;
-            if (intentText.includes('2 hab') && prop.beds < 2) matchesBeds = false;
-            if (intentText.includes('3 hab') && prop.beds < 3) matchesBeds = false;
-            if (intentText.includes('4 hab') && prop.beds < 4) matchesBeds = false;
-
-            return (matchesCat || matchesOp) && matchesBeds;
-        }).slice(0, 4);
-    }
-
-    // ==========================================
-    // 13. KANBAN LEADS & DRAWER
-    // ==========================================
-    const colNew = document.getElementById('col-new');
-    const colContacted = document.getElementById('col-contacted');
-    const colVisited = document.getElementById('col-visited');
-    const colOffer = document.getElementById('col-offer');
-
-    const columnMap = {
-        'new': colNew,
-        'contacted': colContacted,
-        'visited': colVisited,
-        'offer': colOffer
-    };
-
-    let draggedCard = null;
-    let isDragging = false;
-
-    const leadDrawer = document.getElementById('lead-drawer');
-    const drawerBackdrop = document.getElementById('drawer-backdrop');
-    const closeLeadDrawerBtn = document.getElementById('close-lead-drawer-btn');
+    const leadDetailsModal = document.getElementById('lead-details-modal');
+    const closeLeadDetailsModalBtn = document.getElementById('close-lead-details-modal-btn');
     const btnToggleEditLead = document.getElementById('btn-toggle-edit-lead');
     const btnDeleteLead = document.getElementById('btn-delete-lead');
     
-    const drawerViewMode = document.getElementById('drawer-view-mode');
-    const drawerEditForm = document.getElementById('drawer-edit-form');
-    const drawerViewFooter = document.getElementById('drawer-view-footer');
+    const modalLeadViewMode = document.getElementById('modal-lead-view-mode');
+    const modalLeadEditForm = document.getElementById('modal-lead-edit-form');
+    const modalLeadViewFooter = document.getElementById('modal-lead-view-footer');
     const btnCancelEditLead = document.getElementById('btn-cancel-edit-lead');
 
-    const drawerLeadAvatar = document.getElementById('drawer-lead-avatar');
-    const drawerLeadName = document.getElementById('drawer-lead-name');
-    const drawerLeadTime = document.getElementById('drawer-lead-time');
-    const drawerLeadIntent = document.getElementById('drawer-lead-intent');
-    const drawerLeadBudget = document.getElementById('drawer-lead-budget');
-    const drawerLeadPhone = document.getElementById('drawer-lead-phone');
-    const drawerLeadNotes = document.getElementById('drawer-lead-notes');
+    const modalLeadAvatar = document.getElementById('modal-lead-avatar');
+    const modalLeadName = document.getElementById('modal-lead-name');
+    const modalLeadTime = document.getElementById('modal-lead-time');
+    const modalLeadIntent = document.getElementById('modal-lead-intent');
+    const modalLeadBudget = document.getElementById('modal-lead-budget');
+    const modalLeadPhone = document.getElementById('modal-lead-phone');
+    const modalLeadNotes = document.getElementById('modal-lead-notes');
     const btnSaveLeadNotes = document.getElementById('btn-save-lead-notes');
-    const drawerMatchesCount = document.getElementById('drawer-matches-count');
-    const drawerMatchesList = document.getElementById('drawer-matches-list');
-    const drawerWhatsAppBtn = document.getElementById('drawer-whatsapp-btn');
+    const modalMatchesCount = document.getElementById('modal-matches-count');
+    const modalMatchesList = document.getElementById('modal-matches-list');
+    const modalLeadWhatsAppBtn = document.getElementById('modal-lead-whatsapp-btn');
 
     const editLeadName = document.getElementById('edit-lead-name');
     const editLeadPhone = document.getElementById('edit-lead-phone');
@@ -1692,6 +1652,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentActiveLeadId = null;
 
     function renderLeads() {
+        const colNew = document.getElementById('col-new');
+        const colContacted = document.getElementById('col-contacted');
+        const colVisited = document.getElementById('col-visited');
+        const colOffer = document.getElementById('col-offer');
+
+        const columnMap = {
+            'new': colNew,
+            'contacted': colContacted,
+            'visited': colVisited,
+            'offer': colOffer
+        };
+
         Object.values(columnMap).forEach(col => { if (col) col.innerHTML = ''; });
         const valSearch = normalizeText(globalSearch ? globalSearch.value : '');
 
@@ -1717,12 +1689,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="lead-intent">${lead.intent}</p>
                     <div class="lead-footer">
                         <span class="budget-tag">${lead.budget}</span>
-                        ${matches.length > 0 ? `<span class="lead-matches-badge">✨ ${matches.length} matches</span>` : ''}
+                        ${matches.length > 0 ? `<span class="lead-matches-badge">✨ ${matches.length} coincidencias</span>` : ''}
                     </div>
                 `;
 
                 card.addEventListener('dragstart', () => {
-                    isDragging = true;
                     draggedCard = card;
                     setTimeout(() => card.style.display = 'none', 0);
                 });
@@ -1731,14 +1702,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         if (draggedCard) draggedCard.style.display = 'block';
                         draggedCard = null;
-                        isDragging = false;
                         updateKanbanCounters();
                         saveLeadsState();
                     }, 0);
                 });
 
                 card.addEventListener('click', () => {
-                    if (!isDragging) openLeadDrawer(lead.id);
+                    openLeadModalOverlay(lead.id);
                 });
 
                 targetCol.appendChild(card);
@@ -1749,21 +1719,23 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDashboardStats();
     }
 
-    function openLeadDrawer(leadId) {
+    let draggedCard = null;
+
+    function openLeadModalOverlay(leadId) {
         const lead = leads.find(l => l.id == leadId);
         if (!lead) return;
 
         currentActiveLeadId = lead.id;
-        showViewMode();
+        showLeadViewMode();
 
         const initials = lead.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-        drawerLeadAvatar.textContent = initials;
-        drawerLeadName.textContent = lead.name;
-        drawerLeadTime.textContent = lead.time || 'Reciente';
-        drawerLeadIntent.textContent = lead.intent;
-        drawerLeadBudget.textContent = lead.budget;
-        drawerLeadPhone.textContent = lead.phone || '+58 414-0000000';
-        drawerLeadNotes.value = lead.notes || '';
+        modalLeadAvatar.textContent = initials;
+        modalLeadName.textContent = lead.name;
+        modalLeadTime.textContent = lead.time || 'Reciente';
+        modalLeadIntent.textContent = lead.intent;
+        modalLeadBudget.textContent = lead.budget;
+        modalLeadPhone.textContent = lead.phone || '+58 414-0000000';
+        modalLeadNotes.value = lead.notes || '';
 
         editLeadName.value = lead.name;
         editLeadPhone.value = lead.phone || '';
@@ -1772,11 +1744,11 @@ document.addEventListener('DOMContentLoaded', () => {
         editLeadBudget.value = lead.budget;
 
         const matches = findMatchingPropertiesForLead(lead);
-        drawerMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia' : 'coincidencias'}`;
-        drawerMatchesList.innerHTML = '';
+        modalMatchesCount.textContent = `${matches.length} ${matches.length === 1 ? 'coincidencia encontrada' : 'coincidencias encontradas'}`;
+        modalMatchesList.innerHTML = '';
 
         if (matches.length === 0) {
-            drawerMatchesList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No hay propiedades que coincidan directamente con este requerimiento.</p>';
+            modalMatchesList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No hay propiedades que coincidan directamente con este requerimiento.</p>';
         } else {
             matches.forEach(prop => {
                 const mainImg = (prop.images && prop.images.length > 0) ? prop.images[0] : (prop.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80');
@@ -1790,47 +1762,46 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="match-specs">🛏️ ${prop.beds}h • 🛁 ${prop.baths}b • 📐 ${prop.sqmBuild}m²</span>
                     </div>
                 `;
-                card.onclick = () => viewPropertyDetails(prop.id);
-                drawerMatchesList.appendChild(card);
+                card.onclick = () => {
+                    closeLeadModalOverlay();
+                    viewPropertyDetails(prop.id);
+                };
+                modalMatchesList.appendChild(card);
             });
         }
 
-        drawerWhatsAppBtn.onclick = () => {
+        modalLeadWhatsAppBtn.onclick = () => {
             const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
             const msg = `Hola ${lead.name}, te contacto de inmoderno respecto a tu búsqueda de inmueble: "${lead.intent}". ¿Cómo estás?`;
             window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
-        leadDrawer.classList.add('open');
-        drawerBackdrop.style.display = 'block';
+        leadDetailsModal.style.display = 'flex';
     }
 
-    function showViewMode() {
-        drawerViewMode.style.display = 'block';
-        drawerEditForm.style.display = 'none';
-        drawerViewFooter.style.display = 'block';
+    function showLeadViewMode() {
+        modalLeadViewMode.style.display = 'block';
+        modalLeadEditForm.style.display = 'none';
+        modalLeadViewFooter.style.display = 'block';
     }
 
-    function showEditMode() {
-        drawerViewMode.style.display = 'none';
-        drawerEditForm.style.display = 'flex';
-        drawerViewFooter.style.display = 'none';
+    function showLeadEditMode() {
+        modalLeadViewMode.style.display = 'none';
+        modalLeadEditForm.style.display = 'flex';
+        modalLeadViewFooter.style.display = 'none';
     }
 
-    function closeLeadDrawer() {
-        leadDrawer.classList.remove('open');
-        drawerBackdrop.style.display = 'none';
+    function closeLeadModalOverlay() {
+        leadDetailsModal.style.display = 'none';
         currentActiveLeadId = null;
-        showViewMode();
+        showLeadViewMode();
     }
 
-    if (closeLeadDrawerBtn) closeLeadDrawerBtn.addEventListener('click', closeLeadDrawer);
-    if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeLeadDrawer);
+    if (closeLeadDetailsModalBtn) closeLeadDetailsModalBtn.addEventListener('click', closeLeadModalOverlay);
+    if (btnToggleEditLead) btnToggleEditLead.addEventListener('click', showLeadEditMode);
+    if (btnCancelEditLead) btnCancelEditLead.addEventListener('click', showLeadViewMode);
 
-    if (btnToggleEditLead) btnToggleEditLead.addEventListener('click', showEditMode);
-    if (btnCancelEditLead) btnCancelEditLead.addEventListener('click', showViewMode);
-
-    drawerEditForm.addEventListener('submit', (e) => {
+    modalLeadEditForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!currentActiveLeadId) return;
 
@@ -1844,7 +1815,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             saveLeadsState();
             renderLeads();
-            openLeadDrawer(lead.id);
+            openLeadModalOverlay(lead.id);
         }
     });
 
@@ -1860,7 +1831,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveLeadsState();
                 renderLeads();
                 renderVisits();
-                closeLeadDrawer();
+                closeLeadModalOverlay();
             }
         });
     }
@@ -1870,7 +1841,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentActiveLeadId) return;
             const lead = leads.find(l => l.id == currentActiveLeadId);
             if (lead) {
-                lead.notes = drawerLeadNotes.value.trim();
+                lead.notes = modalLeadNotes.value.trim();
                 saveLeadsState();
                 alert('¡Notas del cliente guardadas correctamente!');
             }
@@ -1910,6 +1881,45 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('inmo_leads', JSON.stringify(leads));
         updateDashboardStats();
     }
+
+    // ==========================================
+    // 12. MOTOR DE MATCHING
+    // ==========================================
+    function findMatchingPropertiesForLead(lead) {
+        const intentText = normalizeText(lead.intent + ' ' + lead.budget);
+        
+        return properties.filter(prop => {
+            const propCat = normalizeText(prop.category);
+            const matchesCat = intentText.includes(propCat) || intentText.includes('propiedad') || intentText.includes('inmueble');
+            const matchesOp = (intentText.includes('alquiler') && prop.type === 'Alquiler') ||
+                              ((intentText.includes('venta') || intentText.includes('compra') || intentText.includes('busca')) && prop.type === 'Venta') ||
+                              (!intentText.includes('alquiler') && !intentText.includes('venta'));
+            
+            let matchesBeds = true;
+            if (intentText.includes('1 hab') && prop.beds < 1) matchesBeds = false;
+            if (intentText.includes('2 hab') && prop.beds < 2) matchesBeds = false;
+            if (intentText.includes('3 hab') && prop.beds < 3) matchesBeds = false;
+            if (intentText.includes('4 hab') && prop.beds < 4) matchesBeds = false;
+
+            return (matchesCat || matchesOp) && matchesBeds;
+        }).slice(0, 4);
+    }
+
+    // ==========================================
+    // 13. CIERRE DE MODALES AL HACER CLICK EN BACKDROP
+    // ==========================================
+    const allModals = document.querySelectorAll('.modal-backdrop');
+    allModals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                const form = modal.querySelector('form');
+                if (form) form.reset();
+                if (propEditId) propEditId.value = '';
+                if (propModalTitle) propModalTitle.textContent = 'Agregar Nueva Propiedad';
+            }
+        });
+    });
 
     // ==========================================
     // 14. GESTIÓN DE AGENDA Y GOOGLE CALENDAR
@@ -2035,6 +2045,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileFabMenu = document.getElementById('mobile-fab-menu');
     const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
 
+    const secondarySidebar = document.getElementById('secondary-sidebar');
+    const filterBackdrop = document.getElementById('filter-backdrop');
+    const btnMobileFilters = document.getElementById('btn-mobile-filters');
+    const mobileFilterClose = document.getElementById('mobile-filter-close');
+
     function closeMobileSidebar() {
         primarySidebar.classList.remove('open');
         sidebarBackdrop.style.display = 'none';
@@ -2045,9 +2060,23 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebarBackdrop.style.display = 'block';
     }
 
+    function closeMobileFilters() {
+        secondarySidebar.classList.remove('open');
+        filterBackdrop.style.display = 'none';
+    }
+
+    function openMobileFilters() {
+        secondarySidebar.classList.add('open');
+        filterBackdrop.style.display = 'block';
+    }
+
     if (mobileFabMenu) mobileFabMenu.addEventListener('click', openMobileSidebar);
     if (mobileSidebarClose) mobileSidebarClose.addEventListener('click', closeMobileSidebar);
     if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+
+    if (btnMobileFilters) btnMobileFilters.addEventListener('click', openMobileFilters);
+    if (mobileFilterClose) mobileFilterClose.addEventListener('click', closeMobileFilters);
+    if (filterBackdrop) filterBackdrop.addEventListener('click', closeMobileFilters);
 
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -2062,7 +2091,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (globalSearch) globalSearch.value = '';
             if (targetId === 'view-inventory') {
-                renderHistogram(0, MAX_RANGE_LIMIT);
+                renderHistogram(0, currentDynamicMax);
                 renderProperties();
             }
             if (targetId === 'view-leads') renderLeads();
@@ -2267,7 +2296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         localStorage.setItem('inmo_properties', JSON.stringify(properties));
-        renderHistogram(0, MAX_RANGE_LIMIT);
+        renderHistogram(0, currentDynamicMax);
         renderProperties();
         closeM(propModal, propForm);
     });
@@ -2356,7 +2385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('inmo_properties', JSON.stringify(properties));
                     localStorage.setItem('inmo_leads', JSON.stringify(leads));
                     localStorage.setItem('inmo_visits', JSON.stringify(visits));
-                    renderHistogram(0, MAX_RANGE_LIMIT);
+                    renderHistogram(0, currentDynamicMax);
                     renderProperties();
                     renderLeads();
                     renderVisits();
@@ -2370,7 +2399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Inicializar vistas
-    renderHistogram(0, MAX_RANGE_LIMIT);
+    renderHistogram(0, currentDynamicMax);
     renderProperties();
     renderLeads();
     renderVisits();
