@@ -1,55 +1,51 @@
 import os
-import re
 import google.generativeai as genai
 
-# 1. Configurar Gemini con la API Key gratuita
+# 1. Configurar la API Key
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 prompt_usuario = os.environ.get("ISSUE_BODY", "")
 
-# 2. Leer los archivos del repositorio para enviarlos como contexto
+# Archivos clave de tu proyecto CRM-Inmobiplus
 archivos = ["index.html", "style.css", "script.js"]
-contexto_codigo = ""
 
+# 2. Iterar archivo por archivo para procesarlo individualmente
 for nombre_archivo in archivos:
     if os.path.exists(nombre_archivo):
+        # Leer el contenido actual del archivo
         with open(nombre_archivo, "r", encoding="utf-8") as f:
-            contenido = f.read()
-        contexto_codigo += f"=== INICIO ARCHIVO ORIGINAL: {nombre_archivo} ===\n{contenido}\n=== FIN ARCHIVO ORIGINAL ===\n\n"
-
-# 3. Instrucciones ultra-específicas para formatear la respuesta
-prompt_final = (
-    f"Instrucción de cambio solicitada por el usuario:\n{prompt_usuario}\n\n"
-    f"Código actual del proyecto:\n{contexto_codigo}\n"
-    f"Modifica los archivos necesarios (pueden ser uno, dos o los tres) para cumplir la instrucción.\n"
-    f"Devuelve tu respuesta estructurada exactamente usando estos delimitadores para envolver el código de cada archivo modificado:\n\n"
-    f"@@@INICIO:{nombre_archivo}@@@\n"
-    f"(Escribe aquí el código completo actualizado del archivo)\n"
-    f"@@@FIN:{nombre_archivo}@@@\n\n"
-    f"Importante: No uses bloques de markdown adicionales (como ```html o ```css) dentro de las etiquetas @@@. Solo el código puro."
-)
-
-# 4. Llamar al modelo
-model = genai.GenerativeModel('gemini-1.5-flash')
-response = model.generate_content(prompt_final)
-respuesta_ia = response.text
-
-# 5. Extraer y guardar los cambios usando expresiones regulares robustas
-bloques = re.findall(r'@@@INICIO:(.*?)@@@(.*?)@@@FIN:\1@@@', respuesta_ia, re.DOTALL)
-
-if not bloques:
-    print("❌ Error crítico: Gemini no devolvió los bloques con el formato @@@INICIO y @@@FIN esperado.")
-    print("Respuesta cruda de la IA para diagnóstico:\n", respuesta_ia)
-    exit(1)
-
-for nombre_archivo, nuevo_contenido in bloques:
-    nombre_archivo = nombre_archivo.strip()
-    # Limpieza extrema de formato markdown por si la IA ignora las órdenes
-    nuevo_contenido = re.sub(r'^```[a-zA-Z]*\n', '', nuevo_contenido)
-    nuevo_contenido = re.sub(r'\n```$', '', nuevo_contenido).strip()
-    
-    if nombre_archivo in archivos:
-        with open(nombre_archivo, "w", encoding="utf-8") as f:
-            f.write(nuevo_contenido)
-        print(f"✅ ¡Archivo '{nombre_archivo}' actualizado correctamente!")
-    else:
-        print(f"⚠️ Se detectó un intento de modificar un archivo no autorizado: {nombre_archivo}")
+            codigo_actual = f.read()
+        
+        # Súper instrucciones individuales
+        prompt_final = (
+            f"Instrucción general de cambio solicitada por el usuario:\n{prompt_usuario}\n\n"
+            f"Estás editando el archivo específico: '{nombre_archivo}'.\n"
+            f"Aquí tienes su código actual completo:\n\n{codigo_actual}\n\n"
+            f"Tu tarea:\n"
+            f"Aplica los cambios solicitados por el usuario si afectan a este archivo. "
+            f"Devuelve el código COMPLETO y actualizado de este archivo. "
+            f"Si los cambios del usuario NO afectan o no requieren tocar este archivo, devuelve exactamente y únicamente la palabra: SIN_CAMBIOS\n\n"
+            f"REGLA CRÍTICA: No agregues saludos, explicaciones, ni introducciones. No uses bloques de markdown (como ```html o ```css). Devuelve solo el texto plano listo para guardar."
+        )
+        
+        # Llamar a Gemini (Usando el modelo gratuito Flash)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt_final)
+        resultado = response.text.strip()
+        
+        # Limpieza de seguridad por si acaso la IA introduce bloques markdown
+        if resultado.startswith("```"):
+            lineas = resultado.splitlines()
+            if lineas[0].startswith("```"):
+                lineas = lineas[1:]
+            if lineas and lineas[-1].startswith("```"):
+                lineas = lineas[:-1]
+            resultado = "\n".join(lineas).strip()
+        
+        # Analizar respuesta
+        if "SIN_CAMBIOS" in resultado and len(resultado) < 20:
+            print(f"ℹ️ El archivo '{nombre_archivo}' no requería modificaciones.")
+        else:
+            # Sobrescribir el archivo con los cambios aplicados
+            with open(nombre_archivo, "w", encoding="utf-8") as f:
+                f.write(resultado)
+            print(f"✅ ¡Archivo '{nombre_archivo}' actualizado correctamente!")
