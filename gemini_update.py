@@ -5,50 +5,50 @@ import google.generativeai as genai
 # 1. Configurar Gemini
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-# 2. Capturar datos del Issue
-issue_title = os.environ.get("ISSUE_TITLE", "")
+# 2. Capturar el prompt del usuario
 prompt_usuario = os.environ.get("ISSUE_BODY", "")
 
-# 3. Detectar qué archivo quieres modificar leyendo el título [archivo]
-# Busca algo como [index.html], [styles.css] o [script.js]
-match = re.search(r'\[(.*?\..*?)\]', issue_title)
+# 3. Leer los tres archivos principales de tu proyecto
+archivos = ["index.html", "style.css", "script.js"]
+contexto_codigo = ""
 
-if not match:
-    print("❌ Error: No especificaste el archivo entre corchetes en el título. Ej: [Gemini-Auto][index.html]")
-    exit(1)
+for nombre_archivo in archivos:
+    if os.path.exists(nombre_archivo):
+        with open(nombre_archivo, "r", encoding="utf-8") as f:
+            contenido = f.read()
+        contexto_codigo += f"--- ARCHIVO: {nombre_archivo} ---\n{contenido}\n\n"
 
-archivo_objetivo = match.group(1).strip()
-
-# 4. Verificar si el archivo existe en tu proyecto
-if not os.path.exists(archivo_objetivo):
-    print(f"❌ Error: El archivo '{archivo_objetivo}' no existe en tu repositorio.")
-    exit(1)
-
-# 5. Leer el contenido actual de TU archivo (Index, styles o script)
-with open(archivo_objetivo, "r", encoding="utf-8") as file:
-    codigo_actual = file.read()
-
-# 6. Diseñar las instrucciones estrictas para el modelo
+# 4. Crear un súper prompt donde Gemini analiza todo el contexto
 prompt_final = (
     f"Instrucción del usuario: {prompt_usuario}\n\n"
-    f"Código actual en el archivo '{archivo_objetivo}':\n"
-    f"```\n{codigo_actual}\n```\n\n"
-    f"Tu tarea es aplicar el cambio solicitado. Devuelve ÚNICAMENTE el código completo resultante para este archivo. "
-    f"No agregues saludos, explicaciones, ni introducciones. No uses bloques de formato markdown (como ```html o ```css) en tu respuesta. "
-    f"Devuelve solo el texto limpio listo para guardar."
+    f"Aquí tienes el código actual de todo el proyecto:\n\n{contexto_codigo}\n"
+    f"Tu tarea es decidir qué archivo o archivos deben ser modificados para cumplir con la instrucción del usuario. "
+    f"Puedes modificar uno solo, dos, o los tres si es necesario.\n\n"
+    f"Devuelve tu respuesta usando estrictamente este formato para cada archivo que decidas cambiar (no agregues texto fuera de estos bloques):\n"
+    f"[INICIO_ARCHIVO:nombre_del_archivo]\n"
+    f"Aquí pones todo el código completo y actualizado de ese archivo\n"
+    f"[FIN_ARCHIVO:nombre_del_archivo]\n"
 )
 
-# 7. Ejecutar Gemini 1.5 Flash (Gratuito)
+# 5. Llamar a Gemini (Usamos 1.5 Flash)
 model = genai.GenerativeModel('gemini-1.5-flash')
 response = model.generate_content(prompt_final)
-nuevo_codigo = response.text
+respuesta_ia = response.text
 
-# 8. Limpieza de seguridad por si Gemini añade marcas markdown
-nuevo_codigo = re.sub(r'^```[a-zA-Z]*\n', '', nuevo_codigo)
-nuevo_codigo = re.sub(r'\n```$', '', nuevo_codigo)
+# 6. Procesar la respuesta de Gemini y guardar los cambios en los archivos correspondientes
+bloques = re.findall(r'\[INICIO_ARCHIVO:(.*?)\](.*?)\[FIN_ARCHIVO:\1\]', respuesta_ia, re.DOTALL)
 
-# 9. Sobrescribir TU archivo con los cambios aplicados
-with open(archivo_objetivo, "w", encoding="utf-8") as file:
-    file.write(nuevo_codigo.strip())
-
-print(f"¡Archivo '{archivo_objetivo}' actualizado con éxito por Gemini!")
+if not bloques:
+    print("⚠️ Gemini no devolvió cambios en el formato solicitado o no consideró necesario cambiar nada.")
+    print("Respuesta recibida:", respuesta_ia)
+else:
+    for nombre_archivo, nuevo_contenido in bloques:
+        nombre_archivo = nombre_archivo.strip()
+        # Limpieza de seguridad por si Gemini mete marcas markdown de código inside del bloque
+        nuevo_contenido = re.sub(r'^```[a-zA-Z]*\n', '', nuevo_contenido)
+        nuevo_contenido = re.sub(r'\n```$', '', nuevo_contenido).strip()
+        
+        if nombre_archivo in archivos:
+            with open(nombre_archivo, "w", encoding="utf-8") as f:
+                f.write(nuevo_contenido)
+            print(f"✅ ¡Archivo '{nombre_archivo}' actualizado con éxito!")
