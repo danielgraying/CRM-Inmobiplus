@@ -1,15 +1,16 @@
 import os
-import google.generativeai as genai
+from google import genai
 
 try:
     # 1. Validar la existencia de la API KEY
     if "GEMINI_API_KEY" not in os.environ:
         raise ValueError("Falta configurar la variable 'GEMINI_API_KEY' en los Secrets de tu GitHub.")
 
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    # Inicializar el nuevo cliente unificado de Google GenAI
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     prompt_usuario = os.environ.get("ISSUE_BODY", "")
 
-    # Archivos del repositorio CRM-Inmobiplus
+    # Archivos del proyecto CRM-Inmobiplus
     archivos = ["index.html", "style.css", "script.js"]
 
     # 2. Procesar cada archivo individualmente
@@ -28,12 +29,14 @@ try:
                 f"REGLA CRÍTICA: No agregues saludos ni explicaciones. No uses bloques markdown (```html). Devuelve solo el texto plano."
             )
             
-            # 🚀 USAMOS EL MODELO ACTUALIZADO Y DISPONIBLE
-            model = genai.GenerativeModel('gemini-2.5-flash')
-            response = model.generate_content(prompt_final)
+            # 🚀 LLAMADA CON EL NUEVO MODELO GEMINI 3.6 FLASH Y LA NUEVA SINTAXIS
+            response = client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt_final,
+            )
             resultado = response.text.strip()
             
-            # Limpieza rápida por si la IA introduce triple comilla markdown
+            # Limpieza de seguridad por si la IA introduce formato markdown
             if resultado.startswith("```"):
                 lineas = resultado.splitlines()
                 if len(lineas) > 1 and lineas[0].startswith("```"):
@@ -47,7 +50,7 @@ try:
             else:
                 with open(nombre_archivo, "w", encoding="utf-8") as f:
                     f.write(resultado)
-                print(f"✅ ¡Archivo '{nombre_archivo}' actualizado correctamente!")
+                print(f"✅ ¡Archivo '{nombre_archivo}' actualizado correctamente con Gemini 3.6!")
 
 except Exception as e:
     print(f"❌ ERROR CRÍTICO EN EL SCRIPT: {e}")
