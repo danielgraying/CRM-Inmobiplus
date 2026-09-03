@@ -16,7 +16,7 @@
         
         <!-- BACKDROPS -->
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-        <div class="drawer-backdrop" id="drawer-backdrop"></div>
+        <div class="filter-backdrop" id="filter-backdrop"></div>
 
         <!-- SIDEBAR PRINCIPAL -->
         <aside class="primary-sidebar" id="primary-sidebar">
@@ -171,7 +171,12 @@
                 <div id="view-inventory" class="view-section" style="display: none;">
                     <div class="nested-view-layout">
                         
-                        <aside class="secondary-sidebar">
+                        <aside class="secondary-sidebar" id="secondary-sidebar">
+                            <div class="mobile-filter-header">
+                                <h3>Filtros de Búsqueda</h3>
+                                <button class="collapse-btn" id="mobile-filter-close">✕</button>
+                            </div>
+
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
                             <div class="sub-nav-group">
@@ -229,8 +234,8 @@
                                     <div class="histogram-bars" id="histogram-bars"></div>
                                     <div class="range-slider-wrapper">
                                         <div class="slider-track" id="slider-track"></div>
-                                        <input type="range" id="range-slider-min" min="0" max="500000" step="5000" value="0">
-                                        <input type="range" id="range-slider-max" min="0" max="500000" step="5000" value="500000">
+                                        <input type="range" id="range-slider-min" min="0" max="500000" step="1000" value="0">
+                                        <input type="range" id="range-slider-max" min="0" max="500000" step="1000" value="500000">
                                     </div>
                                     <div class="histogram-labels">
                                         <span id="label-min-price">$0</span>
@@ -328,12 +333,17 @@
                             <div class="nested-content-area">
                                 <div class="content-header-row">
                                     <div>
-                                        <h2>Propiedades coincidentes</h2>
+                                        <h2>Propiedades disponibles</h2>
                                         <span id="filtered-count-badge" style="font-size: 0.85rem; color: var(--text-muted);">Cargando...</span>
                                     </div>
-                                    <button class="btn-toggle-map" id="btn-toggle-map-view">
-                                        <span id="map-btn-icon">🗺️</span> <span id="map-btn-text">Ver mapa</span>
-                                    </button>
+                                    <div class="header-action-buttons">
+                                        <button class="btn-mobile-filters" id="btn-mobile-filters">
+                                            <span>⚙️</span> Filtros
+                                        </button>
+                                        <button class="btn-toggle-map" id="btn-toggle-map-view">
+                                            <span id="map-btn-icon">🗺️</span> <span id="map-btn-text">Ver mapa</span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="property-grid" id="property-grid"></div>
                             </div>
@@ -435,98 +445,6 @@
             </div>
         </div>
 
-        <!-- DRAWER LATERAL DE LEAD -->
-        <aside class="lead-drawer" id="lead-drawer">
-            <div class="lead-drawer-header">
-                <div class="drawer-user-title">
-                    <div class="lead-avatar" id="drawer-lead-avatar">CM</div>
-                    <div>
-                        <h3 id="drawer-lead-name">Carlos Mendoza</h3>
-                        <span class="time-tag" id="drawer-lead-time">Hace 2h</span>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-icon-action" id="btn-toggle-edit-lead" title="Editar Lead">✏️</button>
-                    <button class="btn-icon-action delete" id="btn-delete-lead" title="Eliminar Lead">🗑️</button>
-                    <button class="drawer-close-btn" id="close-lead-drawer-btn">✕</button>
-                </div>
-            </div>
-
-            <div class="lead-drawer-body">
-                <div id="drawer-view-mode">
-                    <div class="drawer-section">
-                        <span class="drawer-label">REQUERIMIENTO PRINCIPAL</span>
-                        <p class="drawer-highlight-text" id="drawer-lead-intent">Busca apto 3 habs con 2 puestos</p>
-                        <div class="drawer-meta-row">
-                            <div>
-                                <span class="drawer-mini-label">Presupuesto</span>
-                                <strong id="drawer-lead-budget">$100k - $130k</strong>
-                            </div>
-                            <div>
-                                <span class="drawer-mini-label">Teléfono</span>
-                                <span id="drawer-lead-phone">+58 414-1234567</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="drawer-section">
-                        <span class="drawer-label">NOTAS Y SEGUIMIENTO</span>
-                        <textarea class="lead-notes-area" id="drawer-lead-notes" placeholder="Escribe notas sobre las preferencias del cliente..."></textarea>
-                        <button class="btn-secondary full-width" id="btn-save-lead-notes" style="margin-top: 6px;">Guardar Nota</button>
-                    </div>
-
-                    <div class="drawer-section">
-                        <div class="drawer-section-header">
-                            <span class="drawer-label">PROPIEDADES SUGERIDAS (MATCHING)</span>
-                            <span class="match-count-badge" id="drawer-matches-count">0 matches</span>
-                        </div>
-                        <div class="drawer-matches-list" id="drawer-matches-list"></div>
-                    </div>
-                </div>
-
-                <form id="drawer-edit-form" style="display: none; flex-direction: column; gap: 14px;">
-                    <div class="form-group">
-                        <label>Nombre del Prospecto</label>
-                        <input type="text" id="edit-lead-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono (WhatsApp)</label>
-                        <input type="tel" id="edit-lead-phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Etapa en el Pipeline</label>
-                        <select id="edit-lead-status" required>
-                            <option value="new">Nuevos</option>
-                            <option value="contacted">Contactados</option>
-                            <option value="visited">Visitas Programadas</option>
-                            <option value="offer">Ofertas / Negociación</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Requerimiento / Búsqueda</label>
-                        <input type="text" id="edit-lead-intent" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Presupuesto</label>
-                        <input type="text" id="edit-lead-budget" required>
-                    </div>
-                    <div class="modal-actions" style="margin-top: 10px;">
-                        <button type="button" class="btn-secondary" id="btn-cancel-edit-lead">Cancelar</button>
-                        <button type="submit" class="btn-primary">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="lead-drawer-footer" id="drawer-view-footer">
-                <button class="btn-whatsapp full-width" id="drawer-whatsapp-btn">
-                    <svg class="btn-icon-svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.59c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.71 4.3 3.8 2.52 1.1 2.52.73 2.98.69.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/>
-                    </svg>
-                    Conversar por WhatsApp
-                </button>
-            </div>
-        </aside>
-
         <!-- MOBILE FLOATING UI -->
         <button class="mobile-fab-menu" id="mobile-fab-menu" aria-label="Abrir menú">
             <span class="fab-icon-bars">☰</span>
@@ -554,7 +472,7 @@
 
     </div>
 
-    <!-- MODAL 1: PROPIEDAD (CREAR / EDITAR CON SELECTOR EN MAPA) -->
+    <!-- MODAL 1: PROPIEDAD (CREAR / EDITAR) -->
     <div class="modal-backdrop" id="property-modal">
         <div class="modal-window" style="max-width: 580px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
@@ -594,7 +512,7 @@
                     </div>
                 </div>
 
-                <!-- SELECTOR DE PUNTO EN MAPA -->
+                <!-- SELECTOR INTERACTIVO EN MAPA -->
                 <div class="form-group">
                     <label style="margin-bottom: 2px;">📍 Ubicación en el Mapa (Haz clic o arrastra el pin)</label>
                     <div id="modal-picker-map" style="height: 190px; width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background-color: var(--bg-app); margin-top: 4px;"></div>
@@ -764,7 +682,7 @@
         </div>
     </div>
 
-    <!-- MODAL 4: VER FICHA DETALLE -->
+    <!-- MODAL 4: VER FICHA DETALLE PROPIEDAD -->
     <div class="modal-backdrop" id="details-modal">
         <div class="modal-window printable-area" style="max-width: 640px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header no-print">
@@ -775,6 +693,103 @@
             <div class="modal-actions no-print" style="margin-top: 20px;">
                 <button type="button" class="btn-secondary" onclick="window.print()">Imprimir / PDF 📄</button>
                 <button type="button" class="btn-whatsapp" id="detail-whatsapp-btn">
+                    <svg class="btn-icon-svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.59c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.71 4.3 3.8 2.52 1.1 2.52.73 2.98.69.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/>
+                    </svg>
+                    Conversar por WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: FICHA COMPLETA DEL LEAD (OVERLAY) -->
+    <div class="modal-backdrop" id="lead-details-modal">
+        <div class="modal-window printable-area" style="max-width: 620px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header no-print">
+                <div class="drawer-user-title">
+                    <div class="lead-avatar" id="modal-lead-avatar">CM</div>
+                    <div>
+                        <h3 id="modal-lead-name">Carlos Mendoza</h3>
+                        <span class="time-tag" id="modal-lead-time">Hace 2h</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn-icon-action" id="btn-toggle-edit-lead" title="Editar Lead">✏️</button>
+                    <button class="btn-icon-action delete" id="btn-delete-lead" title="Eliminar Lead">🗑️</button>
+                    <button class="modal-close" id="close-lead-details-modal-btn">✕</button>
+                </div>
+            </div>
+
+            <div class="modal-lead-body">
+                <!-- MODO VISTA NORMAL -->
+                <div id="modal-lead-view-mode">
+                    <div class="lead-detail-section">
+                        <span class="drawer-label">REQUERIMIENTO PRINCIPAL</span>
+                        <p class="drawer-highlight-text" id="modal-lead-intent">Busca apto 3 habs con 2 puestos</p>
+                        
+                        <div class="lead-meta-stacked">
+                            <div class="lead-meta-row-item">
+                                <span class="drawer-mini-label">Presupuesto</span>
+                                <strong id="modal-lead-budget">$100,000 - $130,000</strong>
+                            </div>
+                            <div class="lead-meta-row-item">
+                                <span class="drawer-mini-label">Teléfono</span>
+                                <span id="modal-lead-phone">+58 414-1234567</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lead-detail-section">
+                        <span class="drawer-label">NOTAS Y SEGUIMIENTO</span>
+                        <textarea class="lead-notes-area" id="modal-lead-notes" placeholder="Escribe notas sobre las preferencias del cliente..."></textarea>
+                        <button class="btn-secondary full-width" id="btn-save-lead-notes" style="margin-top: 6px;">Guardar Nota</button>
+                    </div>
+
+                    <div class="lead-detail-section">
+                        <div class="drawer-section-header">
+                            <span class="drawer-label">PROPIEDADES SUGERIDAS</span>
+                            <span class="match-count-badge full-line-badge" id="modal-matches-count">0 coincidencias</span>
+                        </div>
+                        <div class="drawer-matches-list" id="modal-matches-list" style="margin-top: 8px;"></div>
+                    </div>
+                </div>
+
+                <!-- MODO EDICIÓN FORMULARIO -->
+                <form id="modal-lead-edit-form" style="display: none; flex-direction: column; gap: 14px;">
+                    <div class="form-group">
+                        <label>Nombre del Prospecto</label>
+                        <input type="text" id="edit-lead-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono (WhatsApp)</label>
+                        <input type="tel" id="edit-lead-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Etapa en el Pipeline</label>
+                        <select id="edit-lead-status" required>
+                            <option value="new">Nuevos</option>
+                            <option value="contacted">Contactados</option>
+                            <option value="visited">Visitas Programadas</option>
+                            <option value="offer">Ofertas / Negociación</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Requerimiento / Búsqueda</label>
+                        <input type="text" id="edit-lead-intent" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Presupuesto</label>
+                        <input type="text" id="edit-lead-budget" required>
+                    </div>
+                    <div class="modal-actions" style="margin-top: 10px;">
+                        <button type="button" class="btn-secondary" id="btn-cancel-edit-lead">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-actions no-print" id="modal-lead-view-footer" style="margin-top: 20px;">
+                <button class="btn-whatsapp full-width" id="modal-lead-whatsapp-btn">
                     <svg class="btn-icon-svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                         <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.59c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.71 4.3 3.8 2.52 1.1 2.52.73 2.98.69.46-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/>
                     </svg>
