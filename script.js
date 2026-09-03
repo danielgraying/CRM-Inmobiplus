@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filterCountry.addEventListener('change', () => {
-        window._lockedDynamicMax = false; // Permite recalcular el techo de precio para el nuevo país
+        window._lockedDynamicMax = false;
         updateLocationSelectors(filterCountry.value, filterSubdivLabel, filterSubdivision, filterCityLabel, filterCity, true);
         renderProperties();
     });
@@ -1174,6 +1174,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tag.classList.add('active');
             selectedOperation = tag.getAttribute('data-val');
 
+            window._lockedDynamicMax = false; // <-- Esto fuerza a que el slider recalcule su escala (ej: de miles a cientos para alquiler)
+
             if (selectedOperation === 'Venta') {
                 if (containerFilterPets) containerFilterPets.style.display = 'none';
                 if (filterPets) filterPets.checked = false;
@@ -1185,13 +1187,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    let selectedCategory = "";
-    const catTags = document.querySelectorAll('#filter-category-tags .tag-filter-btn');
     catTags.forEach(tag => {
         tag.addEventListener('click', () => {
             catTags.forEach(t => t.classList.remove('active'));
             tag.classList.add('active');
             selectedCategory = tag.getAttribute('data-val');
+            window._lockedDynamicMax = false; // <-- Forzar actualización de escala
             renderProperties();
         });
     });
@@ -1200,20 +1201,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!histogramBarsContainer) return;
         histogramBarsContainer.innerHTML = '';
 
-        // Solo actualizamos el max global si cambia el contexto de ubicación/categoría, 
-        // para evitar que el slider brinque mientras el usuario hace drag.
+        // Obtenemos los precios del dataset actual (que ya viene filtrado por ubicación/operación)
         const prices = dataset.map(p => p.price);
-        const dynamicMax = prices.length > 0 ? Math.max(...prices, 1000) : 500000;
-        
-        // Solo reasignamos si el dataset base cambió significativamente
+        const highestPrice = prices.length > 0 ? Math.max(...prices, 100) : 500000;
+
+        // Si cambió el contexto (ej: pasaste de Venta a Alquiler o de país), recalculamos el max del slider
         if (!window._lockedDynamicMax) {
-            currentDynamicMax = dynamicMax;
+            // Si es alquiler, redondeamos hacia arriba con un margen cómodo; si es venta, ajustamos al techo real
+            currentDynamicMax = highestPrice;
             rangeSliderMin.max = currentDynamicMax;
             rangeSliderMax.max = currentDynamicMax;
+            
+            // Si el slider guardaba un valor viejo muy alto, lo reseteamos al nuevo max
+            if (parseFloat(rangeSliderMax.value) > currentDynamicMax || filterMaxPrice.value === '') {
+                rangeSliderMax.value = currentDynamicMax;
+                filterMaxPrice.value = '';
+            }
             window._lockedDynamicMax = true;
         }
 
-        const bucketSize = currentDynamicMax / HISTOGRAM_BUCKETS;
+        const bucketSize = currentDynamicMax / HISTOGRAM_BUCKETS || 1;
         const counts = new Array(HISTOGRAM_BUCKETS).fill(0);
 
         dataset.forEach(p => {
