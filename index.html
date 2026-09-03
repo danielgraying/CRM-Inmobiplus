@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>InModerno - Real Estate CRM</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Leaflet CSS para Mapas Interactivos -->
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
         <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
-        <!-- SIDEBAR PRINCIPAL (NIVEL 1) -->
+        <!-- SIDEBAR PRINCIPAL -->
         <aside class="primary-sidebar" id="primary-sidebar">
             <div class="workspace-header">
                 <div class="workspace-brand">
@@ -65,17 +65,21 @@
                 <a href="#" class="p-nav-item" data-target="view-calendar">
                     <span class="nav-icon">📅</span> Agenda / Visitas
                 </a>
-                <a href="#" class="p-nav-item" data-target="view-settings">
-                    <span class="nav-icon">⚙️</span> Ajustes
-                </a>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-chip">
-                    <div class="user-avatar">JD</div>
-                    <div class="user-info">
-                        <span class="user-name">José Daniel</span>
-                        <span class="user-role">Administrador</span>
+            <div class="sidebar-bottom-section">
+                <nav class="secondary-nav-bottom">
+                    <a href="#" class="p-nav-item" data-target="view-settings">
+                        <span class="nav-icon">⚙️</span> Ajustes
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-chip">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-info">
+                            <span class="user-name">José Daniel</span>
+                            <span class="user-role">Administrador</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -171,17 +175,17 @@
                             <button class="btn-primary full-width hide-mobile" id="btn-open-prop-modal">+ Nueva Propiedad</button>
                             
                             <div class="sub-nav-group">
-                                <span class="sub-nav-header">📍 LOCALIZACIÓN (LATAM)</span>
+                                <span class="sub-nav-header">PAÍS</span>
                                 <div class="form-group-filter">
-                                    <label class="filter-mini-label">País</label>
                                     <select id="filter-country" class="facet-select">
                                         <option value="">Todos los países</option>
-                                        <option value="Venezuela">Venezuela 🇻🇪</option>
-                                        <option value="Colombia">Colombia 🇨🇴</option>
-                                        <option value="México">México 🇲🇽</option>
                                         <option value="Argentina">Argentina 🇦🇷</option>
                                         <option value="Chile">Chile 🇨🇱</option>
+                                        <option value="Colombia">Colombia 🇨🇴</option>
+                                        <option value="México">México 🇲🇽</option>
                                         <option value="Perú">Perú 🇵🇪</option>
+                                        <option value="Uruguay">Uruguay 🇺🇾</option>
+                                        <option value="Venezuela">Venezuela 🇻🇪</option>
                                     </select>
                                 </div>
                                 <div class="form-group-filter" id="filter-subdiv-container" style="display: none;">
@@ -289,7 +293,7 @@
                             </div>
 
                             <div class="sub-nav-group">
-                                <span class="sub-nav-header">TERRENO / LOTE TOTAL (m²)</span>
+                                <span class="sub-nav-header">TERRENO TOTAL (m²)</span>
                                 <div class="facet-range-row">
                                     <input type="number" id="filter-min-sqm-lot" class="facet-input" placeholder="Mín m²">
                                     <span class="range-sep">-</span>
@@ -321,7 +325,6 @@
                         </aside>
 
                         <div class="inventory-split-viewport" id="inventory-split-viewport">
-                            
                             <div class="nested-content-area">
                                 <div class="content-header-row">
                                     <div>
@@ -343,7 +346,6 @@
                                 </div>
                                 <div id="interactive-results-map"></div>
                             </div>
-
                         </div>
 
                     </div>
@@ -552,15 +554,17 @@
 
     </div>
 
-    <!-- MODAL 1: PROPIEDAD (CREAR / EDITAR) -->
+    <!-- MODAL 1: PROPIEDAD (CREAR / EDITAR CON SELECTOR EN MAPA) -->
     <div class="modal-backdrop" id="property-modal">
-        <div class="modal-window" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-window" style="max-width: 580px; max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3 id="property-modal-title">Agregar Nueva Propiedad</h3>
                 <button class="modal-close" id="close-modal-btn">✕</button>
             </div>
             <form id="property-form">
                 <input type="hidden" id="prop-edit-id">
+                <input type="hidden" id="prop-lat">
+                <input type="hidden" id="prop-lng">
 
                 <div class="form-group">
                     <label>Título / Dirección Corta</label>
@@ -571,12 +575,13 @@
                     <div class="form-group">
                         <label>País</label>
                         <select id="prop-country" required>
-                            <option value="Venezuela">Venezuela</option>
-                            <option value="Colombia">Colombia</option>
-                            <option value="México">México</option>
                             <option value="Argentina">Argentina</option>
                             <option value="Chile">Chile</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="México">México</option>
                             <option value="Perú">Perú</option>
+                            <option value="Uruguay">Uruguay</option>
+                            <option value="Venezuela">Venezuela</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -589,15 +594,10 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Latitud GPS</label>
-                        <input type="number" id="prop-lat" step="any" placeholder="Ej. 7.7885" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Longitud GPS</label>
-                        <input type="number" id="prop-lng" step="any" placeholder="Ej. -72.2156" required>
-                    </div>
+                <!-- SELECTOR DE PUNTO EN MAPA -->
+                <div class="form-group">
+                    <label style="margin-bottom: 2px;">📍 Ubicación en el Mapa (Haz clic o arrastra el pin)</label>
+                    <div id="modal-picker-map" style="height: 190px; width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background-color: var(--bg-app); margin-top: 4px;"></div>
                 </div>
                 
                 <div class="form-row">
