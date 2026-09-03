@@ -6,7 +6,7 @@ on:
 
 jobs:
   update-code:
-    if: contains(github.event.issue.title, '[Gemini-Auto]')
+    if: startsWith(github.event.issue.title, 'Gemini:')
     runs-on: ubuntu-latest
     steps:
     - name: Clonar repositorio
@@ -23,14 +23,13 @@ jobs:
     - name: Ejecutar Inteligencia Artificial
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        ISSUE_TITLE: ${{ github.event.issue.title }}
         ISSUE_BODY: ${{ github.event.issue.body }}
       run: python gemini_update.py
 
-    - name: Guardar cambios en el repositorio
+    - name: Guardar todos los cambios en el repositorio
       run: |
         git config --global user.name "GeminiBot"
         git config --global user.email "gemini-bot@github.com"
         git add .
-        git commit -m "🤖 Código actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
+        git commit -m "🤖 Proyecto actualizado automáticamente por Gemini (Issue #${{ github.event.issue.number }})"
         git push
